@@ -91,7 +91,7 @@
 </div>
 <script>
 const ROI_PCT = 20;  // fixed total return-on-investment, uniform across all investors (the offer's pricing input)
-const EX = {issuer:'Tani AgriTech Sdn Bhd', title:'Share buyback offer', ref:'CE-2026-014', deadline:'30 Jun 2026', close:'Voting closes 30 Jun 2026, 5:00pm'};
+const EX = {issuer:'Tani AgriTech Sdn Bhd', title:'Share buyback offer', ref:'CE-2026-014', deadline:'30 Jun 2026', close:'Voting closes 30 Jun 2026, 5:00pm', shareType:'Ordinary Shares'};
 const INV = {
   aisha: {name:'Aisha Rahman', id:'INV-10231', invested:10000, shares:10000, annualised:11},
   ben:   {name:'Ben Lim',      id:'INV-10876', invested:6000,  shares:5000,  annualised:18},
@@ -108,17 +108,11 @@ function detail(o){
       <span style="font-size:12px; color:var(--brand)"><i class="ti ti-clock"></i> Closes ${EX.deadline}</span>
     </div>
     <h3 style="margin-top:12px">${EX.issuer} wants to buy back your shares</h3>
-    <p class="lead">You invested <b>${rm(o.invested)}</b> in ${EX.issuer} and own <b>${o.shares.toLocaleString()}</b> shares. ${EX.issuer} is offering to buy back <b>all of your shares</b> at <b>${rm(o.price)}</b> per share.</p>
+    <p class="lead">You invested <b>${rm(o.invested)}</b> in ${EX.issuer} and own <b>${o.shares.toLocaleString()} ${EX.shareType}</b>. The company is offering to buy back <b>all your ${EX.shareType}</b> at <b>${rm(o.price)}</b> per share.</p>
     <div class="hero">
-      <div class="lbl">If you accept, you'll receive</div>
+      <div class="lbl">Total offer for your shares</div>
       <div class="val">${rm(o.total)}</div>
       <div class="roi">a <b>+${o.roi}% return</b> on your investment (≈${o.annualised}% per year)</div>
-    </div>
-    <div class="facts">
-      <div class="fact"><div class="k">You invested</div><div class="v">${rm(o.invested)}</div></div>
-      <div class="fact"><div class="k">Shares you own</div><div class="v">${o.shares.toLocaleString()}</div></div>
-      <div class="fact"><div class="k">Offer price / share</div><div class="v">${rm(o.price)}</div></div>
-      <div class="fact"><div class="k">Voting closes</div><div class="v">${EX.deadline}</div></div>
     </div>
     <div class="note"><i class="ti ti-users"></i> This buyback only goes ahead if a <b>majority of investors</b> vote to approve it — your vote is one of many.</div>
     <div class="row">
