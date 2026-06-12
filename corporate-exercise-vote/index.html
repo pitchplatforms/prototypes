@@ -110,7 +110,7 @@ function detail(o){
     <h3 style="margin-top:12px">${EX.issuer} wants to buy back your shares</h3>
     <p class="lead">You invested <b>${rm(o.invested)}</b> in ${EX.issuer} and own <b>${o.shares.toLocaleString()} ${EX.shareType}</b>. The company is offering to buy back <b>all your ${EX.shareType}</b> at <b>${rm(o.price)}</b> per share.</p>
     <div class="hero">
-      <div class="lbl">Total offer for your shares</div>
+      <div class="lbl">If this offer goes through</div>
       <div class="val">${rm(o.total)}</div>
       <div class="roi">a <b>+${o.roi}% return</b> on your investment (≈${o.annualised}% per year)</div>
     </div>
