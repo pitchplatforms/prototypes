@@ -1,0 +1,572 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>From a Voice Note to a Shipped Feature — pitchIN AI Case Study</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --red:#BF2026; --red-dark:#7D1F23; --red-light:#FEE2E3; --red-lightest:#fff2f2;
+    --green:#006927; --green-light:#0A994A; --green-lightest:#C2F0CA;
+    --warn:#E18437; --warn-light:#FAEDDA; --warn-dark:#AE4F20;
+    --info:#2D898B; --info-light:#D5F2F0; --link:#005DD1;
+    --body:#6a6a6a; --ink:#333333; --blue:#1A1847;
+    --divider:#e7e7e7; --divider-light:#f1f1f1; --table:#EAECF0;
+    --bg:#ffffff; --bg-soft:#faf9f8;
+    --font-head:'Poppins',system-ui,sans-serif; --font-body:'Inter',system-ui,sans-serif;
+    --shadow-card:0px 4px 32px 0px #00000029; --shadow-md:0 4px 6px -1px rgba(0,0,0,.1);
+    --r-md:6px; --r-lg:8px; --r-xl:12px; --maxw:900px;
+  }
+  *{box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{margin:0;font-family:var(--font-body);color:var(--ink);background:var(--bg-soft);font-size:16px;line-height:1.6;-webkit-font-smoothing:antialiased}
+  h1,h2,h3,h4{font-family:var(--font-head);line-height:1.22;color:var(--ink);font-weight:600}
+  h2{font-size:1.85rem;margin:2.8rem 0 .6rem;display:flex;align-items:center;gap:.55rem}
+  h2 .hi{font-size:1.4rem;line-height:1;filter:saturate(1.1)}
+  h3{font-size:1.28rem;margin:1.8rem 0 .4rem}
+  h4{font-size:1.04rem;margin:1.1rem 0 .3rem}
+  p{margin:.7rem 0;color:#3f3f3f}
+  a{color:var(--link);text-decoration:none} a:hover{text-decoration:underline}
+  code{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:.85em;background:var(--red-lightest);color:var(--red-dark);padding:.1em .4em;border-radius:4px}
+  pre{background:#1f1d2b;color:#f4f3f7;padding:16px 18px;border-radius:var(--r-lg);overflow:auto;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:.85rem;line-height:1.55}
+  pre code{background:none;color:inherit;padding:0}
+  .wrap{max-width:var(--maxw);margin:0 auto;padding:0 22px}
+  .muted{color:var(--body)} .small{font-size:.84rem}
+  hr{border:0;border-top:1px solid var(--divider);margin:2.4rem 0}
+
+  /* hero */
+  header.hero{background:linear-gradient(135deg,#7D1F23 0%,#BF2026 60%,#d6453b 100%);color:#fff;padding:54px 0 40px}
+  header.hero .wrap{max-width:var(--maxw)}
+  .brand{font-family:var(--font-head);font-weight:700;letter-spacing:.5px;font-size:1.05rem;opacity:.95}
+  .brand b{color:#fff} .brand span{color:#ffd9d6}
+  header.hero h1{color:#fff;font-size:2.6rem;margin:.5rem 0 .4rem;font-weight:700;line-height:1.12}
+  header.hero .sub{font-size:1.18rem;color:#ffe3e1;font-weight:500;margin:0 0 1.2rem}
+  .tldr{background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.25);border-radius:var(--r-xl);padding:18px 20px}
+  .tldr p{color:#fff;margin:.3rem 0}
+  .pill-row{margin-top:18px;display:flex;flex-wrap:wrap;gap:8px}
+  .pill{background:rgba(255,255,255,.16);border:1px solid rgba(255,255,255,.28);color:#fff;border-radius:999px;padding:5px 13px;font-size:.8rem;font-weight:500}
+
+  /* at-a-glance band */
+  .glance{background:var(--red-lightest);border-bottom:1px solid var(--red-light)}
+  .glance .wrap{padding:26px 22px 30px;max-width:980px}
+  .glance .eyebrow{font-family:var(--font-head);font-weight:600;font-size:.75rem;letter-spacing:.08em;text-transform:uppercase;color:var(--red);margin:0 0 12px}
+  .pipe{display:flex;flex-wrap:wrap;align-items:center;gap:6px 4px;margin-bottom:22px}
+  .pipe .pchip{background:#fff;border:1px solid var(--red-light);color:var(--ink);border-radius:999px;padding:6px 12px;font-size:.82rem;font-weight:500;font-family:var(--font-head);display:inline-flex;align-items:center;gap:6px}
+  .pipe .pchip .pe{font-size:.95rem}
+  .pipe .arr{color:var(--red);font-weight:700;opacity:.55;padding:0 1px}
+  .bigstat-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:14px}
+  .bigstat{background:#fff;border:1px solid var(--red-light);border-radius:var(--r-lg);padding:16px 18px}
+  .bigstat .n{font-family:var(--font-head);font-weight:700;font-size:2.3rem;line-height:1;color:var(--red)}
+  .bigstat .n small{font-size:1rem;font-weight:600;color:var(--ink)}
+  .bigstat .l{font-size:.86rem;color:#3f3f3f;margin-top:7px;line-height:1.45}
+
+  /* toc */
+  nav.toc{background:#fff;border-bottom:1px solid var(--divider);position:sticky;top:0;z-index:20;box-shadow:0 1px 0 rgba(0,0,0,.03)}
+  nav.toc .wrap{display:flex;gap:6px;flex-wrap:wrap;padding:10px 22px;max-width:1080px}
+  nav.toc a{font-size:.78rem;color:var(--body);padding:4px 9px;border-radius:999px;font-weight:500}
+  nav.toc a:hover{background:var(--red-lightest);color:var(--red);text-decoration:none}
+
+  main .wrap{background:var(--bg);max-width:var(--maxw);margin:0 auto;padding:8px 40px 48px;box-shadow:var(--shadow-card)}
+  @media(max-width:680px){main .wrap{padding:8px 20px 36px}}
+
+  /* callouts */
+  .note{border-radius:var(--r-lg);padding:14px 18px;margin:1.2rem 0;border-left:4px solid}
+  .note p{margin:.3rem 0}
+  .note.key{background:var(--red-lightest);border-color:var(--red)}
+  .note.warn{background:var(--warn-light);border-color:var(--warn)}
+  .note.info{background:var(--info-light);border-color:var(--info)}
+  .note.good{background:var(--green-lightest);border-color:var(--green)}
+  .note .tag{font-family:var(--font-head);font-weight:600;font-size:.74rem;text-transform:uppercase;letter-spacing:.06em;display:block;margin-bottom:3px}
+  .note.key .tag{color:var(--red)} .note.warn .tag{color:var(--warn-dark)} .note.info .tag{color:var(--info)} .note.good .tag{color:var(--green)}
+
+  blockquote{margin:1.2rem 0;padding:14px 20px;background:var(--bg-soft);border-left:4px solid #cfcfcf;border-radius:0 var(--r-md) var(--r-md) 0;color:#444;font-style:italic}
+  blockquote.voice{border-left-color:var(--red);background:var(--red-lightest);font-style:normal}
+
+  /* stat cards */
+  .stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:14px;margin:1.4rem 0}
+  .stat{background:#fff;border:1px solid var(--divider);border-radius:var(--r-lg);padding:16px;box-shadow:var(--shadow-md)}
+  .stat .n{font-family:var(--font-head);font-weight:700;font-size:1.7rem;color:var(--red);line-height:1.1}
+  .stat .l{font-size:.82rem;color:var(--body);margin-top:5px}
+
+  /* tables */
+  table{border-collapse:collapse;width:100%;margin:1.1rem 0;font-size:.9rem}
+  th,td{text-align:left;padding:9px 12px;border-bottom:1px solid var(--divider);vertical-align:top}
+  th{font-family:var(--font-head);font-weight:600;background:var(--table);color:var(--ink);font-size:.82rem}
+  tbody tr:nth-child(even){background:var(--bg-soft)}
+
+  /* pipeline flow */
+  .flow{margin:1.4rem 0;display:flex;flex-direction:column}
+  .step{display:flex;gap:14px;align-items:flex-start;position:relative}
+  .step .dot{flex:0 0 36px;height:36px;border-radius:999px;background:var(--red);color:#fff;font-family:var(--font-head);font-weight:600;display:flex;align-items:center;justify-content:center;font-size:.85rem;z-index:2}
+  .step .line{position:absolute;left:18px;top:36px;bottom:-10px;width:2px;background:var(--red-light)}
+  .step:last-child .line{display:none}
+  .step .body{padding-bottom:18px}
+  .step .body b{font-family:var(--font-head);color:var(--ink)}
+  .step .body .skill{font-family:ui-monospace,monospace;font-size:.78rem;background:var(--red-lightest);color:var(--red-dark);padding:1px 7px;border-radius:4px;margin-left:6px}
+  .step .body p{margin:.25rem 0 0;font-size:.92rem}
+
+  /* cost bars */
+  .bars{margin:1.3rem 0}
+  .bar{display:grid;grid-template-columns:130px 1fr 64px;align-items:center;gap:10px;margin:9px 0}
+  .bar .cap{font-size:.84rem;font-weight:500;color:var(--ink);text-align:right}
+  .bar .track{background:#e7e7e7;border-radius:999px;height:22px;overflow:hidden;min-width:40px}
+  .bar .fill{height:100%;border-radius:999px;background:var(--info);min-width:4px}
+  .bar.qa .fill{background:var(--red)} .bar.build .fill{background:var(--green-light)}
+  .bar .val{font-family:var(--font-head);font-weight:600;font-size:.85rem;color:var(--ink)}
+  @media(max-width:620px){
+    .bar{grid-template-columns:1fr auto;grid-template-areas:"cap val" "track track";row-gap:5px;column-gap:8px}
+    .bar .cap{grid-area:cap;text-align:left;font-size:.8rem}
+    .bar .val{grid-area:val}
+    .bar .track{grid-area:track;min-width:0}
+  }
+
+  /* two-col compare */
+  .cols{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin:1.2rem 0}
+  @media(max-width:600px){.cols{grid-template-columns:1fr}}
+  .col{border:1px solid var(--divider);border-radius:var(--r-lg);padding:14px 16px;background:#fff}
+  .col h4{margin:.1rem 0 .5rem;display:flex;align-items:center;gap:.4rem}
+
+  /* human vs AI split */
+  .vs{display:grid;grid-template-columns:1fr 1fr;gap:0;margin:1.3rem 0;border:1px solid var(--divider);border-radius:var(--r-lg);overflow:hidden}
+  @media(max-width:600px){.vs{grid-template-columns:1fr}}
+  .vs .vh{font-family:var(--font-head);font-weight:600;padding:11px 16px;font-size:.95rem;display:flex;align-items:center;gap:.45rem}
+  .vs .vh.h{background:var(--info-light);color:var(--info)} .vs .vh.a{background:var(--red-lightest);color:var(--red)}
+  .vs ul{margin:0;padding:12px 16px 14px 32px;list-style:none}
+  .vs ul li{position:relative;margin:.5rem 0;font-size:.9rem}
+  .vs .hc ul li::before{content:"●";position:absolute;left:-18px;color:var(--info);font-size:.7rem;top:.25em}
+  .vs .ac ul li::before{content:"●";position:absolute;left:-18px;color:var(--red);font-size:.7rem;top:.25em}
+  .vs .hc{border-right:1px solid var(--divider)}
+  @media(max-width:600px){.vs .hc{border-right:0;border-bottom:1px solid var(--divider)}}
+
+  /* 3 icon cards */
+  .cards3{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px;margin:1.3rem 0}
+  .iconcard{border:1px solid var(--divider);border-radius:var(--r-lg);padding:16px 18px;background:#fff;box-shadow:var(--shadow-md)}
+  .iconcard .ic{font-size:1.7rem;line-height:1;display:block;margin-bottom:8px}
+  .iconcard h4{margin:0 0 .35rem}
+  .iconcard p{font-size:.88rem;margin:0;color:#444}
+
+  /* maker-checker role flow */
+  .roleflow{display:flex;flex-wrap:wrap;align-items:stretch;gap:8px;margin:1.3rem 0}
+  .roleflow .rc{flex:1 1 200px;border:1px solid var(--divider);border-top:3px solid var(--red);border-radius:var(--r-lg);padding:13px 15px;background:#fff}
+  .roleflow .rc .role{font-family:var(--font-head);font-weight:600;font-size:.95rem;color:var(--ink);display:flex;align-items:center;gap:.4rem}
+  .roleflow .rc .act{font-size:.83rem;color:var(--body);margin-top:5px}
+  .roleflow .rarr{align-self:center;color:var(--red);font-weight:700;opacity:.5;font-size:1.3rem}
+  @media(max-width:600px){.roleflow .rarr{transform:rotate(90deg)}}
+
+  /* inline screenshot */
+  figure.shot{margin:1.5rem auto;max-width:600px;border:1px solid var(--divider);border-radius:var(--r-lg);overflow:hidden;background:#fff;box-shadow:var(--shadow-card)}
+  figure.shot img{display:block;width:100%;height:auto;border-bottom:1px solid var(--divider)}
+  figure.shot figcaption{padding:9px 14px;font-size:.82rem;color:var(--body)}
+  figure.shot figcaption b{color:var(--red);font-family:var(--font-head)}
+
+  /* green-build / broken-screen motif */
+  .gbmotif{display:inline-flex;flex-wrap:wrap;gap:8px;margin:.4rem 0 .2rem}
+  .gbmotif .gp{border-radius:999px;padding:4px 12px;font-size:.8rem;font-weight:600;font-family:var(--font-head)}
+  .gbmotif .gp.ok{background:var(--green-lightest);color:var(--green)}
+  .gbmotif .gp.bad{background:var(--red-light);color:var(--red)}
+
+  /* screenshot gallery */
+  .gallery{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px;margin:1.3rem 0}
+  .gallery figure{margin:0;border:1px solid var(--divider);border-radius:var(--r-lg);overflow:hidden;background:#fff;box-shadow:var(--shadow-md)}
+  .gallery figure img{display:block;width:100%;height:auto;border-bottom:1px solid var(--divider)}
+  .gallery figure figcaption{padding:8px 11px;font-size:.78rem;color:var(--body)}
+
+  footer{max-width:var(--maxw);margin:0 auto;padding:26px 40px 60px;color:var(--body);font-size:.84rem}
+  .bignum{font-family:var(--font-head);font-weight:700;color:var(--red)}
+  ul li,ol li{margin:.3rem 0}
+</style>
+</head>
+<body>
+
+<header class="hero">
+  <div class="wrap">
+    <div class="brand"><b>pitch</b><span>IN</span> &nbsp;·&nbsp; AI Workspace Case Study</div>
+    <h1>From a Voice Note to a Shipped Feature</h1>
+    <p class="sub">How a non-technical PM drove a full build across four codebases with AI — and why it was safe.</p>
+    <div class="tldr">
+      <p><strong>The one-sentence version:</strong> A non-technical product manager — who doesn't write code — took a vague spoken idea, "let investors vote on share buybacks," and in about two days drove it through a disciplined AI pipeline into a working, multi-app feature. The headline isn't that it was fast. It's <em>why</em> it was safe: every decision was made by a human and written down before any code was generated, and nothing the AI wrote was trusted until an independent step proved it actually ran.</p>
+    </div>
+    <div class="pill-row">
+      <span class="pill">Corporate Actions sprint</span>
+      <span class="pill">15–17 Jun 2026 · ~44h</span>
+      <span class="pill">4 codebases</span>
+      <span class="pill">~21 tickets, autonomous build</span>
+    </div>
+  </div>
+</header>
+
+<!-- AT A GLANCE -->
+<section class="glance">
+  <div class="wrap">
+    <p class="eyebrow">The whole story in five seconds</p>
+    <div class="pipe">
+      <span class="pchip"><span class="pe">🎤</span>Vague idea</span><span class="arr">→</span>
+      <span class="pchip"><span class="pe">🧐</span>Grill</span><span class="arr">→</span>
+      <span class="pchip"><span class="pe">📝</span>Spec</span><span class="arr">→</span>
+      <span class="pchip"><span class="pe">🎟️</span>Issues</span><span class="arr">→</span>
+      <span class="pchip"><span class="pe">🏷️</span>Triage</span><span class="arr">→</span>
+      <span class="pchip"><span class="pe">🧱</span>Build</span><span class="arr">→</span>
+      <span class="pchip"><span class="pe">🔍</span>Verify</span><span class="arr">→</span>
+      <span class="pchip"><span class="pe">👤</span>Human sign-off</span><span class="arr">→</span>
+      <span class="pchip"><span class="pe">🚀</span>Ship</span>
+    </div>
+    <div class="bigstat-row">
+      <div class="bigstat"><div class="n">9×</div><div class="l">Verifying the AI's work cost ~9× what the AI cost to write it — QA is where the money goes.</div></div>
+      <div class="bigstat"><div class="n">0 <small>lines</small></div><div class="l">Product code changed to make the AI's cross-app test actually pass — all 12 fixes were test-side.</div></div>
+      <div class="bigstat"><div class="n">≥4</div><div class="l">Real bugs the human verifier caught that "green" automated checks missed.</div></div>
+      <div class="bigstat"><div class="n">13</div><div class="l">Real screens built &amp; running locally — on test data the AI generated itself.</div></div>
+    </div>
+  </div>
+</section>
+
+<nav class="toc">
+  <div class="wrap">
+    <a href="#summary">Summary</a>
+    <a href="#numbers">The numbers</a>
+    <a href="#stages">The 8 stages</a>
+    <a href="#spec">Decision-as-spec</a>
+    <a href="#issue8">The test that never ran</a>
+    <a href="#ui">AI is weak at UI</a>
+    <a href="#screens">Screens</a>
+    <a href="#vs">Human vs AI</a>
+    <a href="#why">Why it works</a>
+    <a href="#economics">Economics</a>
+    <a href="#testdata">AI &amp; test data</a>
+    <a href="#learnings">Learnings</a>
+    <a href="#setup">Set up your own</a>
+    <a href="#next">What's next</a>
+  </div>
+</nav>
+
+<main>
+<div class="wrap">
+
+  <div class="note info" style="margin-top:22px">
+    <span class="tag">Who this is for</span>
+    <p>The pitchIN team — including non-technical colleagues — who want to set up a space like this and run the same workflow. It explains what was done, shows real examples and screenshots, is honest about what the AI is <em>bad</em> at (UI, especially), gives a concrete plan to clone the setup, and lays out how to scale it.</p>
+  </div>
+
+  <h2 id="summary"><span class="hi">🧭</span>1 · Executive summary</h2>
+  <p>This was a controlled experiment: <strong>can an AI agent do real engineering work on the actual pitchIN codebases — safely — when a non-technical product manager is driving?</strong></p>
+  <p>The test feature was <strong>Corporate Actions</strong>: a share-buyback voting flow where pitchIN, acting as nominee, collects investor votes but never decides the outcome itself. It's a genuine cross-system feature — it touches the .NET backend, both Angular apps (admin + customer), and the Playwright end-to-end suite.</p>
+
+  <div class="cols">
+    <div class="col" style="border-top:3px solid var(--green)">
+      <h4><span>✅</span> What it proved</h4>
+      <ul style="margin:0;padding-left:18px">
+        <li>An agent can stand up the entire local environment — backend, database, both web apps — from a laptop with nothing installed, unaided.</li>
+        <li>A disciplined, reviewable workflow with human checkpoints produces work you can trust.</li>
+        <li><strong>None of it risks production.</strong> The AI setup lives outside the product repos; product changes flow through the normal PR pipeline, clean of AI-infra files.</li>
+      </ul>
+    </div>
+    <div class="col" style="border-top:3px solid var(--warn)">
+      <h4><span>⚠️</span> What it taught the hard way</h4>
+      <ul style="margin:0;padding-left:18px">
+        <li><strong>AI is genuinely weak at UI.</strong> Two screens shipped "green" but rendered nothing or broken — a passing build says nothing about whether a screen works.</li>
+        <li><strong>Verifying cost ~9× more than building.</strong> The autonomous build was cheap; human-supervised QA was where the cost went.</li>
+        <li><strong>The bottleneck is one person.</strong> One verifier gates everything. Fix that first.</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="note key">
+    <span class="tag">The recommendation</span>
+    <p>The environment and guardrails are proven enough to run a wider, contained trial. To do that: (a) hand the QA/verification role to a dedicated person, and (b) package this setup so teammates can clone and run it themselves — which <a href="#setup">Section 11</a> is about.</p>
+  </div>
+
+  <h2 id="numbers"><span class="hi">📊</span>2 · The numbers</h2>
+  <div class="note warn">
+    <span class="tag">Read this about the cost figures first</span>
+    <p>All dollar amounts are <strong>token value at API list prices</strong> — "what these tokens would cost if billed through the API." The sprint ran inside a Claude subscription (a flat monthly fee), so the <strong>actual out-of-pocket cost was the subscription, not these numbers.</strong> Use the list-price figures for one question only: <em>what would this cost to scale up via the API?</em></p>
+  </div>
+  <div class="stats">
+    <div class="stat"><div class="n">~44h</div><div class="l">calendar time (on top of earlier setup)</div></div>
+    <div class="stat"><div class="n">4</div><div class="l">codebases touched</div></div>
+    <div class="stat"><div class="n">~21</div><div class="l">tickets built autonomously</div></div>
+    <div class="stat"><div class="n">~$50</div><div class="l">build cost (token value) · $1.30–$2.40/issue</div></div>
+    <div class="stat"><div class="n">~$458</div><div class="l">QA/verify cost — <b>~9× the build</b></div></div>
+    <div class="stat"><div class="n">~$30</div><div class="l">all-in per issue (incl. QA)</div></div>
+  </div>
+  <p>The single most important number is the <strong>9×</strong>: building was the easy, cheap part; <em>proving the build was correct</em> was the expensive part. <a href="#economics">Section 9</a> explains why, and what it means for scaling.</p>
+
+  <h2 id="stages"><span class="hi">🛤️</span>3 · What actually happened: the eight stages</h2>
+  <p>The workflow is a pipeline. Each stage has a job, an input, and an output, and most are a named skill invoked by typing <code>/&lt;name&gt;</code>. The golden rule throughout: <strong>decisions are made (by a human) and written down <em>before</em> any code is generated.</strong></p>
+
+  <div class="flow">
+    <div class="step"><div class="dot">0</div><div class="line"></div><div class="body"><b>Idea</b><span class="skill">/grill-with-docs</span><p>A vague voice note. The AI interrogates it, challenging fuzzy terms against pitchIN's domain language and forcing precise answers.</p></div></div>
+    <div class="step"><div class="dot">1</div><div class="line"></div><div class="body"><b>Spec</b><span class="skill">/to-prd</span><p>The grilled context becomes a written PRD, published as a tracked issue.</p></div></div>
+    <div class="step"><div class="dot">2</div><div class="line"></div><div class="body"><b>Issues</b><span class="skill">/to-issues</span><p>The PRD is sliced into ~21 small, independent "vertical slice" tickets.</p></div></div>
+    <div class="step"><div class="dot">3</div><div class="line"></div><div class="body"><b>Triage</b><span class="skill">/triage</span><p>Each ticket runs through a state machine → labelled <code>ready-for-agent</code>, tagged by repo and whether it needs a real browser test.</p></div></div>
+    <div class="step"><div class="dot">3.5</div><div class="line"></div><div class="body"><b>Design (UI tickets only)</b><span class="skill">/prototype</span><p>Build a throwaway HTML mock that reuses the real design system, and sign it off. The mock becomes the spec the builder follows.</p></div></div>
+    <div class="step"><div class="dot">4</div><div class="line"></div><div class="body"><b>Build</b><span class="skill">ralph loop</span><p>One ticket at a time, tests-first. Planner = Opus, implementer = Sonnet. Commits to a local-only branch; never closes, never pushes.</p></div></div>
+    <div class="step"><div class="dot">5</div><div class="line"></div><div class="body"><b>Verify</b><span class="skill">/check-needs-human-verify</span><p>An <em>independent</em> agent boots the real app and checks the real database. Produces a plain-language "here's what to check" report.</p></div></div>
+    <div class="step"><div class="dot">6</div><div class="line"></div><div class="body"><b>Human UAT</b><p>A person clicks through it and closes the ticket — or bounces it back.</p></div></div>
+    <div class="step"><div class="dot">7</div><div class="line"></div><div class="body"><b>Ship</b><span class="skill">/ship</span><p>Lift only the feature commits onto a clean product PR. The production pipeline never sees an AI-infra file.</p></div></div>
+  </div>
+
+  <h3>It started with a literal voice note</h3>
+  <p>Here is the <strong>actual opening message</strong>, transcribed, that kicked off the entire feature:</p>
+  <blockquote class="voice">"I want to build a new feature. So we have companies that are offering corporate exercises, um, for investors, to vote… because we are the nominee company, we act as the middleman to collect all the votes… there's no money flow… Admin will be getting all those information from the issuer, finalize it outside of the platform, put it into an Excel sheet, and then upload it… We should match by the investor ID… for now, we will be sticking to share buyback… when investors log in, they should see this vote offer as a pop up. It should be persistent because it's very important…"</blockquote>
+  <p>A clear intent, full of unresolved questions. Rather than jump to code, the grilling resolved them <em>first</em> — so by the time any code was written, the hard product decisions were already made, debated, and recorded, not buried as assumptions inside generated code. The screen below is what that voice note eventually became:</p>
+  <figure class="shot"><img src="screenshots/admin-create-wizard-step1.png" alt="Admin create-wizard step 1" onerror="this.closest('figure').remove()"><figcaption><b>Stage 4 output</b> · the admin "create a buyback" wizard — built by the autonomous loop to match a signed-off prototype.</figcaption></figure>
+
+  <h2 id="spec"><span class="hi">⚖️</span>4 · The decision that became the spec</h2>
+  <p>The single most important question in the whole feature: <strong>when the votes are in, who decides the outcome?</strong></p>
+  <p>It's tempting to have the platform tally votes and declare "passed" automatically. But pitchIN is the <strong>nominee</strong> — it holds shares on investors' behalf; it is not the decision-maker. Getting this wrong would have the platform overstepping its legal role. This was captured in a short, durable decision record — <strong>ADR-0001</strong>:</p>
+  <div class="cards3">
+    <div class="iconcard"><span class="ic">🗳️</span><h4>One vote per investor</h4><p>Per head, not weighted by shareholding.</p></div>
+    <div class="iconcard"><span class="ic">🧮</span><h4>Tally only</h4><p>The platform counts votes — it never computes pass/fail.</p></div>
+    <div class="iconcard"><span class="ic">📣</span><h4>Human publishes</h4><p>An admin publishes the outcome as a separate, deliberate step. No auto-decide, ever.</p></div>
+  </div>
+  <div class="note good">
+    <span class="tag">The payoff</span>
+    <p>When the autonomous loop later built the "publish outcome" and "cast vote" tickets, the planner <strong>read that decision record and implemented the right behaviour</strong> — the tally logic computes counts but stops short of declaring a result. Nobody re-explained the rule per ticket. <strong>The written decision <em>was</em> the specification; the code was the transcription.</strong></p>
+  </div>
+  <figure class="shot"><img src="screenshots/admin-detail-vote-tally.png" alt="Admin vote tally and voter roster" onerror="this.closest('figure').remove()"><figcaption><b>ADR-0001 in the UI</b> · admins see a running tally + per-voter roster — clearly marked "Provisional; not the final outcome." Investors never see tally numbers.</figcaption></figure>
+
+  <h2 id="issue8"><span class="hi">🧪</span>5 · The test that "looked done" but had never run</h2>
+  <p>Issue #8 was the hardest ticket: an end-to-end test of the <strong>whole</strong> corporate-actions journey across all three apps — admin creates a buyback and uploads voters → SuperAdmin approves → investor votes → admin closes and proposes an outcome → SuperAdmin publishes → investor sees the result.</p>
+  <p>The autonomous loop wrote the test. It <strong>compiled cleanly. It looked finished. And it had never actually run.</strong> The builder itself was honest about this in its notes — the stack wasn't running when it committed, so the real test had to be completed by the human verifier.</p>
+  <div class="gbmotif"><span class="gp ok">compiled ✓</span><span class="gp bad">never executed ✗</span><span class="gp ok">~13 runs → green ✓</span><span class="gp ok">0 product lines changed</span></div>
+  <p>When the independent verification step booted the real stack and actually ran it, it took <strong>~13 runs and ~12 fixes</strong> to reach a genuine green pass (36 seconds, all steps passing). Every fix was a <strong>runtime fact no compiler, build, unit test, or code review could ever catch</strong> — hash-based URLs, a search box that debounces before it filters, a confirmation modal mid-flow, tests that assumed "the first row" instead of finding data by ID.</p>
+  <div class="note key">
+    <span class="tag">The result</span>
+    <p><strong>Zero lines of product code changed.</strong> All 12 fixes were in the test itself. The feature was fine; the <em>test</em> was fiction until something ran it. This produced a permanent rule (ADR-0002): an e2e test isn't "done" until it produces a real passing run against a live stack. And the sharpest lesson of the sprint: <strong>autonomous coding is viable with the right verification gate — and dangerous without it.</strong></p>
+  </div>
+
+  <h2 id="ui"><span class="hi">🖼️</span>6 · AI is weak at UI</h2>
+  <p>This is the most important caveat in the whole report. <strong>The AI is good at logic and bad at UI — and worse, the failure is invisible.</strong></p>
+  <p>When the AI writes backend logic, an executable test passes or fails — a clear signal. When it writes a <em>screen</em>, the build can pass, the types can check, the unit tests (which use fake data) can go green… <strong>and the screen can still render nothing, or render broken.</strong> A passing build tells you the code compiled. It tells you nothing about whether a human sees a working page.</p>
+  <p>Two separate screens shipped "green" and were broken, both caught only when a human looked at the rendered page:</p>
+  <div class="cols">
+    <div class="col" style="border-top:3px solid var(--red)">
+      <h4><span>👻</span> The blank investor screen</h4>
+      <div class="gbmotif"><span class="gp ok">build ✓</span><span class="gp bad">screen blank ✗</span></div>
+      <p class="small">A service grabbed the whole API envelope <code>{ result: [...] }</code> instead of unwrapping the <code>.result</code> inside it. Compiled perfectly; three screens rendered <em>nothing</em>. Fix: a reusable <code>unwrapResult()</code> helper so it can't recur silently.</p>
+    </div>
+    <div class="col" style="border-top:3px solid var(--red)">
+      <h4><span>📐</span> The collapsed admin table</h4>
+      <div class="gbmotif"><span class="gp ok">build ✓</span><span class="gp bad">table unusable ✗</span></div>
+      <p class="small">A table used the wrong markup variant — <code>&lt;table mat-table&gt;</code> instead of <code>&lt;mat-table&gt;</code> — collapsing every cell into one column. Build: green. Screen: unusable.</p>
+    </div>
+  </div>
+  <h4>What we did about it</h4>
+  <div class="cards3">
+    <div class="iconcard"><span class="ic">📸</span><h4>Screen-smoke tier</h4><p>A check that loads the real screen in a real browser and asserts the content is actually there. Catches "renders-but-broken."</p></div>
+    <div class="iconcard"><span class="ic">🚧</span><h4>Hard rule</h4><p>A front-end ticket is only "verified" if a screen-smoke ran for that screen this run — otherwise a human looks. No exceptions.</p></div>
+    <div class="iconcard"><span class="ic">🙅</span><h4>No self-grading</h4><p>The agent that builds a screen is forbidden from editing the test that grades it (ADR-0009). Never mark your own homework.</p></div>
+  </div>
+  <p>When it's done right, it looks like this — the <em>real</em> built investor vote page, not a mock:</p>
+  <figure class="shot"><img src="screenshots/customer-vote-detail-payout.png" alt="Investor vote page with RM 6.60 payout" onerror="this.closest('figure').remove()"><figcaption><b>The real screen</b> · company hero, holdings, the headline payout (RM 6.60), nominee disclaimer, and Approve / Reject — running locally.</figcaption></figure>
+  <div class="note key">
+    <span class="tag">Bottom line for your team</span>
+    <p>Trust the AI with logic that has a clear pass/fail test. Do <strong>not</strong> trust it with UI on the strength of a green build — make it prove the screen renders, or look at it yourself.</p>
+  </div>
+
+  <h2 id="screens"><span class="hi">📷</span>The maker-checker journey, on real screens</h2>
+  <p>Corporate Actions is a three-role flow. Each role's screens were built by the loop and are shown here running locally:</p>
+  <div class="roleflow">
+    <div class="rc"><div class="role"><span>🧑‍💼</span> Admin</div><div class="act">Creates the buyback, uploads the voter list, watches the running tally, proposes an outcome.</div></div>
+    <div class="rarr">→</div>
+    <div class="rc"><div class="role"><span>🛡️</span> SuperAdmin</div><div class="act">Approves or rejects the action (maker-checker), then publishes the final outcome.</div></div>
+    <div class="rarr">→</div>
+    <div class="rc"><div class="role"><span>💼</span> Investor</div><div class="act">Gets a persistent pop-up, sees their payout, votes Approve/Reject, later sees the official result.</div></div>
+  </div>
+  <p class="muted small">All 13 screens below are real captures from the feature running locally — on test data the AI generated itself (see <a href="#testdata">§ AI &amp; test data</a>).</p>
+  <div class="gallery" id="gallery">
+    <figure><img src="screenshots/customer-pending-vote-modal.png" alt="Investor pending-vote modal" onerror="this.closest('figure').remove()"><figcaption>Investor · login pop-up when a vote is outstanding.</figcaption></figure>
+    <figure><img src="screenshots/customer-announcement-tab-feed.png" alt="Investor announcement feed" onerror="this.closest('figure').remove()"><figcaption>Investor · the counter's Announcement tab feed.</figcaption></figure>
+    <figure><img src="screenshots/customer-vote-detail-payout.png" alt="Investor vote detail" onerror="this.closest('figure').remove()"><figcaption>Investor · the vote page (payout + Approve/Reject).</figcaption></figure>
+    <figure><img src="screenshots/customer-vote-confirm-modal.png" alt="Vote confirm modal" onerror="this.closest('figure').remove()"><figcaption>Investor · the confirmation step.</figcaption></figure>
+    <figure><img src="screenshots/customer-vote-recorded.png" alt="Vote recorded" onerror="this.closest('figure').remove()"><figcaption>Investor · recorded-vote state.</figcaption></figure>
+    <figure><img src="screenshots/customer-final-outcome-published.png" alt="Final outcome" onerror="this.closest('figure').remove()"><figcaption>Investor · published "Final Outcome".</figcaption></figure>
+    <figure><img src="screenshots/admin-ca-list.png" alt="Admin list" onerror="this.closest('figure').remove()"><figcaption>Admin · the corporate-actions list.</figcaption></figure>
+    <figure><img src="screenshots/admin-create-wizard-step1.png" alt="Admin create wizard" onerror="this.closest('figure').remove()"><figcaption>Admin · create-wizard step 1.</figcaption></figure>
+    <figure><img src="screenshots/admin-create-wizard-upload-voters.png" alt="Admin voter upload" onerror="this.closest('figure').remove()"><figcaption>Admin · voter-file upload step.</figcaption></figure>
+    <figure><img src="screenshots/admin-detail-vote-tally.png" alt="Admin tally" onerror="this.closest('figure').remove()"><figcaption>Admin · manage view + Vote Tally + roster.</figcaption></figure>
+    <figure><img src="screenshots/superadmin-approval-queue.png" alt="SuperAdmin queue" onerror="this.closest('figure').remove()"><figcaption>SuperAdmin · approval queue.</figcaption></figure>
+    <figure><img src="screenshots/superadmin-approval-detail.png" alt="SuperAdmin approval detail" onerror="this.closest('figure').remove()"><figcaption>SuperAdmin · approve / reject + tally.</figcaption></figure>
+    <figure><img src="screenshots/superadmin-publish-outcome.png" alt="SuperAdmin publish" onerror="this.closest('figure').remove()"><figcaption>SuperAdmin · publish the outcome.</figcaption></figure>
+  </div>
+
+  <h2 id="vs"><span class="hi">🤝</span>7 · What the human did vs. what the AI did</h2>
+  <p>The cleanest way to understand this workflow: <strong>humans made the decisions; the AI did the execution.</strong> Every time.</p>
+  <div class="vs">
+    <div class="hc">
+      <div class="vh h"><span>🧑</span> The human decided…</div>
+      <ul>
+        <li>What to build (the voice note)</li>
+        <li>How votes work (one-per-head, tally-only, no auto-decide)</li>
+        <li>What each screen looks like (signed-off prototype)</li>
+        <li>Which tickets are ready to build</li>
+        <li>Whether a result is actually correct (final click-through)</li>
+        <li>When to close a ticket / ship a PR</li>
+      </ul>
+    </div>
+    <div class="ac">
+      <div class="vh a"><span>🤖</span> The AI executed…</div>
+      <ul>
+        <li>Interrogated it, sharpened it, drafted the PRD</li>
+        <li>Implemented exactly that, by reading the decision record</li>
+        <li>Built the Angular screens to match</li>
+        <li>Built them one at a time, tests-first</li>
+        <li>Re-ran the app + DB and reported what it found</li>
+        <li>Never closed, never pushed — handed off and waited</li>
+      </ul>
+    </div>
+  </div>
+  <p>The AI was <strong>never</strong> trusted to decide the product, mark its own work correct, close a ticket, or push to production — exactly the high-stakes, hard-to-reverse actions. Those all stayed with a human.</p>
+
+  <h2 id="why"><span class="hi">⚙️</span>8 · Why this works: the core mechanism</h2>
+  <p>It would be easy to read this as "AI is fast." That's the hook, not the substance. The substance is three structural choices that make the output <em>trustworthy</em>:</p>
+  <div class="cards3">
+    <div class="iconcard"><span class="ic">🧠</span><h4>Decisions before code</h4><p>The grilling, PRD, and decision records force every hard choice to be made and written down <em>before</em> code exists. The AI implements decisions rather than inventing them — which is why 21 separately-built tickets are coherent.</p></div>
+    <div class="iconcard"><span class="ic">📄</span><h4>Human-owned artifacts the AI reads</h4><p>The spec, tickets, glossary, and decision records aren't bureaucracy — they're the AI's inputs. The same documents a human uses to understand the feature are the ones the AI uses to build it.</p></div>
+    <div class="iconcard"><span class="ic">🛡️</span><h4>Verification by structure</h4><p>The agent that builds is never the agent that verifies. What grades a screen is a protected file the builder can't touch. "Done" means <em>a real run passed</em>, not <em>it compiled</em>.</p></div>
+  </div>
+  <p>Take any one away and it stops working. Skip the decisions → incoherent code. Skip the written artifacts → the AI guesses. Skip independent verification → you ship blank screens with green checkmarks.</p>
+
+  <h2 id="economics"><span class="hi">💸</span>9 · The economics</h2>
+  <p class="muted">Remember the list-price caveat from <a href="#numbers">Section 2</a>: these are token values at API rates, not money spent.</p>
+
+  <div class="note key" style="display:flex;gap:18px;align-items:center;flex-wrap:wrap">
+    <div style="font-family:var(--font-head);font-weight:700;font-size:2.6rem;color:var(--red);line-height:1">~9×</div>
+    <div style="flex:1;min-width:220px"><strong>Verifying cost roughly nine times what building did.</strong> The autonomous loop wrote ~21 tickets for <b>~$50</b> of tokens. Human-supervised verification was <b>~$458</b>. Budget for "the AI writing code" alone and you'll be off by an order of magnitude.</div>
+  </div>
+
+  <h3>The cost, stage by stage (corporate-actions pipeline)</h3>
+  <div class="bars">
+    <div class="bar build"><div class="cap">Build (Ralph)</div><div class="track"><div class="fill" style="width:11%"></div></div><div class="val">~$50</div></div>
+    <div class="bar"><div class="cap">Idea→issues</div><div class="track"><div class="fill" style="width:18%"></div></div><div class="val">~$83</div></div>
+    <div class="bar"><div class="cap">Prototype</div><div class="track"><div class="fill" style="width:9%"></div></div><div class="val">~$42</div></div>
+    <div class="bar"><div class="cap">Triage + retro</div><div class="track"><div class="fill" style="width:8%"></div></div><div class="val">~$38</div></div>
+    <div class="bar qa"><div class="cap">QA / verify</div><div class="track"><div class="fill" style="width:100%"></div></div><div class="val">~$458</div></div>
+  </div>
+  <p>Separately, a <strong>one-time workspace setup</strong> (getting the backend, database, and both web apps to boot on a fresh laptop) cost <strong>~$180</strong> in token value — paid once, reused forever.</p>
+
+  <h3>Where the QA money actually went</h3>
+  <p>The surprise: there's no single expensive <em>task</em>. The driver is <strong>session length itself.</strong> Tracing the biggest verification run (the $173 one, 756 steps), the cumulative % of cost reached at each step:</p>
+  <div class="bars">
+    <div class="bar"><div class="cap">by step 100</div><div class="track"><div class="fill" style="width:5%"></div></div><div class="val">5%</div></div>
+    <div class="bar"><div class="cap">by step 200</div><div class="track"><div class="fill" style="width:12%"></div></div><div class="val">12%</div></div>
+    <div class="bar"><div class="cap">by step 400</div><div class="track"><div class="fill" style="width:32%"></div></div><div class="val">32%</div></div>
+    <div class="bar"><div class="cap">by step 600</div><div class="track"><div class="fill" style="width:62%"></div></div><div class="val">62%</div></div>
+    <div class="bar qa"><div class="cap">by step 756</div><div class="track"><div class="fill" style="width:100%"></div></div><div class="val">100%</div></div>
+  </div>
+  <p><strong>The last 156 steps cost more than the first 400 combined.</strong> Each step replays everything before it, so a long session gets more expensive <em>per step</em> the longer it runs. Dollars track <em>how long the agent ran</em>, not <em>what it did</em> in any one step.</p>
+  <p>Split by <em>activity</em> (share of the verifier's steps, not dollars), it's roughly:</p>
+  <table>
+    <thead><tr><th>What the verifier spent its steps on</th><th>~share of steps</th></tr></thead>
+    <tbody>
+      <tr><td>Reasoning, planning, and re-running the build/test gates</td><td>~70%</td></tr>
+      <tr><td>Booting / fixing the local environment</td><td>~8%</td></tr>
+      <tr><td>Reading and tracing the code</td><td>~8%</td></tr>
+      <tr><td>Driving the app in a browser to check screens</td><td>~7%</td></tr>
+      <tr><td>Checking the database actually changed</td><td>~3%</td></tr>
+      <tr><td>Writing the plain-language verification report</td><td>~3%</td></tr>
+    </tbody>
+  </table>
+  <p class="muted small">Approximate — attributing a step to one activity is fuzzy, because most of a step's cost is the context replay, not the action itself.</p>
+  <div class="note warn">
+    <span class="tag">Environment debugging is small but pure waste — and real</span>
+    <p>While capturing the screenshots for this very case study, the agent hit it again: the customer app's default start command pointed at the <strong>wrong API port</strong> (<code>:44311</code> instead of <code>:44367</code>), so every login silently failed with no visible error. It cost several steps to work out that login wasn't broken — the app was just talking to a dead address. Multiply that plumbing across every QA run and it adds up.</p>
+  </div>
+
+  <h3>How we get this cost down</h3>
+  <p>The cost structure points straight at the fixes. None reduce rigor — they remove waste. <span class="muted">(Tactics and figures from current Anthropic guidance and agent-engineering write-ups — sources at the foot of this page.)</span></p>
+  <div class="cards3">
+    <div class="iconcard"><span class="ic">📦</span><h4>1 · Pay for the environment once</h4><p>Pre-bake a "golden" local stack — dependencies installed, database migrated, test accounts seeded — so the verifier starts on a known-good system and goes straight to verifying. (GitHub's prebuilt dev environments cut startup "from minutes to under one" the same way.) We've paid the one-time ~$180; baking it into an image makes it free, repeatable, and kills the wrong-port traps.</p></div>
+    <div class="iconcard"><span class="ic">🚦</span><h4>2 · Gate cheaply first</h4><p>Run the free deterministic checks (build, type-check, unit tests, a scripted smoke) before waking the costly LLM verifier. A 10-second compile failing should never cost a 750-step verification.</p></div>
+    <div class="iconcard"><span class="ic">✂️</span><h4>3 · Keep sessions short &amp; lean</h4><p>Since dollars track length: split big verifications into smaller runs, and <strong>auto-clear stale context</strong> once acted on — Anthropic reports up to <strong>84% fewer tokens</strong> on long runs. Don't change the fixed front of the prompt mid-run (it forces re-paying full price for context).</p></div>
+    <div class="iconcard"><span class="ic">🪙</span><h4>4 · Cheaper model for grunt work</h4><p>Most steps are low-judgment (reading logs, flipping labels, writing the report). Route those to a cheaper model (~15–25× cheaper); reserve the expensive model for the actual "does this feature work?" judgment.</p></div>
+  </div>
+  <div class="note good">
+    <span class="tag">Realistic upside</span>
+    <p>These stack: cheaper grunt work (~5–10×), aggressive context-clearing (up to ~84% fewer tokens), and a golden environment (removing the boot/fix steps entirely). A QA pass that costs ~$458 of token value today could plausibly drop well below half that — without checking anything less carefully.</p>
+  </div>
+
+  <h2 id="testdata"><span class="hi">🌱</span>The AI made its own test data</h2>
+  <div class="note good">
+    <span class="tag">Why this matters to us</span>
+    <p>Getting realistic test data is a <strong>standing pain at pitchIN</strong> — and the AI generated its own, on demand, throughout this sprint.</p>
+  </div>
+  <p>To capture the screens above, the agent didn't wait for someone to hand it a dataset. It <strong>created exactly the scenarios it needed</strong>, directly in the isolated local database — additively, without touching production data or product code:</p>
+  <div class="cards3">
+    <div class="iconcard"><span class="ic">🆕</span><h4>A fresh open buyback</h4><p>A new share-buyback action with an eligible, not-yet-voted investor — so the votable detail page renders with real figures.</p></div>
+    <div class="iconcard"><span class="ic">🏁</span><h4>A closed action with an outcome</h4><p>An already-closed action with a proposed outcome — so the SuperAdmin "publish outcome" screen has something to show.</p></div>
+    <div class="iconcard"><span class="ic">🔁</span><h4>Tests that seed themselves</h4><p>By rule (ADR-0002), every end-to-end test <strong>creates and finds its own records by ID</strong> rather than depending on whatever happens to be in the database.</p></div>
+  </div>
+  <p>That last rule is the durable win: because the tests are <strong>data-self-contained</strong>, QA scenarios are reproducible and don't rot when the shared database changes underneath them. The same capability that seeds a demo can seed a test fixture — which is exactly the gap the team keeps hitting.</p>
+
+  <h2 id="learnings"><span class="hi">🎓</span>10 · Learnings</h2>
+  <ol>
+    <li><strong>The grilling is the product work.</strong> The most valuable half-hour was the AI interrogating a vague idea until it was precise. "Build me X" gets you confident, coherent, <em>wrong</em> code.</li>
+    <li><strong>A green build is not a working feature</strong> — especially for UI. Treat "the screen renders" as something to prove.</li>
+    <li><strong>Never let the agent grade its own work.</strong> Independent verification caught every escaped bug. This single rule separates "useful" from "dangerous."</li>
+    <li><strong>A test that compiled but never ran is fiction.</strong> "Done" must mean a real run passed against a live system.</li>
+    <li><strong>Mocked unit tests inherit the AI's blind spot.</strong> For anything that writes to the database, verify against the real database — a save that silently persisted nothing passed all seven unit tests.</li>
+    <li><strong>The AI can generate its own test data.</strong> It seeded the exact scenarios it needed in the local DB and writes data-self-contained tests — directly useful given our standing test-data pain.</li>
+    <li><strong>Cost lives in verification, not generation.</strong> ~9× more. Budget and staff accordingly.</li>
+    <li><strong>Keep the AI setup completely separate from production.</strong> The "brain" never enters a product repo; product PRs are clean; the pipeline is untouched.</li>
+    <li><strong>The bottleneck is one human.</strong> Everything funnels through a single verifier today.</li>
+  </ol>
+
+  <h2 id="setup"><span class="hi">🛠️</span>11 · How to set up your own space</h2>
+  <p>Goal: a teammate clones one thing, runs one script, and has the same working setup. Here's the honest state today and what gets us there.</p>
+  <h3>What the setup actually is</h3>
+  <p>Your "space" is a plain folder (not a code repo) that sits <strong>next to</strong> the four product repos and contains the "brain": orientation docs (<code>CLAUDE.md</code>), the skills and agents (<code>.claude/</code>), the local database/storage/queue (<code>infra/</code>, one <code>docker compose</code> file), the autonomous-loop scripts (<code>ralph/</code>), the QA runner (<code>bin/</code>), and the runbooks + decision records (<code>docs/</code>). The four product repos stay <strong>separate git repos</strong>, cloned as siblings — the brain integrates with them but never lives inside them. That's the production-safety boundary.</p>
+  <div class="note good"><span class="tag">The good news</span><p>~90% of the brain is already portable — no machine-specific paths. The docs, skills, agents, <code>docker compose</code> infra, QA runner, and loop scripts all work on any Mac as-is.</p></div>
+  <h3>The honest gaps — four things between "copy the folder" and "clone and go"</h3>
+  <ol>
+    <li><strong>A leftover folder to clean up.</strong> A throwaway experiment folder (<code>km-spike/</code>) needs removing and a <code>.gitignore</code> added before the setup is shared, so nothing stray is ever committed.</li>
+    <li><strong>A name is hard-coded.</strong> The loop's work branch is <code>nicholas-ralph</code>; for a teammate it should become <code>&lt;your-name&gt;-ralph</code> — one config value to make a variable.</li>
+    <li><strong>No one-command setup script yet.</strong> ~9 setup steps (install toolchain, clone repos, start DB, run migrations, log in to GitHub) are documented and verified but still manual. Very scriptable; just not wrapped in a <code>bootstrap.sh</code> yet.</li>
+    <li><strong>GitHub access is per-person.</strong> Each teammate needs their own login with read access to the issue tracker — an access task, not a code task.</li>
+  </ol>
+  <h3>The recommended way to share it</h3>
+  <p>Package the brain as <strong>one repository</strong> — the planned <code>pitchplatforms/pitchin-ai</code> — that a teammate clones, and that <strong>clones the product repos next to itself via a setup script</strong> (not a mega-repo with product code copied in, and not git submodules — both would blur the boundary that keeps this safe). The target experience:</p>
+  <pre><code>git clone github.com/pitchplatforms/pitchin-ai &amp;&amp; cd pitchin-ai
+cp .env.example .env          # set your name + tracker login
+gh auth login                 # your GitHub account
+bin/bootstrap.sh              # clones repos, starts DB, migrates, installs deps
+bin/local-qa.sh               # confirm everything's green</code></pre>
+  <div class="note warn">
+    <span class="tag">Status</span>
+    <p>The setup isn't packaged for cloning yet — that's an approval-gated follow-up. The one genuinely urgent item before anything is shared is <strong>cleaning up the leftover <code>km-spike/</code> folder.</strong> The rest is a focused half-day: write <code>bootstrap.sh</code>, make <code>nicholas-ralph</code> a variable, add <code>.env.example</code> + <code>.gitignore</code>, and push to <code>pitchin-ai</code>.</p>
+  </div>
+
+  <h2 id="next"><span class="hi">🚀</span>12 · What's next: scaling this up</h2>
+  <p>The POC is proven. Here's the path from "it works on my machine" to "it's how the company ships" — five moves, in order:</p>
+  <div class="flow">
+    <div class="step"><div class="dot">1</div><div class="line"></div><div class="body"><b>Ship the corporate-actions feature for real.</b><p>Take this proven build through the actual QA → staging → production path, so the POC's first feature lands as shipped product. It doubles as the cleanest live test of the "clean product PR" mechanic.</p></div></div>
+    <div class="step"><div class="dot">2</div><div class="line"></div><div class="body"><b>Point it at a bigger target: the Knowledge Management platform.</b><p>Run the same pipeline on a meatier, higher-value initiative — the owned KM platform that replaces the FAQ + Learning portal — to prove it holds up well beyond a single contained feature.</p></div></div>
+    <div class="step"><div class="dot">3</div><div class="line"></div><div class="body"><b>Open it up — let everyone try what we have, including non-technical teammates.</b><p>Package the setup so any colleague can clone it and run the workflow. This case study and the <code>pitchin-ai</code> repo (Section 11) are step one.</p></div></div>
+    <div class="step"><div class="dot">4</div><div class="line"></div><div class="body"><b>Lock in one company workflow across roles.</b><p>Define exactly how <strong>design, engineering, and product/QA</strong> hand off through this pipeline — one shared, documented way of working, with QA owning the verification gate.</p></div></div>
+    <div class="step"><div class="dot">5</div><div class="line"></div><div class="body"><b>Then scale.</b><p>With the workflow proven, shared, and role-aware, grow the agent fleet and widen scope across the product — bringing the QA-cost levers from Section 9 to bear so wider use stays cheap.</p></div></div>
+  </div>
+  <div class="note key">
+    <span class="tag">Two questions still genuinely open</span>
+    <p>Everything above is direction; these are decisions. How aggressively to grow the agent fleet — one loop, or several scoped to different initiatives running at once? And what's the bar, if ever, for letting an agent's verified work reach staging <em>without</em> a human in the loop?</p>
+  </div>
+
+  <hr>
+  <p class="muted small">This is the shareable presentation of an internal pitchIN case study. The full technical record (Ralph loop mechanics, ADRs, branch model, known limits, and sources) is kept internally.</p>
+
+</div>
+</main>
+
+<footer>
+  <div><span class="bignum">pitchIN</span> · Corporate Actions AI Case Study · prepared 17 June 2026.</div>
+  <p>Reconstructed from the actual session logs (62 Claude Code sessions, 15–17 Jun 2026), the instrumented run data, the decision records, and the live codebases. Cost figures computed from per-session token usage at API list prices (Opus 4.8 $5/$25 per million in/out; Sonnet 4.6 $3/$15) — see the list-price caveat in Section 2. A living document — last updated 17 June 2026.</p>
+  <p class="small"><strong>Sources on lowering agentic-QA cost (Section 9), verified June 2026:</strong>
+    Anthropic <a href="https://platform.claude.com/docs/en/build-with-claude/prompt-caching">Prompt caching</a> &amp; <a href="https://platform.claude.com/docs/en/build-with-claude/context-editing">Context editing</a> (the 84%-token-reduction figure) ·
+    MindStudio <a href="https://www.mindstudio.ai/blog/smart-orchestrator-cheaper-sub-agent-models-claude-code">cheaper sub-agent routing</a> &amp; <a href="https://www.mindstudio.ai/blog/how-to-build-agentic-loop-claude-code">bounded agentic loops</a> ·
+    SitePoint <a href="https://www.sitepoint.com/testing-ai-agents-deterministic-evaluation-in-a-non-deterministic-world/">deterministic evaluation gating</a> ·
+    GitHub <a href="https://docs.github.com/en/codespaces/prebuilding-your-codespaces/about-github-codespaces-prebuilds">Codespaces prebuilds</a>.</p>
+</footer>
+
+</body>
+</html>
