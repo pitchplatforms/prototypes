@@ -1,709 +1,185 @@
 <!doctype html>
-<!--
-  PROTOTYPE — Corporate Actions "Share Buyback" end-to-end journey
-  Throwaway UI mock for the CTO/QA sharing. NOT production code.
-
-  Reproduces the REAL screens faithfully (same DOM, CSS class names, hex, typography):
-    CUSTOMER (PitchinCustomerWeb):
-      shared/components/pending-vote-modal            — "Your vote is needed" login popup
-      pages/mysec/corporate-action-detail             — the voting screen + confirm-vote modal
-      pages/mysec/businesses/market-details           — company page header + tab bar
-      .../market-details/announcement                 — Announcements tab + CA feed
-    ADMIN (PitchinAdminWeb):
-      pages/corporate-actions/corporate-actions-form  — create wizard (details / upload voters)
-      pages/corporate-actions/corporate-actions-detail— manage, vote tally, propose outcome
-      pages/corporate-actions-approval/...            — superadmin approve creation + publish outcome
-
-  UI only — no backend, no real votes. Data is illustrative (Agroz Group share buyback).
-  Open in a browser and step through with the bar at the bottom (or ← / → keys).
--->
 <html lang="en">
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>pitchIN — Share Buyback voting (full journey mock)</title>
-<link rel="preconnect" href="https://fonts.googleapis.com" />
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Poppins:wght@500;600;700;800&display=swap" rel="stylesheet" />
+<title>pitchIN — Share Buyback Voting (guided walkthrough)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
   :root{
-    --green:#006837; --green-tint:#e6f4ec; --green-card-border:#cdeed5; --green-card-bg:#fbfdfb;
-    --ink:#1a1a1a; --muted:#6a6a6a; --body:#333; --line:#f0f0f0;
-    --red:#c00000; --red-tint:#ffeded; --amber:#edb418; --green-badge:#13b25c; --danger:#d14646;
-    --indigo:#3730a3; --indigo-tint:#eef0ff;
+    --red:#BF2026; --red-dark:#7D1F23; --red-light:#FEE2E3; --red-lightest:#fff2f2;
+    --green:#006927; --green-light:#0A994A; --green-lightest:#C2F0CA;
+    --blue:#1A1847; --warn:#E18437; --warn-dark:#AE4F20;
+    --ink:#333; --body:#6a6a6a; --divider:#e7e7e7;
+    --bg-soft:#faf9f8; --font-head:'Poppins',system-ui,sans-serif; --font-body:'Inter',system-ui,sans-serif;
+    --r-lg:10px; --r-xl:14px; --shadow:0 10px 40px -8px rgba(0,0,0,.22);
   }
   *{box-sizing:border-box}
-  html,body{margin:0;padding:0}
-  body{
-    font-family:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
-    background:#f4f5f7; color:var(--ink); -webkit-font-smoothing:antialiased;
-    min-height:100vh; padding-bottom:92px;
-  }
-  h1,h2,h5,.font-poppins{font-family:'Poppins','Inter',sans-serif;}
+  body{margin:0;font-family:var(--font-body);color:var(--ink);background:var(--bg-soft);-webkit-font-smoothing:antialiased}
+  h1,h2,h3{font-family:var(--font-head);font-weight:600;margin:0}
+  .wrap{max-width:1120px;margin:0 auto;padding:0 22px}
 
-  /* ===== sticky app header (chrome + explainer) ===== */
-  .appbar{position:sticky; top:0; z-index:20;}
-  .topbar{background:#fff; border-bottom:1px solid #eaeaea; display:flex; align-items:center; gap:14px; padding:11px 22px;}
-  .topbar img{height:24px;}
-  .topbar .tag{font-size:11px; font-weight:600; padding:4px 10px; border-radius:999px; letter-spacing:.02em;}
-  .tag-pstx{color:var(--green); background:var(--green-tint);}
-  .tag-admin{color:var(--red); background:var(--red-tint);}
-  .topbar .spacer{flex:1}
-  .topbar .avatar{width:32px;height:32px;border-radius:50%;background:#1a1a1a;color:#fff;display:flex;align-items:center;justify-content:center;font-weight:600;font-size:12px;}
-  .role-chip{font-size:11px;font-weight:700;padding:4px 11px;border-radius:999px;}
-  .rc-admin{color:var(--red);background:var(--red-tint);}
-  .rc-superadmin{color:var(--indigo);background:var(--indigo-tint);}
+  /* top bar */
+  header{background:#fff;border-bottom:1px solid var(--divider);position:sticky;top:0;z-index:20}
+  header .wrap{display:flex;align-items:center;gap:14px;padding:13px 22px;flex-wrap:wrap}
+  header img{height:26px}
+  .htitle{font-family:var(--font-head);font-weight:600;font-size:1rem;color:var(--ink)}
+  .htitle small{display:block;font-family:var(--font-body);font-weight:400;font-size:.78rem;color:var(--body)}
+  .pill{margin-left:auto;background:var(--red-lightest);color:var(--red-dark);border:1px solid var(--red-light);border-radius:999px;padding:5px 12px;font-size:.74rem;font-weight:600;font-family:var(--font-head)}
 
-  /* explainer banner */
-  .explainer{display:flex; align-items:flex-start; gap:12px; padding:11px 22px; border-bottom:1px solid #eaeaea;
-    background:#fbfbfc;}
-  .explainer.acc-investor{border-left:4px solid var(--green);}
-  .explainer.acc-admin{border-left:4px solid var(--red);}
-  .explainer.acc-superadmin{border-left:4px solid var(--indigo);}
-  .explainer .who{flex-shrink:0; font-size:10.5px; font-weight:800; letter-spacing:.04em; text-transform:uppercase;
-    padding:5px 10px; border-radius:6px; margin-top:1px;}
-  .who-investor{color:var(--green);background:var(--green-tint);}
-  .who-admin{color:var(--red);background:var(--red-tint);}
-  .who-superadmin{color:var(--indigo);background:var(--indigo-tint);}
-  .explainer .ex-text{min-width:0;}
-  .explainer .ex-title{font-weight:700; font-size:13.5px; color:var(--ink); line-height:1.3;}
-  .explainer .ex-desc{font-size:12.5px; color:#5a6068; line-height:1.5; margin-top:2px;}
+  /* progress */
+  .progress{background:#fff;border-bottom:1px solid var(--divider)}
+  .progress .wrap{padding:10px 22px}
+  .ptrack{height:6px;background:#eee;border-radius:999px;overflow:hidden}
+  .pfill{height:100%;background:linear-gradient(90deg,var(--red-dark),var(--red));border-radius:999px;transition:width .25s ease}
+  .pmeta{display:flex;justify-content:space-between;align-items:center;margin-top:7px;font-size:.78rem;color:var(--body)}
+  .pmeta b{font-family:var(--font-head);color:var(--ink)}
 
-  .stage{position:relative;}
+  /* stage */
+  main .wrap{display:grid;grid-template-columns:1.55fr 1fr;gap:26px;padding:26px 22px 16px;align-items:start}
+  @media(max-width:880px){main .wrap{grid-template-columns:1fr;gap:18px}}
 
-  /* ===== buttons ===== */
-  .btn{display:inline-flex; align-items:center; justify-content:center; gap:8px; font-family:'Inter',sans-serif;
-    font-weight:600; font-size:14px; line-height:1; padding:12px 18px; border-radius:8px; border:1px solid transparent; cursor:pointer; transition:filter .12s;}
-  .btn:hover{filter:brightness(.97)} .btn:disabled{opacity:.5; cursor:default;}
-  .btn-green,.btn-primary{background:var(--green); color:#fff;}
-  .btn-green-border{background:#fff; color:var(--green); border-color:var(--green);}
-  .btn-grey-border{background:#fff; color:#555; border-color:#d3d3d3;}
-  .btn-outline-secondary{background:#fff; color:#5b6470; border-color:#cfd4da;}
-  .btn-sm{padding:8px 14px; font-size:13px;}
-  .tw-flex-1{flex:1}
-  /* admin buttons */
-  .btn-admin{background:var(--red); color:#fff;}            /* btn-secondary (admin primary CTA) */
-  .btn-admin-light{background:#fff; color:#5b6470; border-color:#cfd4da;}
-  .btn-warning{background:var(--amber); color:#fff;}
-  .btn-danger{background:var(--danger); color:#fff;}
+  .shot{background:#fff;border:1px solid var(--divider);border-radius:var(--r-xl);box-shadow:var(--shadow);overflow:hidden}
+  .chrome{display:flex;align-items:center;gap:7px;padding:9px 13px;background:#f3f3f4;border-bottom:1px solid var(--divider)}
+  .chrome .d{width:11px;height:11px;border-radius:999px;background:#d9d9dc}
+  .chrome .d:nth-child(1){background:#ff5f57}.chrome .d:nth-child(2){background:#febc2e}.chrome .d:nth-child(3){background:#28c840}
+  .chrome .url{margin-left:8px;font-size:.72rem;color:#8a8a8a;background:#fff;border:1px solid #e3e3e6;border-radius:6px;padding:3px 10px;font-family:ui-monospace,Menlo,monospace}
+  .shot img{display:block;width:100%;height:auto;background:#fff}
 
-  /* ===== modals (pvm + confirm) ===== */
-  .backdrop{position:fixed; inset:0; background:rgba(20,22,28,.55); z-index:40; display:flex; align-items:center; justify-content:center; padding:20px; opacity:0; pointer-events:none; transition:opacity .18s;}
-  .backdrop.show{opacity:1; pointer-events:auto;}
-  .modal-card{background:#fff; border-radius:14px; width:100%; max-width:420px; box-shadow:0 24px 60px rgba(0,0,0,.28); overflow:hidden; transform:translateY(8px); transition:transform .18s;}
-  .backdrop.show .modal-card{transform:translateY(0);}
-  .modal-header{display:flex; align-items:center; justify-content:space-between; padding:18px 22px 0;}
-  .modal-body{padding:0 22px;}
-  .modal-footer{display:flex; padding:8px 22px 4px; gap:10px;}
-  .close{background:none;border:none;font-size:24px;line-height:1;color:#9aa0a6;cursor:pointer;padding:0;}
-  .pvm-title{display:flex; align-items:center; gap:8px; font-size:17px; font-weight:700; margin:0;}
-  .pvm-title-icon{color:var(--red); display:flex;}
-  .pvm-body{padding-top:18px;}
-  .pvm-company{display:flex; gap:16px; align-items:center; margin-bottom:16px;}
-  .pvm-company-name{font-weight:600; font-size:15px; color:var(--ink); line-height:1.3;}
-  .pvm-description{font-size:13.5px; line-height:1.6; color:#555; margin:0 0 12px;}
-  .pvm-deadline{display:flex; align-items:center; gap:6px; font-size:13px; color:var(--muted); margin:0;}
-  .pvm-cta{flex:1;}
-  .pvm-reminder{text-align:center; font-size:12px; color:var(--muted); margin:14px 22px 18px;}
-  .cv-body{padding:28px 24px 22px; text-align:center;}
-  .cv-icon{width:48px;height:48px;border-radius:50%; display:flex;align-items:center;justify-content:center; margin:0 auto 16px;}
-  .cv-icon.approve{background:#dcfce7; color:#15803d;} .cv-icon.reject{background:#fee2e2; color:#dc2626;}
-  .cv-title{font-size:18px; margin:0 0 8px;}
-  .cv-desc{color:var(--muted); font-size:13.5px; line-height:1.6; margin:0 0 20px;}
-  .cv-actions{display:flex; gap:12px;}
+  /* explainer */
+  .panel{background:#fff;border:1px solid var(--divider);border-left:4px solid var(--red);border-radius:var(--r-lg);padding:20px 22px;position:sticky;top:120px}
+  @media(max-width:880px){.panel{position:static}}
+  .role{display:inline-flex;align-items:center;gap:6px;font-family:var(--font-head);font-weight:700;font-size:.72rem;border-radius:999px;padding:4px 12px;text-transform:uppercase;letter-spacing:.04em}
+  .rc-admin{background:var(--red-lightest);color:var(--red-dark)}
+  .rc-superadmin{background:#e9e8f3;color:var(--blue)}
+  .rc-investor{background:var(--green-lightest);color:var(--green)}
+  .panel h2{font-size:1.32rem;margin:13px 0 8px;line-height:1.25;color:var(--ink)}
+  .panel p{margin:0;color:#3f3f3f;font-size:.98rem;line-height:1.6}
+  .lc{margin-top:16px;display:flex;align-items:center;gap:8px;font-size:.8rem;color:var(--body)}
+  .lc .state{font-family:var(--font-head);font-weight:600;border-radius:999px;padding:4px 11px;font-size:.78rem;background:#f3f3f4;color:#555;border:1px solid var(--divider)}
+  .lc .state.open{background:var(--green-lightest);color:var(--green);border-color:var(--green)}
+  .lc .state.pub{background:var(--red-lightest);color:var(--red-dark);border-color:var(--red-light)}
 
-  /* logo box + green pills (shared) */
-  .ca-logo{width:48px;height:48px;border-radius:8px;background:#1a1a1a;color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:15px;flex-shrink:0;}
-  .badge{display:inline-flex;}
-  .ca-badge-type,.ca-badge-deadline,.ca-badge-voted{display:inline-flex; align-items:center; gap:4px; color:var(--green); background:var(--green-tint); font-weight:600; font-size:11px; border-radius:999px; padding:4px 10px;}
-
-  /* ===== corporate-action-detail (customer voting screen) ===== */
-  .panel-container{max-width:720px; margin:24px auto; background:#fff; border:1px solid #e7e7e7; border-radius:14px; overflow:hidden;}
-  .ca-back-link{display:flex; align-items:center; gap:6px; width:100%; background:none; border:none; border-bottom:1px solid var(--line); padding:14px 28px; color:#6b7280; font-size:14px; font-weight:500; cursor:pointer; text-align:left;}
-  .ca-back-link:hover{color:#111827;}
-  .ca-hero{background:#fff; padding:24px 28px 20px; border-bottom:1px solid var(--line);}
-  .ca-hero-row{display:flex; gap:16px; align-items:flex-start;}
-  .flex-fill{flex:1;}
-  .badge-row{display:flex; flex-wrap:wrap; gap:8px; margin-bottom:8px;}
-  .ca-title{font-size:20px; line-height:1.3; color:var(--ink); margin:0 0 6px;}
-  .ca-subtitle{font-size:13.5px; margin:0; line-height:1.55; color:var(--muted);}
-  .ca-body{padding:22px 28px;}
-  .ca-lead{font-size:14.5px; line-height:1.65; color:var(--body); margin:0 0 24px;} .ca-lead strong{color:var(--ink);}
-  .ca-payout-card{border:1px solid var(--green-card-border); background:var(--green-card-bg); border-radius:10px; padding:18px; text-align:center; margin-bottom:24px;}
-  .ca-payout-label{font-size:11px; font-weight:600; text-transform:uppercase; letter-spacing:.04em; color:var(--muted); margin-bottom:8px;}
-  .ca-payout-amount{font-weight:700; font-size:38px; color:var(--green); line-height:1; font-family:'Poppins',sans-serif;}
-  .ca-payout-returns{border-top:1px solid #d8eada; margin-top:14px; padding-top:12px; font-size:14px; display:flex; align-items:center; justify-content:center; gap:8px; flex-wrap:wrap;}
-  .text-muted{color:var(--muted);} .ca-divider{color:var(--green-card-border);}
-  .vote-heading{font-size:16px; margin:0 0 10px;}
-  .ca-note{border-left:3px solid var(--green); background:#f6fbfb; border-radius:0 8px 8px 0; padding:13px 16px; font-size:13px; line-height:1.6; color:#4a5a5a; margin-bottom:16px; display:flex; gap:8px;}
-  .vote-actions{display:flex; gap:12px;}
-  @media (max-width:560px){ .vote-actions{flex-direction:column;} }
-  .ca-voted-card{border:1px solid var(--green-card-border); background:#f6fbfb; border-radius:10px; padding:18px;}
-  .ca-voted-card.mt{margin-top:16px;}
-  .ca-voted-top{display:flex; justify-content:space-between; align-items:center;}
-  .ca-voted-label{font-size:11px; font-weight:600; text-transform:uppercase; letter-spacing:.04em; color:var(--muted);}
-  .ca-voted-value{font-weight:600; font-size:18px; margin-top:4px; display:flex; align-items:center; gap:6px;}
-  .text-success{color:var(--green);} .text-danger{color:#c0392b;}
-  .ca-voted-note{font-size:12.5px; margin:12px 0 0; color:var(--muted); line-height:1.6;}
-
-  /* ===== company page (market-details) ===== */
-  .md-page{max-width:920px; margin:20px auto; padding:0 18px;}
-  .md-header{display:flex; justify-content:space-between; flex-wrap:wrap; gap:16px; margin-bottom:22px;}
-  .md-prodbadge{display:inline-block; font-size:11px; font-weight:800; letter-spacing:.03em; color:#fff; background:#1a1a1a; padding:4px 9px; border-radius:5px; margin-bottom:14px;}
-  .md-id{display:flex; gap:16px; align-items:center;}
-  .md-logo{width:80px;height:80px;border-radius:5px;background:#1a1a1a;color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:26px;box-shadow:0 3px 10px rgba(0,0,0,.15); flex-shrink:0;}
-  .md-name{font-size:24px; font-weight:700; margin:0; font-family:'Poppins',sans-serif;}
-  .md-tagline{color:var(--muted); font-size:14px; margin:4px 0 0;}
-  .md-watch{display:inline-flex;align-items:center;gap:7px; border:1px solid #d3d3d3; background:#fff; color:#444; border-radius:8px; padding:9px 14px; font-size:13px; font-weight:600; cursor:pointer;}
-  .md-tags{display:flex; gap:8px; flex-wrap:wrap; margin-top:14px;}
-  .md-tag{font-size:12px; color:#5b6470; background:#f0f1f3; border-radius:999px; padding:4px 12px;}
-  .md-tabbar{border-bottom:1px solid #e7e7e7; margin-bottom:24px; overflow-x:auto;}
-  .md-tabs{display:flex; gap:2.6rem; list-style:none; margin:0; padding:0; min-width:max-content;}
-  .md-tabs li{padding-bottom:12px;}
-  .md-tabs a{font-size:15px; font-weight:700; color:rgba(0,0,0,.5); text-decoration:none; cursor:pointer; white-space:nowrap;}
-  .md-tabs li.active{border-bottom:3px solid var(--red);}
-  .md-tabs li.active a{color:var(--red);}
-  .module-title{font-size:18px; font-weight:700; margin:0 0 16px; font-family:'Poppins',sans-serif;}
-
-  /* CA feed card (announcement.component) */
-  .ca-feed-title{font-size:1rem; font-weight:700; color:#111827; margin:0 0 14px; font-family:'Poppins',sans-serif;}
-  .ca-feed-card{padding:16px 20px; border-radius:10px; border:1px solid rgba(0,0,0,.08); box-shadow:0 1px 4px rgba(0,0,0,.05); background:#fff; margin-bottom:14px;}
-  .ca-feed-card--pending{border-left:3px solid #2563eb; background:#f0f7ff;}
-  .feed-top{display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:8px;}
-  .feed-badges{display:flex; gap:8px; flex-wrap:wrap;}
-  .feed-card .badge{font-size:11px; border-radius:4px; padding:3px 8px; display:inline-flex; align-items:center; gap:4px;}
-  .fb-type{background:#e0e7ff; color:#3730a3;} .fb-vote{background:#fef3c7; color:#92400e;}
-  .fb-approved{background:#d1fae5; color:#065f46;} .fb-rejected{background:#fee2e2; color:#991b1b;}
-  .ca-feed-company{font-weight:700; font-size:.95rem; color:#111827; margin-bottom:4px;}
-  .feed-desc{font-size:13px; color:var(--muted); margin:0 0 14px; line-height:1.5;}
-  .feed-close{font-size:12.5px; color:var(--muted); white-space:nowrap;}
-  /* normal announcement timeline */
-  .timeline{margin-top:26px; border-top:1px solid #eee; padding-top:20px;}
-  .tl-item{display:flex; gap:18px; margin-bottom:22px;}
-  .tl-left{width:96px; flex-shrink:0;} .tl-date{color:var(--green); font-weight:700; font-size:13px;} .tl-time{color:var(--muted); font-size:12px;}
-  .tl-card{flex:1; background:#fff; border:1px solid #ececec; border-radius:10px; padding:16px 18px;}
-  .tl-title-row{display:flex; justify-content:space-between; gap:10px; align-items:flex-start; margin-bottom:6px;}
-  .tl-title{font-weight:700; font-size:15px; color:#111;}
-  .tl-badge{font-size:11px; font-weight:600; padding:3px 9px; border-radius:999px; white-space:nowrap;}
-  .tl-badge.issuer{background:#eef2ff; color:#3730a3;}
-  .tl-body{font-size:13.5px; color:#555; line-height:1.6;}
-  .tl-foot{display:flex; justify-content:space-between; align-items:center; margin-top:12px; border-top:1px solid #f1f1f1; padding-top:10px; font-size:12.5px; color:var(--muted);}
-  .read-more{color:var(--red); font-weight:600; background:none; border:none; cursor:pointer; font-size:12.5px;}
-
-  /* ===== admin shell ===== */
-  .adm{max-width:960px; margin:22px auto; padding:0 18px;}
-  .adm-crumb{font-size:13px; color:var(--muted); margin-bottom:6px;} .adm-crumb a{color:var(--muted); text-decoration:none;} .adm-crumb .sep{margin:0 6px;}
-  .adm-title{font-size:26px; font-weight:800; margin:0 0 20px; display:flex; align-items:center; gap:12px; font-family:'Poppins',sans-serif;}
-  .adm-actions{margin-left:auto; display:flex; gap:10px;}
-  .adm-steps{display:flex; gap:14px; flex-wrap:wrap; margin-bottom:24px; font-size:13px; font-weight:600;}
-  .adm-steps .st{color:#b0b4ba;} .adm-steps .st.active{color:var(--red);} .adm-steps .sep{color:#cfd2d6;}
-  .adm-card{background:#fff; border:1px solid #e7e7e7; border-radius:10px; margin-bottom:18px;}
-  .adm-card-head{padding:13px 18px; border-bottom:1px solid #eee; font-weight:700; font-size:14px;}
-  .adm-card-body{padding:18px;}
-  .adm-h2{font-size:20px; font-weight:800; margin:0 0 16px; font-family:'Poppins',sans-serif;}
-  .alert{border-radius:8px; padding:12px 14px; font-size:13px; line-height:1.5; margin-bottom:16px;}
-  .alert-info{background:#eaf4fd; color:#1b5a86; border:1px solid #cfe6f8;}
-  .alert-success{background:#e8f8ef; color:#1a7a45; border:1px solid #c7ebd5;}
-  .alert-warning{background:#fef6e0; color:#8a6400; border:1px solid #f6e4ad;}
-  .fg{margin-bottom:16px;} .fg-row{display:flex; gap:16px; flex-wrap:wrap;} .fg-row .fg{flex:1; min-width:200px;}
-  .input-label{font-size:13px; font-weight:600; color:#3b4149; margin-bottom:6px;}
-  .req{color:var(--danger);}
-  .form-control{width:100%; border:1px solid #d6dadf; border-radius:8px; padding:10px 12px; font-size:14px; font-family:inherit; background:#fff; color:#222;}
-  .form-control[readonly], .form-control.disabledish{background:#f7f8f9; color:#555;}
-  .form-hint{font-size:12px; color:var(--muted); margin-top:5px;} .form-sel{color:#222;}
-  .selected-note{font-size:12.5px; color:var(--muted); margin-top:6px;}
-  .adm-foot{display:flex; justify-content:flex-end; gap:12px; margin-top:8px;}
-  .adm-foot.split{justify-content:space-between;}
-  /* admin tables */
-  .adm-table{width:100%; border-collapse:collapse; font-size:13px;}
-  .adm-table th{text-align:left; color:var(--muted); font-weight:600; font-size:11.5px; text-transform:uppercase; letter-spacing:.03em; padding:8px 10px; border-bottom:1px solid #eee;}
-  .adm-table td{padding:9px 10px; border-bottom:1px solid #f3f3f3; color:#333;}
-  .adm-table tr:last-child td{border-bottom:none;}
-  .pill{display:inline-block; font-size:11px; font-weight:700; color:#fff; padding:3px 10px; border-radius:999px;}
-  .pill.pending{background:var(--amber);} .pill.approved{background:var(--green-badge);} .pill.stop{background:var(--danger);} .pill.default{background:rgba(0,0,0,.78);}
-  .pill-soft{display:inline-block; font-size:11px; font-weight:700; padding:3px 9px; border-radius:6px;}
-  .pill-soft.matched{background:#e8f8ef; color:#1a7a45;}
-  /* vote tally */
-  .tally{display:flex; gap:10px; flex-wrap:wrap; text-align:center;}
-  .tally .cell{flex:1; min-width:90px; padding:6px;}
-  .tally .num{font-size:26px; font-weight:800; font-family:'Poppins',sans-serif;}
-  .tally .lbl{font-size:11px; color:#7a8089; margin-top:2px;}
-  .kv{font-size:13.5px; color:#333; margin:0 0 7px;} .kv strong{color:#111;}
-
-  /* ===== demo controller ===== */
-  .demobar{position:fixed; left:50%; bottom:16px; transform:translateX(-50%); z-index:60; background:#111418; color:#fff; border-radius:14px; padding:9px 12px; display:flex; align-items:center; gap:12px; box-shadow:0 12px 36px rgba(0,0,0,.35); font-size:13px; max-width:calc(100% - 24px);}
-  .demobar .step-label{font-weight:600; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; max-width:240px;}
-  .demobar .step-num{color:#9aa3ad; font-weight:500; margin-right:4px;}
-  .dots{display:flex; gap:5px;} .dot{width:7px;height:7px;border-radius:50%; background:#3a4048; cursor:pointer; border:none; padding:0;}
-  .dot.investor.active{background:var(--green-badge);} .dot.admin.active{background:#e26060;} .dot.superadmin.active{background:#7c83e6;}
-  .dot.active{background:#fff;}
-  .dbtn{background:#262b31; color:#fff; border:none; border-radius:8px; padding:8px 12px; cursor:pointer; font-weight:600; font-size:13px;}
-  .dbtn:hover{background:#30363d;} .dbtn:disabled{opacity:.4; cursor:default;} .dbtn.primary{background:var(--green);}
-  @media (max-width:640px){ .demobar .step-label{display:none;} }
+  /* controls */
+  .controls{position:sticky;bottom:0;background:linear-gradient(180deg,rgba(250,249,248,0),var(--bg-soft) 38%);padding:14px 0 10px}
+  .controls .wrap{display:flex;align-items:center;gap:14px}
+  .btn{font-family:var(--font-head);font-weight:600;font-size:.92rem;padding:11px 20px;border-radius:var(--r-lg);border:1.5px solid var(--red-light);background:#fff;color:var(--red);cursor:pointer;transition:.08s}
+  .btn:hover:not(:disabled){background:var(--red-lightest)}
+  .btn.primary{background:var(--red);color:#fff;border-color:var(--red)}
+  .btn.primary:hover:not(:disabled){background:var(--red-dark)}
+  .btn:disabled{opacity:.4;cursor:default}
+  .dots{display:flex;gap:6px;flex-wrap:wrap;margin:0 auto}
+  .dot{width:10px;height:10px;border-radius:999px;background:#dcdcdf;border:none;cursor:pointer;padding:0}
+  .dot.on{transform:scale(1.25)}
+  .dot.admin.on{background:var(--red)} .dot.superadmin.on{background:var(--blue)} .dot.investor.on{background:var(--green)}
+  .hint{font-size:.74rem;color:var(--body);text-align:center;padding:4px 0 22px}
+  kbd{font-family:ui-monospace,Menlo,monospace;background:#fff;border:1px solid var(--divider);border-radius:4px;padding:1px 6px;font-size:.72rem}
 </style>
 </head>
 <body>
 
-  <div class="appbar">
-    <div class="topbar" id="topbar"></div>
-    <div class="explainer" id="explainer"></div>
+<header>
+  <div class="wrap">
+    <img src="pitchin_logo.svg" alt="pitchIN" onerror="this.style.display='none'">
+    <div class="htitle">Share Buyback — Voting Journey<small>Guided walkthrough · real product screens</small></div>
+    <span class="pill">Sample data · click through</span>
   </div>
+</header>
 
-  <div class="stage" id="stage"></div>
-  <div class="backdrop" id="backdrop"><div id="modalSlot"></div></div>
+<div class="progress">
+  <div class="wrap">
+    <div class="ptrack"><div class="pfill" id="pfill"></div></div>
+    <div class="pmeta"><span>Step <b id="cur">1</b> of <b id="total">13</b></span><span id="phase">Admin creates the buyback</span></div>
+  </div>
+</div>
 
-  <div class="demobar">
-    <button class="dbtn" id="prevBtn">‹ Back</button>
+<main>
+  <div class="wrap">
+    <div class="shot">
+      <div class="chrome"><span class="d"></span><span class="d"></span><span class="d"></span><span class="url" id="url">app.pitchin.my</span></div>
+      <img id="shotimg" src="" alt="">
+    </div>
+    <aside class="panel">
+      <span class="role" id="role">Admin</span>
+      <h2 id="title"></h2>
+      <p id="body"></p>
+      <div class="lc"><span>State:</span><span class="state" id="state">—</span></div>
+    </aside>
+  </div>
+</main>
+
+<div class="controls">
+  <div class="wrap">
+    <button class="btn" id="prev">← Back</button>
     <div class="dots" id="dots"></div>
-    <span class="step-label"><span class="step-num" id="stepNum"></span><span id="stepLabel"></span></span>
-    <button class="dbtn primary" id="nextBtn">Next ›</button>
-    <button class="dbtn" id="restartBtn" title="Restart">↺</button>
+    <button class="btn primary" id="next">Next →</button>
   </div>
+</div>
+<p class="hint">Use the buttons, the dots, or your <kbd>←</kbd> <kbd>→</kbd> arrow keys.</p>
 
 <script>
-/* ---------- demo data ---------- */
-const D = {
-  company:'Agroz Group', ticker:'AGRO', initials:'AG', type:'Share Buyback', typeLower:'share buyback',
-  tagline:'Indoor vertical farming for a food-secure future',
-  amountInvested:'5,000.00', sharesHeld:'2,500', shareType:'Ordinary',
-  pricePerShare:'2.40', payout:'6,000.00', roi:'20.0', annual:'9.5',
-  opens:'17 Jun 2026', closes:'30 Jun 2026', closesShort:'30 Jun', voterCount:5,
-  disclaimer:'pitchIN holds these shares for you as nominee and votes on your behalf based on the majority of investor instructions it receives.'
-};
-const VOTERS = [
-  {id:'INV-10231', name:'Aisyah binti Rahman', shares:'2,500', payout:'6,000.00'},
-  {id:'INV-10844', name:'Tan Wei Ming',        shares:'1,000', payout:'2,400.00'},
-  {id:'INV-11002', name:'Kumar A/L Suresh',    shares:'800',   payout:'1,920.00'},
-  {id:'INV-11457', name:'Nurul Huda',          shares:'3,200', payout:'7,680.00'},
-  {id:'INV-12120', name:'Lim Mei Ling',        shares:'500',   payout:'1,200.00'},
-];
-const TALLY = {approve:3, reject:1, votesCast:4, notVoted:1, totalEligible:5};
-
-/* ---------- inline icons ---------- */
-const I = {
-  info:'<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><line x1="12" y1="11" x2="12" y2="16"/><circle cx="12" cy="8" r="0.6" fill="currentColor"/></svg>',
-  cal:'<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="5" width="18" height="16" rx="2"/><line x1="3" y1="9" x2="21" y2="9"/><line x1="8" y1="3" x2="8" y2="6"/><line x1="16" y1="3" x2="16" y2="6"/></svg>',
-  check:'<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>',
-  checkBig:'<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>',
-  x:'<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>',
-  xBig:'<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>',
-  chev:'<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"/></svg>',
-  grid:'<svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>',
-  bank:'<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 21h18M5 21V10M19 21V10M3 10l9-6 9 6M9 21v-6h6v6"/></svg>',
-  star:'<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 15 9 22 9.3 16.5 14 18.5 21 12 17 5.5 21 7.5 14 2 9.3 9 9"/></svg>',
-  mega:'<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 11l14-6v14L3 13zM3 11v2M17 7a4 4 0 010 6"/></svg>'
-};
-
-/* ===================== CHROME ===================== */
-function chromeCustomer(){
-  return `<img src="pitchin_logo.svg" alt="pitchIN" />
-    <span class="tag tag-pstx">PSTX · Secondary Market</span>
-    <span class="spacer"></span><div class="avatar">AB</div>`;
-}
-function chromeAdmin(role){
-  const chip = role==='superadmin'
-    ? `<span class="role-chip rc-superadmin">Superadmin</span>`
-    : `<span class="role-chip rc-admin">Admin</span>`;
-  return `<img src="pitchin_logo.svg" alt="pitchIN" />
-    <span class="tag tag-admin">Admin Console</span>
-    <span class="spacer"></span>${chip}<div class="avatar">${role==='superadmin'?'SA':'AD'}</div>`;
-}
-
-/* ===================== CUSTOMER SCREENS ===================== */
-function screenDashboard(){
-  return `<div class="md-page"><div style="font-size:20px;font-weight:700;margin:8px 0 16px;font-family:Poppins">Welcome back, Aisyah 👋</div>
-    <div class="ca-feed-card"><div class="ca-voted-label">Portfolio value</div><div style="font-size:26px;font-weight:800;margin-top:4px;font-family:Poppins">RM 18,420.00</div></div>
-    <div style="display:flex;gap:14px">
-      <div class="ca-feed-card" style="flex:1"><div class="ca-voted-label">Holdings</div><div style="font-size:24px;font-weight:800;margin-top:4px;font-family:Poppins">4</div></div>
-      <div class="ca-feed-card" style="flex:1"><div class="ca-voted-label">Companies</div><div style="font-size:24px;font-weight:800;margin-top:4px;font-family:Poppins">3</div></div>
-    </div></div>`;
-}
-
-function screenDetail(state){
-  const heroBadges = `<span class="badge ca-badge-type">${I.grid} ${D.type}</span>` + (
-    state==='prevote'
-      ? `<span class="badge ca-badge-deadline">${I.cal} Closes ${D.closes}</span>`
-      : `<span class="badge ca-badge-voted">${I.check} You voted</span>`);
-
-  let voteBlock = state==='prevote' ? `
-      <h2 class="vote-heading">Your vote</h2>
-      <div class="ca-note">${I.info}<span>${D.disclaimer} Once you confirm, your vote is final and cannot be changed.</span></div>
-      <div class="vote-actions">
-        <button class="btn btn-green tw-flex-1" onclick="goTo(IDX.confirm)">${I.check} Approve the offer</button>
-        <button class="btn btn-green-border tw-flex-1" onclick="goTo(IDX.confirm)">${I.x} Reject the offer</button>
-      </div>` : `
-      <div class="ca-voted-card">
-        <div class="ca-voted-top">
-          <div><div class="ca-voted-label">Your recorded vote</div>
-            <div class="ca-voted-value text-success">${I.checkBig} Approved</div></div>
-          <span class="badge ca-badge-voted">${I.check} Recorded</span>
-        </div>
-        <p class="ca-voted-note">Your vote has been recorded. Thank you. The result will appear here once voting closes — you'll only ever see your own vote and the final outcome, never how others voted.</p>
-      </div>`;
-
-  let outcomeBlock = state==='outcome' ? `
-      <div class="ca-voted-card mt">
-        <div class="ca-voted-top">
-          <div><div class="ca-voted-label">Final Outcome</div>
-            <div class="ca-voted-value text-success">${I.checkBig} Approved</div></div>
-          <span class="badge ca-badge-voted">${I.mega} Official Result</span>
-        </div>
-        <p class="ca-voted-note">The buyback was approved by shareholders. pitchIN will process the sale of the shares it holds for you and credit RM ${D.payout} to your wallet within 5 business days.</p>
-        <p class="ca-voted-note">Voting closed ${D.closes}.</p>
-      </div>` : '';
-
-  return `<div class="panel-container">
-    <button class="ca-back-link" onclick="goTo(IDX.feed)">${I.chev} See all announcements</button>
-    <div class="ca-hero"><div class="ca-hero-row">
-      <div class="ca-logo">${D.initials}</div>
-      <div class="flex-fill">
-        <div class="badge-row">${heroBadges}</div>
-        <h1 class="ca-title">${D.company} is doing a ${D.type}</h1>
-        <p class="ca-subtitle">pitchIN holds these shares for you as nominee. Shareholders are voting on whether the buyback goes ahead.</p>
-      </div></div></div>
-    <div class="ca-body">
-      <p class="ca-lead">You invested <strong>RM ${D.amountInvested}</strong> and hold <strong>${D.sharesHeld} ${D.shareType} shares</strong> in ${D.company}. The company is offering to buy back your shares at <strong>RM ${D.pricePerShare} per share</strong>.</p>
-      <div class="ca-payout-card">
-        <div class="ca-payout-label">If the buyback goes ahead, you would receive</div>
-        <div class="ca-payout-amount">RM ${D.payout}</div>
-        <div class="ca-payout-returns">
-          <span class="text-muted">Total return</span><strong class="text-muted">+${D.roi}%</strong>
-          <span class="ca-divider">|</span>
-          <span class="text-muted">Return per year</span><strong class="text-muted">+${D.annual}%</strong>
-        </div></div>
-      ${voteBlock}${outcomeBlock}
-    </div></div>`;
-}
-
-function companyHeaderAndTabs(){
-  const tabs = ['Market','My Orders','Recent Trades','Financials & Documents','Announcements','Company Profile'];
-  return `
-    <span class="md-prodbadge">PSTX</span>
-    <div class="md-header">
-      <div class="md-id">
-        <div class="md-logo">${D.initials}</div>
-        <div><h1 class="md-name">${D.company} (${D.ticker})</h1><p class="md-tagline">${D.tagline}</p></div>
-      </div>
-      <div><button class="md-watch">${I.star} Watch List</button></div>
-    </div>
-    <div class="md-tags"><span class="md-tag">Agriculture</span><span class="md-tag">Food Tech</span><span class="md-tag">Sustainability</span></div>
-    <div class="md-tabbar" style="margin-top:18px"><ul class="md-tabs">
-      ${tabs.map(t=>`<li class="${t==='Announcements'?'active':''}"><a>${t}</a></li>`).join('')}
-    </ul></div>`;
-}
-
-function screenCompanyPage(){
-  return `<div class="md-page">
-    ${companyHeaderAndTabs()}
-    <h5 class="module-title">Announcements</h5>
-    <h5 class="ca-feed-title">Corporate Actions</h5>
-    <div class="ca-feed-card feed-card">
-      <div class="feed-top">
-        <div class="feed-badges">
-          <span class="badge fb-type">${I.bank} Corporate action</span>
-          <span class="badge fb-approved">You approved</span>
-        </div>
-        <span class="feed-close">Closed ${D.closesShort}</span>
-      </div>
-      <div class="ca-feed-company">${D.company} — ${D.typeLower} offer</div>
-      <p class="feed-desc">${D.company} launched a ${D.typeLower}. The result has been published — view the final outcome and your payout.</p>
-      <button class="btn btn-sm btn-outline-secondary" onclick="goTo(IDX.outcome)">View details</button>
-    </div>
-    <div class="timeline">
-      <div class="tl-item">
-        <div class="tl-left"><div class="tl-date">28 May 2026</div><div class="tl-time">10:30 AM</div></div>
-        <div class="tl-card">
-          <div class="tl-title-row"><div class="tl-title">Q1 FY2026 business update</div><span class="tl-badge issuer">Financials</span></div>
-          <div class="tl-body">Revenue grew 32% quarter-on-quarter as two new vertical farms came online in Selangor. Gross margin held steady at 41%…</div>
-          <div class="tl-foot"><span># Ref AGRO-2026-014</span><button class="read-more">Read more →</button></div>
-        </div>
-      </div>
-      <div class="tl-item">
-        <div class="tl-left"><div class="tl-date">12 Apr 2026</div><div class="tl-time">4:05 PM</div></div>
-        <div class="tl-card">
-          <div class="tl-title-row"><div class="tl-title">New offtake agreement signed</div><span class="tl-badge issuer">Others</span></div>
-          <div class="tl-body">Agroz has signed a 24-month supply agreement with a national grocery chain, securing baseline demand for its leafy-green range…</div>
-          <div class="tl-foot"><span># Ref AGRO-2026-009</span><button class="read-more">Read more →</button></div>
-        </div>
-      </div>
-    </div>
-  </div>`;
-}
-
-/* ===================== CUSTOMER MODALS ===================== */
-function modalPending(){
-  return `<div class="modal-card">
-    <div class="modal-header"><h5 class="pvm-title"><span class="pvm-title-icon">${I.info}</span> Your vote is needed</h5>
-      <button class="close" onclick="closeModal()">&times;</button></div>
-    <div class="modal-body pvm-body">
-      <div class="pvm-company"><div class="ca-logo">${D.initials}</div>
-        <div class="flex-fill"><div class="pvm-company-name">${D.company}</div>
-          <span class="badge ca-badge-type" style="margin-top:6px">${I.grid} ${D.type}</span></div></div>
-      <p class="pvm-description">${D.company} wants to buy back the shares pitchIN holds for you. Vote to approve or reject the offer before voting closes.</p>
-      <p class="pvm-deadline">${I.cal}<span>Voting closes ${D.closes} · </span>&nbsp;<strong>13</strong>&nbsp;days left</p>
-    </div>
-    <div class="modal-footer pvm-footer">
-      <button class="btn btn-grey-border" onclick="closeModal()">Later</button>
-      <button class="btn btn-primary pvm-cta" onclick="goTo(IDX.review)">Review &amp; vote</button>
-    </div>
-    <p class="pvm-reminder">We'll remind you each time you log in until you vote.</p>
-  </div>`;
-}
-function modalConfirm(){
-  return `<div class="modal-card" style="max-width:380px"><div class="cv-body">
-    <div class="cv-icon approve">${I.checkBig}</div>
-    <h5 class="cv-title">Approve this buyback?</h5>
-    <p class="cv-desc">You are voting to <strong>approve</strong> ${D.company}'s buyback offer.<br><strong>This is final and cannot be changed.</strong></p>
-    <div class="cv-actions">
-      <button class="btn btn-grey-border tw-flex-1" onclick="closeModal()">Go back</button>
-      <button class="btn btn-green tw-flex-1" onclick="goTo(IDX.recorded)">Confirm</button>
-    </div></div></div>`;
-}
-
-/* ===================== ADMIN SCREENS ===================== */
-function admSteps(active){
-  const labels=['Details','Upload voters','Review and submit'];
-  return `<div class="adm-steps">${labels.map((l,i)=>
-    `<span class="st ${i===active?'active':''}">${i+1}. ${l}</span>${i<2?'<span class="sep">›</span>':''}`).join('')}</div>`;
-}
-
-function screenAdminCreate(){
-  return `<div class="adm">
-    <div class="adm-crumb">MySec <span class="sep">›</span> Corporate Actions <span class="sep">›</span> New</div>
-    <h1 class="adm-title">New corporate action</h1>
-    ${admSteps(0)}
-    <div class="alert alert-info"><strong>Note:</strong> Halt trading for this company before opening the vote. Holdings must stay frozen for the duration of the exercise.</div>
-    <div class="adm-card"><div class="adm-card-body">
-      <div class="adm-h2">Details</div>
-      <div class="fg">
-        <div class="input-label">Company</div>
-        <input class="form-control" value="Search by counter code…" readonly />
-        <div class="selected-note">Selected: <strong>${D.ticker} — ${D.company}</strong></div>
-      </div>
-      <div class="fg-row">
-        <div class="fg">
-          <div class="input-label">Corporate action type</div>
-          <select class="form-control form-sel"><option>Share buyback</option></select>
-          <div class="form-hint">Only share buyback is available now. More types are coming.</div>
-        </div>
-        <div class="fg"></div>
-      </div>
-      <div class="fg-row">
-        <div class="fg"><div class="input-label">Voting opens <span class="req">*</span></div>
-          <input class="form-control" value="${D.opens}" readonly /></div>
-        <div class="fg"><div class="input-label">Voting closes <span class="req">*</span></div>
-          <input class="form-control" value="${D.closes}" readonly />
-          <div class="form-hint">Voting deadline. Ballots are final at this time.</div></div>
-      </div>
-      <div class="fg">
-        <div class="input-label">Description (internal)</div>
-        <textarea class="form-control" rows="3">Board-approved share buyback at RM 2.40/share. Trading halted 16 Jun. Voter list from registry as at 15 Jun.</textarea>
-        <div class="form-hint">Internal note for admins — not shown to investors.</div>
-      </div>
-      <div class="adm-foot">
-        <button class="btn btn-admin-light">Cancel</button>
-        <button class="btn btn-admin" onclick="goTo(IDX.admUpload)">Next: upload voters</button>
-      </div>
-    </div></div>
-  </div>`;
-}
-
-function screenAdminUpload(){
-  return `<div class="adm">
-    <div class="adm-crumb">MySec <span class="sep">›</span> Corporate Actions <span class="sep">›</span> New</div>
-    <h1 class="adm-title">New corporate action</h1>
-    ${admSteps(1)}
-    <div class="adm-card"><div class="adm-card-body">
-      <div class="adm-h2">Upload voters</div>
-      <div class="fg">
-        <div class="input-label">Upload voter file</div>
-        <div class="form-hint" style="margin:0 0 8px">Each row is matched to a shareholder by Investor ID. Columns: Investor ID, Buyback Price/Share, Payout, ROI %, Annualised %.</div>
-        <input class="form-control disabledish" value="agroz-buyback-voters.xlsx" readonly />
-      </div>
-      <div class="alert alert-success">All ${D.voterCount} rows matched a shareholder. Ready to submit.</div>
-      <table class="adm-table">
-        <thead><tr><th>#</th><th>Investor ID</th><th>Name</th><th>Shares Held*</th><th>Price/Share</th><th>Payout</th><th>ROI %</th><th>Annualised %</th><th>Match</th></tr></thead>
-        <tbody>${VOTERS.map((v,i)=>`<tr><td>${i+1}</td><td>${v.id}</td><td>${v.name}</td><td>${v.shares}</td><td>${D.pricePerShare}</td><td>${v.payout}</td><td>${D.roi}%</td><td>${D.annual}%</td><td><span class="pill-soft matched">Matched</span></td></tr>`).join('')}</tbody>
-      </table>
-      <div class="form-hint" style="margin-top:10px">* Shares held, amount invested and share type are taken from the registry, not from your file.</div>
-      <div class="alert alert-success" style="margin-top:16px">Voters uploaded successfully. Review the details and submit for superadmin approval to open voting.</div>
-      <div class="adm-foot split">
-        <button class="btn btn-admin-light" onclick="goTo(IDX.admCreate)">Back</button>
-        <button class="btn btn-admin" onclick="goTo(IDX.saApproveCreate)">Submit for approval</button>
-      </div>
-    </div></div>
-  </div>`;
-}
-
-function voterRosterCard(withVotes){
-  return `<div class="adm-card"><div class="adm-card-head">Voter Roster</div><div class="adm-card-body" style="overflow-x:auto">
-    <table class="adm-table">
-      <thead><tr><th>Name</th><th>Shareholder ID</th><th>Shares Held</th><th>Payout</th>${withVotes?'<th>Vote</th>':''}</tr></thead>
-      <tbody>${VOTERS.map((v,i)=>`<tr><td>${v.name}</td><td>${v.id}</td><td>${v.shares}</td><td>${v.payout}</td>${withVotes?`<td>${i===2?'<span class="text-danger" style="font-weight:600">Rejected</span>':i===4?'<span class="text-muted">Not voted</span>':'<span class="text-success" style="font-weight:600">Approved</span>'}</td>`:''}</tr>`).join('')}</tbody>
-    </table></div></div>`;
-}
-
-function tallyCard(running){
-  return `<div class="adm-card"><div class="adm-card-head">Vote Tally</div><div class="adm-card-body">
-    ${running?`<div class="alert alert-warning">Running tally — voting still open. Provisional; not the final outcome.</div>`:''}
-    <div class="tally">
-      <div class="cell"><div class="num text-success">${TALLY.approve}</div><div class="lbl">Approve</div></div>
-      <div class="cell"><div class="num text-danger">${TALLY.reject}</div><div class="lbl">Reject</div></div>
-      <div class="cell"><div class="num">${TALLY.votesCast}</div><div class="lbl">Votes Cast</div></div>
-      <div class="cell"><div class="num text-muted">${TALLY.notVoted}</div><div class="lbl">Not Voted</div></div>
-      <div class="cell"><div class="num">${TALLY.totalEligible}</div><div class="lbl">Total Eligible</div></div>
-    </div></div></div>`;
-}
-
-/* Superadmin — approve the CREATION */
-function screenSaApproveCreate(){
-  return `<div class="adm">
-    <div class="adm-crumb"><a>Corporate Action Approvals</a> <span class="sep">›</span> Review</div>
-    <h1 class="adm-title">${D.company} <span class="pill pending">Pending Approval</span></h1>
-    <div class="adm-card"><div class="adm-card-body">
-      <p class="kv"><strong>Type:</strong> ${D.type}</p>
-      <p class="kv"><strong>Voting window:</strong> ${D.opens} – ${D.closes}</p>
-      <p class="kv"><strong>Voters:</strong> ${D.voterCount}</p>
-      <p class="kv"><strong>Description (internal):</strong> Board-approved share buyback at RM 2.40/share. Trading halted 16 Jun.</p>
-      <div class="adm-foot" style="justify-content:flex-start;margin-top:16px">
-        <button class="btn btn-admin" onclick="goTo(IDX.popup)">Approve</button>
-        <button class="btn btn-danger">Reject</button>
-      </div>
-    </div></div>
-    ${voterRosterCard(false)}
-  </div>`;
-}
-
-/* Admin — manage / tally / propose outcome (voting closed) */
-function screenAdminPropose(){
-  return `<div class="adm">
-    <div class="adm-crumb"><a>Corporate Actions</a> <span class="sep">›</span> Manage</div>
-    <h1 class="adm-title">${D.company} <span class="pill stop">Closed</span></h1>
-    ${tallyCard(false)}
-    <div class="adm-card"><div class="adm-card-head">Propose Outcome</div><div class="adm-card-body">
-      <div class="fg"><div class="input-label">Outcome</div>
-        <select class="form-control form-sel"><option>Approved</option><option>Rejected</option></select></div>
-      <div class="fg"><div class="input-label">Note (optional)</div>
-        <textarea class="form-control" rows="2" placeholder="Add a note for the superadmin reviewer…">Majority approved (3 of 4 votes cast). Recommend publishing as Approved.</textarea></div>
-      <button class="btn btn-admin" onclick="goTo(IDX.saPublish)">Submit for Superadmin Approval</button>
-    </div></div>
-    ${voterRosterCard(true)}
-  </div>`;
-}
-
-/* Superadmin — approve & publish the OUTCOME */
-function screenSaPublish(){
-  return `<div class="adm">
-    <div class="adm-crumb"><a>Corporate Action Approvals</a> <span class="sep">›</span> Review</div>
-    <h1 class="adm-title">${D.company} <span class="pill stop">Closed</span></h1>
-    ${tallyCard(false)}
-    <div class="adm-card"><div class="adm-card-head">Proposed Outcome — Awaiting Your Approval</div><div class="adm-card-body">
-      <p class="kv"><strong>Proposed outcome:</strong> Approved</p>
-      <p class="kv"><strong>Note:</strong> Majority approved (3 of 4 votes cast). Recommend publishing as Approved.</p>
-      <p class="kv"><strong>Proposed by:</strong> admin@pitchin.my</p>
-      <p class="kv"><strong>Proposed at:</strong> 30 Jun 2026 18:05</p>
-      <div class="adm-foot" style="justify-content:flex-start;margin-top:16px">
-        <button class="btn btn-admin" onclick="goTo(IDX.outcome)">Publish Outcome</button>
-        <button class="btn btn-danger">Reject</button>
-      </div>
-    </div></div>
-  </div>`;
-}
-
-/* ===================== JOURNEY ===================== */
 const STEPS = [
-  { key:'admCreate', app:'admin', role:'admin', label:'Admin — create the buyback',
-    who:'Admin', acc:'admin', exTitle:'An admin sets up the share buyback',
-    exDesc:'They pick the company, the voting dates, and add a short internal note. The corporate-action type is "Share buyback".',
-    chrome:()=>chromeAdmin('admin'), backdrop:screenAdminCreate },
-
-  { key:'admUpload', app:'admin', role:'admin', label:'Admin — upload the voter list',
-    who:'Admin', acc:'admin', exTitle:'The admin uploads who can vote',
-    exDesc:'A file lists each eligible investor with their shares and payout. The system checks every row matches a real shareholder, then the admin submits it for approval.',
-    chrome:()=>chromeAdmin('admin'), backdrop:screenAdminUpload },
-
-  { key:'saApproveCreate', app:'admin', role:'superadmin', label:'Superadmin — approve the setup',
-    who:'Superadmin', acc:'superadmin', exTitle:'A second person approves before voting opens',
-    exDesc:'Two-person rule: the admin who created it cannot approve their own work. A superadmin checks the setup and approves — only then does voting open.',
-    chrome:()=>chromeAdmin('superadmin'), backdrop:screenSaApproveCreate },
-
-  { key:'popup', app:'customer', role:'investor', label:'Investor — "Your vote is needed"',
-    who:'Investor', acc:'investor', exTitle:'The investor is reminded to vote',
-    exDesc:'When an eligible investor logs in, this reminder pops up — and keeps appearing each login until they vote.',
-    chrome:chromeCustomer, backdrop:screenDashboard, modal:modalPending },
-
-  { key:'review', app:'customer', role:'investor', label:'Investor — review the buyback',
-    who:'Investor', acc:'investor', exTitle:'They review the offer and the payout',
-    exDesc:'The investor sees their holding and exactly what they would be paid if the buyback goes ahead, before deciding.',
-    chrome:chromeCustomer, backdrop:()=>screenDetail('prevote') },
-
-  { key:'confirm', app:'customer', role:'investor', label:'Investor — confirm the vote',
-    who:'Investor', acc:'investor', exTitle:'They confirm — and the vote is final',
-    exDesc:'A confirmation step makes clear the vote cannot be changed once submitted.',
-    chrome:chromeCustomer, backdrop:()=>screenDetail('prevote'), modal:modalConfirm },
-
-  { key:'recorded', app:'customer', role:'investor', label:'Investor — vote recorded',
-    who:'Investor', acc:'investor', exTitle:'The vote is safely recorded',
-    exDesc:'The investor only ever sees their own vote — never how anyone else voted. They now wait for voting to close.',
-    chrome:chromeCustomer, backdrop:()=>screenDetail('voted') },
-
-  { key:'admPropose', app:'admin', role:'admin', label:'Admin — tally & propose result',
-    who:'Admin', acc:'admin', exTitle:'After voting closes, the admin proposes the result',
-    exDesc:'The admin reviews the vote tally and proposes the outcome (Approved) — but cannot publish it alone.',
-    chrome:()=>chromeAdmin('admin'), backdrop:screenAdminPropose },
-
-  { key:'saPublish', app:'admin', role:'superadmin', label:'Superadmin — publish the result',
-    who:'Superadmin', acc:'superadmin', exTitle:'A superadmin reviews and publishes the official result',
-    exDesc:'Two-person rule again: one proposes, another approves. The superadmin publishes the outcome, which then becomes visible to investors.',
-    chrome:()=>chromeAdmin('superadmin'), backdrop:screenSaPublish },
-
-  { key:'outcome', app:'customer', role:'investor', label:'Investor — outcome published',
-    who:'Investor', acc:'investor', exTitle:'The investor sees the official result and payout',
-    exDesc:'The published outcome and the amount to be credited now appear on the offer page.',
-    chrome:chromeCustomer, backdrop:()=>screenDetail('outcome') },
-
-  { key:'feed', app:'customer', role:'investor', label:'Investor — company Announcements tab',
-    who:'Investor', acc:'investor', exTitle:'The result also shows on the company page',
-    exDesc:'On the company\'s page, under the Announcements tab, the corporate action appears with the investor\'s recorded vote.',
-    chrome:chromeCustomer, backdrop:screenCompanyPage },
+  {img:'admin-ca-list.png', role:'admin', url:'admin.pitchin.my/corporate-actions', phase:'Admin opens Corporate Actions',
+   title:'The Corporate Actions dashboard', state:'', body:'Admins run every share buyback from one place. Let’s create a new one.'},
+  {img:'admin-create-wizard-step1.png', role:'admin', url:'admin.pitchin.my/corporate-actions/new', phase:'Create the buyback',
+   title:'Create the buyback (1 of 3)', state:'Draft', body:'The admin picks the company and sets the voting window. pitchIN holds the shares as nominee, so it runs the vote on investors’ behalf.'},
+  {img:'admin-create-wizard-upload-voters.png', role:'admin', url:'admin.pitchin.my/corporate-actions/new', phase:'Upload the voters',
+   title:'Upload the eligible voters', state:'Draft', body:'An Excel list, matched to shareholders by investor ID — with each investor’s buyback price, payout and return.'},
+  {img:'superadmin-approval-queue.png', role:'superadmin', url:'admin.pitchin.my/approvals', phase:'Waiting for approval',
+   title:'Waiting for a second approval', state:'Pending', body:'A second pair of eyes. The admin who created the action cannot approve their own — maker is never the checker.'},
+  {img:'superadmin-approval-detail.png', role:'superadmin', url:'admin.pitchin.my/approvals/detail', phase:'Approve → voting opens',
+   title:'Approve to open voting', state:'Pending', body:'The superadmin reviews the details and the voter roster, then approves. Voting opens for investors.'},
+  {img:'customer-pending-vote-modal.png', role:'investor', url:'app.pitchin.my', phase:'Investors are prompted',
+   title:'Investors are prompted to vote', state:'Open', body:'Eligible investors get a persistent pop-up the moment they log in — impossible to miss.'},
+  {img:'customer-vote-detail-payout.png', role:'investor', url:'app.pitchin.my/corporate-action', phase:'See payout, cast vote',
+   title:'See your payout, cast your vote', state:'Open', body:'Each investor sees only their own holdings and what they’d receive — then votes Approve or Reject.'},
+  {img:'customer-vote-confirm-modal.png', role:'investor', url:'app.pitchin.my/corporate-action', phase:'Confirm the vote',
+   title:'Confirm the vote', state:'Open', body:'A final confirmation — the vote is final once submitted, so there are no accidental clicks.'},
+  {img:'customer-vote-recorded.png', role:'investor', url:'app.pitchin.my/corporate-action', phase:'Vote recorded',
+   title:'Vote recorded', state:'Open', body:'The investor’s choice is saved and tied to their shareholder record — always in sync with the platform.'},
+  {img:'admin-detail-vote-tally.png', role:'admin', url:'admin.pitchin.my/corporate-actions/detail', phase:'Running tally (admin-only)',
+   title:'Watch the running tally', state:'Closed', body:'The admin sees live results and proposes an outcome. Investors never see these numbers — it stays admin-only.'},
+  {img:'superadmin-publish-outcome.png', role:'superadmin', url:'admin.pitchin.my/corporate-actions/detail', phase:'Publish the outcome',
+   title:'Publish the official outcome', state:'Closed', body:'Maker is never the checker again: the superadmin publishes the official result.'},
+  {img:'customer-final-outcome-published.png', role:'investor', url:'app.pitchin.my/corporate-action', phase:'Investors see the result',
+   title:'Investors see the official result', state:'Published', body:'The published outcome appears for investors — transparent and on the record.'},
+  {img:'customer-announcement-tab-feed.png', role:'investor', url:'app.pitchin.my/market', phase:'On the Announcements tab',
+   title:'On the company’s Announcements tab', state:'Published', body:'The result lives on the company counter’s Announcements feed, alongside other corporate news.'},
 ];
+const ROLE_LABEL = {admin:'Admin', superadmin:'Superadmin', investor:'Investor'};
+const STATE_CLASS = {Open:'open', Published:'pub'};
+const ACCENT = {admin:'var(--red)', superadmin:'var(--blue)', investor:'var(--green)'};
+let i = 0;
 
-/* index lookup by key (used inside templates for navigation) */
-const IDX = {}; STEPS.forEach((s,i)=>IDX[s.key]=i);
-
-let cur = 0;
+const $ = id => document.getElementById(id);
+const dotsEl = $('dots');
+STEPS.forEach((s,idx)=>{ const b=document.createElement('button'); b.className='dot '+s.role; b.title='Step '+(idx+1); b.onclick=()=>go(idx); dotsEl.appendChild(b); });
+$('total').textContent = STEPS.length;
+STEPS.forEach(s=>{ const im=new Image(); im.src='screenshots/'+s.img; }); // preload
 
 function render(){
-  const s = STEPS[cur];
-  document.getElementById('topbar').innerHTML = s.chrome();
-  const ex = document.getElementById('explainer');
-  ex.className = 'explainer acc-'+s.acc;
-  ex.innerHTML = `<span class="who who-${s.acc}">${s.who}</span>
-    <div class="ex-text"><div class="ex-title">${s.exTitle}</div><div class="ex-desc">${s.exDesc}</div></div>`;
-  document.getElementById('stage').innerHTML = s.backdrop();
-  const bd = document.getElementById('backdrop');
-  if(s.modal){ document.getElementById('modalSlot').innerHTML = s.modal(); bd.classList.add('show'); }
-  else { bd.classList.remove('show'); setTimeout(()=>{ if(!STEPS[cur].modal) document.getElementById('modalSlot').innerHTML=''; },180); }
-  document.getElementById('stepNum').textContent = (cur+1)+'/'+STEPS.length;
-  document.getElementById('stepLabel').textContent = s.label;
-  document.getElementById('prevBtn').disabled = cur===0;
-  document.getElementById('nextBtn').disabled = cur===STEPS.length-1;
-  document.querySelectorAll('.dot').forEach((d,i)=>{ d.classList.toggle('active', i===cur); });
-  window.scrollTo({top:0, behavior:'smooth'});
+  const s = STEPS[i];
+  $('shotimg').src = 'screenshots/'+s.img;
+  $('shotimg').alt = s.title;
+  $('url').textContent = s.url;
+  const role = $('role'); role.textContent = ROLE_LABEL[s.role]; role.className = 'role rc-'+s.role;
+  $('title').textContent = s.title;
+  $('body').textContent = s.body;
+  const st = $('state'); st.textContent = s.state || '—'; st.className = 'state '+(STATE_CLASS[s.state]||'');
+  $('cur').textContent = i+1;
+  $('phase').textContent = s.phase;
+  $('pfill').style.width = ((i+1)/STEPS.length*100)+'%';
+  $('prev').disabled = i===0;
+  $('next').textContent = i===STEPS.length-1 ? 'Done ✓' : 'Next →';
+  [...dotsEl.children].forEach((d,idx)=>d.classList.toggle('on', idx===i));
+  document.querySelector('.panel').style.borderLeftColor = ACCENT[s.role];
 }
-
-function goTo(i){ cur = Math.max(0, Math.min(STEPS.length-1, i)); render(); }
-function next(){ if(cur<STEPS.length-1) goTo(cur+1); }
-function prev(){ if(cur>0) goTo(cur-1); }
-function closeModal(){ document.getElementById('backdrop').classList.remove('show'); }
-
-const dotsEl = document.getElementById('dots');
-STEPS.forEach((s,i)=>{ const b=document.createElement('button'); b.className='dot '+s.acc; b.title=s.label; b.onclick=()=>goTo(i); dotsEl.appendChild(b); });
-document.getElementById('nextBtn').onclick = next;
-document.getElementById('prevBtn').onclick = prev;
-document.getElementById('restartBtn').onclick = ()=>goTo(0);
-document.addEventListener('keydown', e=>{ if(e.key==='ArrowRight') next(); if(e.key==='ArrowLeft') prev(); });
-
+function go(n){ i = Math.max(0, Math.min(STEPS.length-1, n)); render(); window.scrollTo({top:0,behavior:'smooth'}); }
+$('prev').onclick = ()=>go(i-1);
+$('next').onclick = ()=>go(i+1);
+document.addEventListener('keydown', e=>{ if(e.key==='ArrowRight') go(i+1); if(e.key==='ArrowLeft') go(i-1); });
 render();
 </script>
 </body>
