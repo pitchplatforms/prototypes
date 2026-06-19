@@ -20431,6 +20431,9 @@ html {
 .tw-border-l-4 {
   border-left-width: 4px;
 }
+.tw-border-r {
+  border-right-width: 1px;
+}
 .tw-border-r-\[6px\] {
   border-right-width: 6px;
 }
