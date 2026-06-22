@@ -93,29 +93,49 @@
   .move h4{margin:.5rem 0 .3rem;font-size:1rem}
   .move p{margin:0;font-size:.88rem;color:#444}
 
-  /* ===== lifecycle flow ===== */
-  .entry{display:flex;flex-wrap:wrap;gap:12px;margin:1rem 0 1.1rem}
-  .entry .e{flex:1;min-width:240px;border-radius:var(--r-lg);padding:12px 15px;font-size:.9rem;border:1px solid}
-  .entry .e b{font-family:var(--font-head)}
-  .entry .e.exist{background:var(--green-soft);border-color:var(--green-lightest)}
-  .entry .e.exist b{color:var(--green)}
-  .entry .e.new{background:var(--warn-light);border-color:#f0d8b8}
-  .entry .e.new b{color:var(--warn-dark)}
-  .entry .e .lab{font-family:var(--font-head);font-weight:600;font-size:.66rem;letter-spacing:.06em;text-transform:uppercase;display:block;margin-bottom:3px}
+  /* ===== lifecycle journey ===== */
+  .entries{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:1.1rem 0 .3rem}
+  @media(max-width:680px){.entries{grid-template-columns:1fr}}
+  .entry-card{background:#eef1f5;border:1px solid #d3dae2;border-left:5px solid #64748b;border-radius:var(--r-lg);padding:13px 16px}
+  .entry-card.new{border-left-color:#7c4dbd;background:#f3eefb;border-color:#e0d3f3}
+  .entry-card .badge{display:inline-flex;align-items:center;gap:6px;font-family:var(--font-head);font-weight:600;font-size:.62rem;letter-spacing:.06em;text-transform:uppercase;border-radius:999px;padding:3px 10px;margin-bottom:7px;background:#dde3ea;color:#475569}
+  .entry-card.new .badge{background:#e7d9f7;color:#6b3fa0}
+  .entry-card h4{font-size:1rem;margin:0 0 3px;color:var(--ink)}
+  .entry-card p{margin:0;font-size:.88rem;color:#475569}
 
-  .lc{display:flex;flex-wrap:wrap;align-items:stretch;gap:7px;margin:.6rem 0 .2rem}
-  .lc .s{display:flex;flex-direction:column;justify-content:center;border-radius:var(--r-lg);padding:10px 14px;font-size:.86rem;font-weight:600;font-family:var(--font-head);border:1px solid;min-width:96px}
-  .lc .s small{display:block;font-family:var(--font-body);font-weight:400;font-size:.72rem;opacity:.8;margin-top:1px}
-  .lc .s.manage{background:var(--green-soft);border-color:var(--green-lightest);color:var(--green)}
-  .lc .s.comm{background:#eef1fb;border-color:#d8def5;color:var(--blue)}
-  .lc .s.value{background:var(--red-lightest);border-color:var(--red-light);color:var(--red-dark)}
-  .lc .arr{display:flex;align-items:center;color:var(--body);font-weight:700;opacity:.45;font-size:1.1rem}
+  .merge{text-align:center;font-family:var(--font-head);font-weight:600;font-size:.78rem;color:var(--body);margin:.5rem 0 .7rem}
+  .merge::before,.merge::after{content:"";display:inline-block;width:34px;height:1px;background:var(--divider);vertical-align:middle;margin:0 9px 3px}
+
+  .journey{display:flex;flex-wrap:wrap;gap:10px;align-items:stretch;margin:.2rem 0 .4rem}
+  .grp{flex:1;min-width:210px;border-radius:var(--r-xl);padding:11px 11px 13px;border:1.5px solid}
+  .grp .gh{display:flex;align-items:center;gap:8px;font-family:var(--font-head);font-weight:600;font-size:.92rem;margin:1px 2px 9px}
+  .grp .gh .ico{width:30px;height:30px;border-radius:50%;display:flex;align-items:center;justify-content:center;flex:none}
+  .grp .gh .ico svg{width:17px;height:17px}
+  .grp.manage{background:var(--green-soft);border-color:#bfe3cc}
+  .grp.manage .gh{color:var(--green)} .grp.manage .ico{background:#cdebd6}
+  .grp.comm{background:#eef1fb;border-color:#d3dbf3}
+  .grp.comm .gh{color:var(--blue)} .grp.comm .ico{background:#dde3f7}
+  .grp.value{background:var(--red-lightest);border-color:var(--red-light)}
+  .grp.value .gh{color:var(--red-dark)} .grp.value .ico{background:#fbd8d6}
+  .grp .stages{display:flex;flex-direction:column;gap:8px}
+  .stp{background:#fff;border:1px solid var(--divider);border-radius:var(--r-md);padding:9px 12px}
+  .stp b{font-family:var(--font-head);font-weight:600;font-size:.86rem;color:var(--ink);display:block}
+  .stp small{font-size:.76rem;color:var(--body);line-height:1.45}
+
+  /* ===== glossary ===== */
+  .glossary{display:grid;grid-template-columns:repeat(3,1fr);gap:11px;margin:.7rem 0 1.3rem}
+  @media(max-width:720px){.glossary{grid-template-columns:1fr}}
+  .gloss{background:var(--bg-soft);border:1px solid var(--divider);border-radius:var(--r-md);padding:11px 13px;font-size:.85rem;color:#444}
+  .gloss b{font-family:var(--font-head);color:var(--ink);display:block;margin-bottom:2px;font-size:.9rem}
 
   /* ===== pillars ===== */
-  .legend{display:flex;flex-wrap:wrap;gap:16px;align-items:center;margin:.4rem 0 1.2rem;font-size:.85rem;color:var(--body)}
-  .legend .dot{display:inline-flex;align-items:center;gap:6px}
-  .legend i{width:10px;height:10px;border-radius:50%;display:inline-block}
+  .legend{display:flex;flex-wrap:wrap;gap:18px;align-items:center;margin:.4rem 0 1.2rem;font-size:.88rem;color:var(--ink)}
+  .legend .dot{display:inline-flex;align-items:center;gap:7px;font-weight:500}
+  .legend i{width:11px;height:11px;border-radius:50%;display:inline-block}
   .d-live{background:var(--green)} .d-soon{background:var(--warn)} .d-explore{background:var(--info)}
+  .cap .desc{font-size:.82rem;color:var(--body);margin:4px 0 5px;font-style:italic}
+  .pcard .head .ico-h{width:34px;height:34px;border-radius:9px;background:rgba(255,255,255,.2);display:flex;align-items:center;justify-content:center;margin-bottom:8px}
+  .pcard .head .ico-h svg{width:20px;height:20px;stroke:#fff}
 
   .pillars{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin:.4rem 0}
   @media(max-width:820px){.pillars{grid-template-columns:1fr}}
@@ -253,8 +273,8 @@
     </div>
 
     <div class="moves">
-      <div class="move"><div class="n">1</div><h4>Fixes the weak arc</h4><p>Corporate actions, a regulated secondary market, private sales and dividends give investors a real path to returns — strengthening exits, the loop's missing link.</p></div>
-      <div class="move"><div class="n">2</div><h4>Changes the revenue model</h4><p>Servicing the shareholder life cycle earns recurring revenue not tied to new fundraising — and makes investors stickier.</p></div>
+      <div class="move"><div class="n">1</div><h4>Fixes the weak link</h4><p>A marketplace to trade shares, private transfers and dividends finally give investors a real way to get returns — strengthening exits, the part of the loop that was missing.</p></div>
+      <div class="move"><div class="n">2</div><h4>Changes how we earn</h4><p>We now earn steady, repeat income from servicing shareholders over time — not just a one-off fee when a company raises money.</p></div>
       <div class="move"><div class="n">3</div><h4>Expands who we serve</h4><p>Asset servicing is no longer a reward for raising with us. Companies that never ran a campaign can bring their registry onto pitchIN.</p></div>
     </div>
   </section>
@@ -265,99 +285,143 @@
     <h2>What asset servicing looks like, end to end</h2>
     <p class="lede">From the moment a raise closes — or the day a company first joins us — pitchIN operates the whole post-raise journey. Two entry points feed the same registry.</p>
 
-    <div class="entry">
-      <div class="e exist"><span class="lab">Entry point · existing</span><b>From a completed ECF raise.</b> Allotment flows straight into the registry — the path we've always had.</div>
-      <div class="e new"><span class="lab">Entry point · new</span><b>From a non-fundraising route (PSTX 2.0).</b> Companies that never raised on pitchIN come straight into asset servicing.</div>
+    <p class="small muted" style="margin-bottom:.2rem"><b style="color:var(--ink)">Two ways a company comes in:</b></p>
+    <div class="entries">
+      <div class="entry-card">
+        <span class="badge">The path we've always had</span>
+        <h4>From a finished crowdfunding campaign</h4>
+        <p>When a company raises money on pitchIN, its investors flow straight into the shareholder registry.</p>
+      </div>
+      <div class="entry-card new">
+        <span class="badge">New — a bigger audience</span>
+        <h4>From any company, even if it never raised with us</h4>
+        <p>A company that has never run a campaign can join asset servicing directly and bring its shareholders onto the platform.</p>
+      </div>
     </div>
 
-    <div class="lc">
-      <div class="s manage">Allotment<small>finalise holdings</small></div>
-      <div class="arr">→</div>
-      <div class="s manage">Digital registry<small>single source of truth</small></div>
-      <div class="arr">→</div>
-      <div class="s comm">IR tools<small>stay connected</small></div>
-      <div class="arr">→</div>
-      <div class="s value">Secondary market / private sale<small>liquidity</small></div>
-      <div class="arr">→</div>
-      <div class="s value">Dividends<small>returns</small></div>
+    <div class="merge">both feed the same journey</div>
+
+    <div class="journey">
+      <div class="grp manage">
+        <div class="gh"><span class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="#006927" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 5H7a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2h-2"/><rect x="9" y="3" width="6" height="4" rx="1"/><path d="M9 12h6M9 16h6"/></svg></span>Manage</div>
+        <div class="stages">
+          <div class="stp"><b>Finalise who owns what</b><small>Lock in each investor's shareholding when a round closes.</small></div>
+          <div class="stp"><b>One shareholder list</b><small>A single, trusted record of every shareholder.</small></div>
+        </div>
+      </div>
+      <div class="grp comm">
+        <div class="gh"><span class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="#1A1847" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11l18-7-7 18-2.5-7.5L3 11z"/></svg></span>Communicate</div>
+        <div class="stages">
+          <div class="stp"><b>Keep investors updated</b><small>Share news, reports and documents from one place.</small></div>
+        </div>
+      </div>
+      <div class="grp value">
+        <div class="gh"><span class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="#7D1F23" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7h13l-2-2M20 17H7l2 2"/><circle cx="9" cy="7" r="0"/></svg></span>Create value</div>
+        <div class="stages">
+          <div class="stp"><b>Buy, sell &amp; transfer shares</b><small>Give investors a real way to cash out.</small></div>
+          <div class="stp"><b>Pay out returns</b><small>Distribute dividends to shareholders.</small></div>
+        </div>
+      </div>
     </div>
-    <p class="small muted">Colour shows which pillar owns each stage — <span style="color:var(--green);font-weight:600">Manage</span>, <span style="color:var(--blue);font-weight:600">Communicate</span>, <span style="color:var(--red-dark);font-weight:600">Create value</span>.</p>
+    <p class="small muted">Each coloured group is one of the three pillars below, so you can see which part of pitchIN handles each step.</p>
   </section>
 
   <!-- ============ PILLARS ============ -->
   <section id="pillars">
     <p class="eyebrow">What we built</p>
     <h2>Three pillars, and the features inside them</h2>
-    <p class="lede">Everything we do for a company after the raise, organised as <b>Manage → Communicate → Create value</b>.</p>
+    <p class="lede">Everything we do for a company after the raise, grouped into three simple jobs: <b>Manage → Communicate → Create value</b>.</p>
+
+    <p class="small muted" style="margin:.3rem 0 .1rem"><b style="color:var(--ink)">A few terms, in plain words:</b></p>
+    <div class="glossary">
+      <div class="gloss"><b>Crowdfunding campaign</b>Raising money online from many small investors — pitchIN's original business.</div>
+      <div class="gloss"><b>Secondary market (our exchange)</b>A regulated marketplace, called PSTX, where investors can buy and sell their private shares after a raise.</div>
+      <div class="gloss"><b>Nominee structure</b>pitchIN legally holds and represents shares on investors' behalf — which makes transfers and payouts simple.</div>
+    </div>
 
     <div class="legend">
-      <span class="dot"><i class="d-live"></i> Live — available now</span>
-      <span class="dot"><i class="d-soon"></i> Coming soon — on the way</span>
+      <span class="dot"><i class="d-live"></i> <b>Live</b> — you can use it today</span>
+      <span class="dot"><i class="d-soon"></i> <b>Coming soon</b> — being built</span>
     </div>
 
     <div class="pillars">
       <div class="pcard p1">
-        <div class="head"><div class="num">Pillar 1</div><h3>Manage</h3><p class="tl">Own your shareholder records with confidence.</p></div>
+        <div class="head">
+          <div class="ico-h"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 5H7a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2h-2"/><rect x="9" y="3" width="6" height="4" rx="1"/><path d="M9 12h6M9 16h6"/></svg></div>
+          <div class="num">Pillar 1</div><h3>Manage</h3><p class="tl">Keep your shareholder records accurate and in one place.</p>
+        </div>
         <div class="body">
           <div class="cap">
-            <div class="ct">Share allotment <span class="st st-live">Live</span></div>
+            <div class="ct">Finalising a completed raise <span class="st st-live">Live</span></div>
+            <p class="desc">When a round closes, settle exactly who gets how many shares.</p>
             <ul>
-              <li>Finalise investors &amp; share quantity</li>
-              <li>Success-fee confirmation</li>
-              <li>Automatic investor comms</li>
+              <li>Confirm each investor and how many shares they hold</li>
+              <li>Confirm and settle pitchIN's fee</li>
+              <li>Automatically tell every investor what they now own</li>
             </ul>
           </div>
           <div class="cap">
-            <div class="ct">Digital registry <span class="st st-live">Live</span></div>
+            <div class="ct">Digital shareholder registry <span class="st st-live">Live</span></div>
+            <p class="desc">One trusted list of who owns what — your single source of truth.</p>
             <ul>
-              <li>One-click import from ECF</li>
-              <li>Create new funding round</li>
-              <li>Mass-import any shareholder (account or not)</li>
-              <li>Non-issuer onboarding</li>
+              <li>Pull in everyone from a finished campaign in one click</li>
+              <li>Add the shareholders from a new fundraising round</li>
+              <li>Bulk-add existing shareholders — even those who never had a pitchIN account</li>
+              <li>Onboard a company that never raised money with pitchIN</li>
             </ul>
           </div>
         </div>
       </div>
 
       <div class="pcard p2">
-        <div class="head"><div class="num">Pillar 2</div><h3>Communicate</h3><p class="tl">Stay close to your investors — for years.</p></div>
+        <div class="head">
+          <div class="ico-h"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11l18-7-7 18-2.5-7.5L3 11z"/></svg></div>
+          <div class="num">Pillar 2</div><h3>Communicate</h3><p class="tl">Stay connected to your investors — for years.</p>
+        </div>
         <div class="body">
           <div class="cap">
-            <div class="ct">Investor-relation tools <span class="st st-live">Live</span></div>
+            <div class="ct">Investor updates &amp; relations <span class="st st-live">Live</span></div>
+            <p class="desc">Keep investors informed from one professional place.</p>
             <ul>
-              <li>Managed company profile</li>
-              <li>Announcements to all investors</li>
-              <li>Secure document sharing</li>
-              <li>Ongoing campaign page reference</li>
+              <li>A managed company page investors can view</li>
+              <li>Post announcements that reach every investor at once</li>
+              <li>Share reports and documents securely</li>
+              <li>Keep the original campaign page as a reference</li>
             </ul>
           </div>
         </div>
       </div>
 
       <div class="pcard p3">
-        <div class="head"><div class="num">Pillar 3</div><h3>Create value</h3><p class="tl">Liquidity and returns for investors.</p></div>
+        <div class="head">
+          <div class="ico-h"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7h13l-2-2M20 17H7l2 2"/></svg></div>
+          <div class="num">Pillar 3</div><h3>Create value</h3><p class="tl">Give investors a real way to see returns.</p>
+        </div>
         <div class="body">
           <div class="cap">
-            <div class="ct">Secondary market — PSTX <span class="st st-live">Live</span></div>
+            <div class="ct">Buy &amp; sell shares (our exchange) <span class="st st-live">Live</span></div>
+            <p class="desc">Our regulated marketplace lets investors trade their private shares.</p>
             <ul>
-              <li>Create &amp; manage orders</li>
-              <li>Auto-matching + auto fee deduction</li>
-              <li>Wallet — add money, withdraw proceeds</li>
-              <li>Public information page</li>
-              <li class="soon">PSTX 2.0 — any private company can list <span class="fsoon">soon</span></li>
+              <li>Place and manage buy &amp; sell orders</li>
+              <li>Buyers and sellers matched automatically, fees handled for you</li>
+              <li>Built-in wallet to add money and withdraw what you earn</li>
+              <li>A public page that showcases the company</li>
+              <li class="soon">Open the marketplace to any private company, not just crowdfunding ones <span class="fsoon">coming soon</span></li>
             </ul>
           </div>
           <div class="cap">
             <div class="ct">Private share sale <span class="st st-live">Live</span></div>
+            <p class="desc">Move shares between people directly, with pitchIN handling the paperwork.</p>
             <ul>
-              <li>Nominee transfers — all directions</li>
-              <li>Transacted price → investor dashboard</li>
+              <li>Transfer shares between holders, in any direction</li>
+              <li>Record the agreed price so investors see their shares' real value</li>
             </ul>
           </div>
           <div class="cap">
-            <div class="ct">Dividend management <span class="st st-soon">Soon</span></div>
+            <div class="ct">Dividend payouts <span class="st st-soon">Coming soon</span></div>
+            <p class="desc">Pay returns to all shareholders through the platform.</p>
             <ul>
-              <li class="soon">Distribute returns to shareholders <span class="fsoon">manual today</span></li>
+              <li class="soon">Distribute dividends to every shareholder <span class="fsoon">done by hand today</span></li>
             </ul>
           </div>
         </div>
@@ -365,8 +429,8 @@
     </div>
 
     <div class="note">
-      <span class="nt">For ops</span>
-      There is now a post-raise life cycle to operate — allotment, registry upkeep, IR tooling, secondary-market and private-transfer admin. Be precise on status with customers: PSTX 1.0 is live; PSTX 2.0 and managed dividends are coming.
+      <span class="nt">What this means for our team</span>
+      There is now a whole post-raise journey to run — finalising raises, keeping the registry up to date, investor updates, and handling share trades and transfers. Be clear with customers on what's ready: buying and selling shares is live today; opening the marketplace to all companies and automated dividend payouts are on the way.
     </div>
   </section>
 
