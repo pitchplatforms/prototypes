@@ -1,0 +1,384 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Corporate Action — Vote Tally: Filter & Export Guide</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+<style>
+  :root {
+    --brand: #0231E8;
+    --brand-soft: #e8f0fe;
+    --success: #1bbc9c;
+    --danger: #e5484d;
+    --ink: #2b2f38;
+    --muted: #6b7280;
+    --line: #e6e8ec;
+    --bg: #f4f6fb;
+    --card: #ffffff;
+    --guide: #12a594;
+    --guide-soft: #e7f7f4;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    font-family: 'Poppins', -apple-system, sans-serif;
+    background: var(--bg);
+    color: var(--ink);
+    line-height: 1.5;
+  }
+  .wrap { max-width: 1080px; margin: 0 auto; padding: 28px 20px 80px; }
+
+  /* ---------- Guide header ---------- */
+  .guide-hero {
+    background: linear-gradient(120deg, #0231E8 0%, #12a594 130%);
+    color: #fff;
+    border-radius: 16px;
+    padding: 26px 30px;
+    margin-bottom: 22px;
+  }
+  .guide-hero .eyebrow {
+    text-transform: uppercase; letter-spacing: .14em; font-size: 12px;
+    font-weight: 600; opacity: .85; margin: 0 0 6px;
+  }
+  .guide-hero h1 { margin: 0 0 8px; font-size: 26px; font-weight: 800; letter-spacing: -.01em; }
+  .guide-hero p { margin: 0; font-size: 15px; opacity: .95; max-width: 720px; }
+
+  /* ---------- Steps strip ---------- */
+  .steps { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; margin-bottom: 26px; }
+  .step {
+    background: var(--card); border: 1px solid var(--line); border-radius: 12px;
+    padding: 16px 18px; position: relative;
+  }
+  .step .n {
+    width: 30px; height: 30px; border-radius: 50%; background: var(--guide); color: #fff;
+    display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 15px;
+    margin-bottom: 10px;
+  }
+  .step h3 { margin: 0 0 4px; font-size: 15px; font-weight: 600; }
+  .step p { margin: 0; font-size: 13px; color: var(--muted); }
+  @media (max-width: 760px) { .steps { grid-template-columns: 1fr; } }
+
+  /* ---------- Faithful admin page replica ---------- */
+  .screen-label {
+    display: flex; align-items: center; gap: 10px; margin: 8px 2px 12px;
+    font-size: 13px; color: var(--muted); font-weight: 500;
+  }
+  .screen-label .dot { width: 8px; height: 8px; border-radius: 50%; background: var(--success); }
+  .app-frame {
+    background: var(--card); border: 1px solid var(--line); border-radius: 12px;
+    box-shadow: 0 8px 30px rgba(20,30,60,.06); overflow: hidden;
+  }
+  .app-topbar {
+    display: flex; align-items: center; gap: 10px; padding: 12px 18px;
+    border-bottom: 1px solid var(--line); background: #fafbfe; font-size: 13px; color: var(--muted);
+  }
+  .app-topbar .crumbs b { color: var(--ink); }
+  .app-body { padding: 22px 24px; }
+
+  .page-title { font-size: 22px; font-weight: 800; margin: 0 0 4px; }
+  .status-badge {
+    display: inline-block; vertical-align: middle; margin-left: 10px;
+    background: var(--danger); color: #fff; font-size: 11px; font-weight: 700;
+    padding: 3px 10px; border-radius: 20px; letter-spacing: .04em;
+  }
+
+  .card { border: 1px solid var(--line); border-radius: 10px; margin-top: 18px; background: #fff; }
+  .card-header {
+    padding: 12px 18px; border-bottom: 1px solid var(--line); font-weight: 600; font-size: 15px;
+    display: flex; align-items: center; justify-content: space-between;
+  }
+  .card-body { padding: 18px; }
+
+  /* Tally boxes — identical behaviour to the real screen */
+  .tally-row { display: grid; grid-template-columns: repeat(5, 1fr); gap: 12px; }
+  @media (max-width: 760px) { .tally-row { grid-template-columns: repeat(2, 1fr); } }
+  .tally-box {
+    background: transparent; border: 1px solid transparent; border-radius: 8px;
+    padding: 14px 8px; cursor: pointer; text-align: center; width: 100%;
+    transition: border-color .15s ease, background-color .15s ease; position: relative;
+    font-family: inherit;
+  }
+  .tally-box:hover { border-color: #dee2e6; background-color: #f8f9fa; }
+  .tally-box.active { border-color: var(--brand); background-color: var(--brand-soft); }
+  .tally-box:focus-visible { outline: 2px solid var(--brand); outline-offset: 2px; }
+  .tally-box .num { font-size: 26px; font-weight: 700; line-height: 1; }
+  .tally-box .num.green { color: var(--success); }
+  .tally-box .num.red { color: var(--danger); }
+  .tally-box .num.grey { color: #9aa1ac; }
+  .tally-box .lbl { font-size: 12px; color: #6b7280; margin-top: 4px; }
+  .tally-box .pct { font-size: 11px; color: #9aa1ac; margin-top: 5px; font-weight: 500; }
+
+  /* Roster table */
+  .roster-head { display: flex; align-items: center; gap: 10px; }
+  .filter-pill {
+    background: #eaf2ff; color: var(--brand); font-size: 11px; font-weight: 600;
+    padding: 3px 10px; border-radius: 20px;
+  }
+  .btn-export {
+    font-family: inherit; font-size: 13px; font-weight: 500; cursor: pointer;
+    border: 1px solid #c7ccd6; background: #fff; color: #384150; border-radius: 7px;
+    padding: 7px 14px; transition: background .12s ease;
+  }
+  .btn-export:hover { background: #f3f5f9; }
+  .btn-export:disabled { opacity: .5; cursor: not-allowed; }
+
+  .table-scroll { overflow-x: auto; }
+  table.roster { width: 100%; border-collapse: collapse; font-size: 13px; min-width: 640px; }
+  table.roster th {
+    text-align: left; text-transform: uppercase; font-size: 10.5px; letter-spacing: .04em;
+    color: #8b93a1; font-weight: 600; padding: 10px 12px; border-bottom: 2px solid var(--line);
+    white-space: nowrap;
+  }
+  table.roster td { padding: 11px 12px; border-bottom: 1px solid #f0f2f5; white-space: nowrap; }
+  table.roster tr:last-child td { border-bottom: none; }
+  .name-link { color: var(--brand); text-decoration: none; font-weight: 500; cursor: pointer; }
+  .name-link:hover { text-decoration: underline; }
+  .vote-tag { font-weight: 600; }
+  .vote-approved { color: var(--success); }
+  .vote-rejected { color: var(--danger); }
+  .vote-none { color: #9aa1ac; }
+  .num-cell { text-align: right; font-variant-numeric: tabular-nums; }
+
+  /* Callout annotations */
+  .callout {
+    display: flex; gap: 12px; align-items: flex-start; background: var(--guide-soft);
+    border: 1px solid #cdeee8; border-radius: 10px; padding: 12px 15px; margin-top: 12px;
+    font-size: 13.5px;
+  }
+  .callout .badge-n {
+    flex: none; width: 24px; height: 24px; border-radius: 50%; background: var(--guide);
+    color: #fff; font-weight: 700; font-size: 13px; display: flex; align-items: center; justify-content: center;
+    margin-top: 1px;
+  }
+  .callout b { color: #0b7a68; }
+
+  /* toast */
+  #toast {
+    position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%) translateY(20px);
+    background: #21262f; color: #fff; padding: 12px 20px; border-radius: 10px; font-size: 13.5px;
+    opacity: 0; pointer-events: none; transition: all .25s ease; z-index: 50; max-width: 92vw;
+    box-shadow: 0 10px 30px rgba(0,0,0,.25);
+  }
+  #toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+  .foot { text-align: center; color: var(--muted); font-size: 12px; margin-top: 30px; }
+  .tip { font-size: 12.5px; color: var(--guide); font-weight: 600; margin: 2px 2px 0; }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="guide-hero">
+    <p class="eyebrow">pitchIN Admin · Corporate Action · Guide</p>
+    <h1>Vote Tally: Filtering &amp; Exporting the Voter List</h1>
+    <p>This is a hands-on walkthrough of two new tools on the Corporate Action detail page. Everything below is
+      <b>live and clickable</b> — using real sample data — so you can try it exactly as it works in the admin system.</p>
+  </div>
+
+  <div class="steps">
+    <div class="step"><div class="n">1</div><h3>Click a tally box</h3><p>Click <b>Approve</b>, <b>Reject</b>, <b>Not Voted</b> (etc.) to instantly filter the voter list below to just those shareholders.</p></div>
+    <div class="step"><div class="n">2</div><h3>Export what you see</h3><p>Press <b>Export CSV</b> to download the currently shown (filtered) list as a spreadsheet you can open in Excel.</p></div>
+    <div class="step"><div class="n">3</div><h3>Open an investor</h3><p>Click any investor’s <b>name</b> to jump straight to their profile.</p></div>
+  </div>
+
+  <div class="screen-label"><span class="dot"></span> Live preview of the admin screen — try clicking</div>
+
+  <div class="app-frame">
+    <div class="app-topbar">
+      <span class="crumbs">Corporate Actions › <b>Manage</b></span>
+    </div>
+    <div class="app-body">
+      <div class="page-title">Satu Hati Berhad <span class="status-badge">CLOSED</span></div>
+      <div style="color:var(--muted);font-size:13px;">Share buyback — nominee voting result</div>
+
+      <!-- Vote Tally -->
+      <div class="card">
+        <div class="card-header">Vote Tally</div>
+        <div class="card-body">
+          <div class="tally-row" id="tallyRow">
+            <button class="tally-box active" data-filter="all">
+              <div class="num">12</div><div class="lbl">Total Eligible</div>
+            </button>
+            <button class="tally-box" data-filter="approve">
+              <div class="num green">6</div><div class="lbl">Approve</div>
+              <div class="pct">93.8% of shares voted</div>
+            </button>
+            <button class="tally-box" data-filter="reject">
+              <div class="num red">4</div><div class="lbl">Reject</div>
+              <div class="pct">6.2% of shares voted</div>
+            </button>
+            <button class="tally-box" data-filter="cast">
+              <div class="num">10</div><div class="lbl">Votes Cast</div>
+            </button>
+            <button class="tally-box" data-filter="notVoted">
+              <div class="num grey">2</div><div class="lbl">Not Voted</div>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <div class="callout"><div class="badge-n">i</div><div>
+        <b>“% of shares voted”</b> shows the result weighted by <b>how many shares</b> each voter holds — not just a headcount.
+        Here 6 of 10 voters approved (60% by head), but because the big shareholders approved, that’s <b>93.8% of the shares</b> that voted.
+      </div></div>
+
+      <!-- Voter Roster -->
+      <div class="card">
+        <div class="card-header">
+          <span class="roster-head">
+            <strong>Voter Roster</strong>
+            <span class="filter-pill" id="filterPill" style="display:none;"></span>
+          </span>
+          <button class="btn-export" id="exportBtn">Export CSV</button>
+        </div>
+        <div class="card-body">
+          <div class="table-scroll">
+            <table class="roster">
+              <thead>
+                <tr>
+                  <th>Name</th><th>Shareholder ID</th><th>ECF Account No</th>
+                  <th class="num-cell">Shares Held</th><th class="num-cell">Amount Invested</th>
+                  <th>Vote</th><th>Voted At</th>
+                </tr>
+              </thead>
+              <tbody id="rosterBody"></tbody>
+            </table>
+          </div>
+          <div class="tip" id="emptyHint" style="display:none;">No voters match this filter.</div>
+        </div>
+      </div>
+
+      <div class="callout"><div class="badge-n">1</div><div>
+        <b>Filter:</b> the roster above always shows exactly the group you selected in the tally boxes. The pill next to
+        “Voter Roster” tells you which filter is active and how many of the 12 are shown.
+      </div></div>
+      <div class="callout"><div class="badge-n">2</div><div>
+        <b>Export CSV</b> downloads <b>only the rows currently shown</b>. Filter to “Reject” then export, and you get just the
+        rejecters — handy for follow-up. The file name includes the filter so you know what’s inside.
+      </div></div>
+      <div class="callout"><div class="badge-n">3</div><div>
+        <b>Investor names are links</b> — click one to open that investor’s profile (names not linked to a platform account
+        show as plain text).
+      </div></div>
+    </div>
+  </div>
+
+  <div class="foot">Interactive guide · sample data · pitchIN Corporate Action (SEC-428)</div>
+</div>
+
+<div id="toast"></div>
+
+<script>
+  // ---- Sample roster (Corporate Action #50 — the verified UAT dataset) ----
+  // decision: 1 = Approved, 2 = Rejected, null = Not voted
+  const VOTERS = [
+    { name:'Investor',       hid:9,    ecf:'000-00000001', shares:5000, invested:50000, decision:1,    linked:true,  votedAt:'01 Jul 2026 14:34' },
+    { name:'Investor2',      hid:1,    ecf:'000-00000003', shares:3000, invested:30000, decision:1,    linked:true,  votedAt:'01 Jul 2026 14:34' },
+    { name:'Investor',       hid:1001, ecf:'000-00001001', shares:800,  invested:8000,  decision:1,    linked:true,  votedAt:'01 Jul 2026 14:34' },
+    { name:'Investor2',      hid:1002, ecf:'000-00001002', shares:1200, invested:12000, decision:1,    linked:true,  votedAt:'01 Jul 2026 14:34' },
+    { name:'Investor Three', hid:1004, ecf:'000-00001004', shares:2000, invested:20000, decision:1,    linked:true,  votedAt:'01 Jul 2026 14:34' },
+    { name:'Investor2',      hid:1006, ecf:'000-00001006', shares:150,  invested:1500,  decision:1,    linked:true,  votedAt:'01 Jul 2026 14:34' },
+    { name:'Wonderfly (M) Sdn Bhd', hid:10, ecf:'000-00000002', shares:100, invested:1000, decision:2, linked:false, votedAt:'01 Jul 2026 14:34' },
+    { name:'Investor Three', hid:999,  ecf:'000-00000004', shares:250,  invested:2500,  decision:2,    linked:true,  votedAt:'01 Jul 2026 14:34' },
+    { name:'Wonderfly (M) Sdn Bhd', hid:1003, ecf:'000-00001003', shares:50, invested:500, decision:2, linked:false, votedAt:'01 Jul 2026 14:34' },
+    { name:'Investor',       hid:1005, ecf:'000-00001005', shares:400,  invested:4000,  decision:2,    linked:true,  votedAt:'01 Jul 2026 14:34' },
+    { name:'Investor',       hid:1007, ecf:'000-00001007', shares:600,  invested:6000,  decision:null, linked:true,  votedAt:null },
+    { name:'Investor2',      hid:1008, ecf:'000-00001008', shares:900,  invested:9000,  decision:null, linked:true,  votedAt:null },
+  ];
+
+  const FILTERS = {
+    all:      { test: () => true,                 label: null },
+    approve:  { test: v => v.decision === 1,       label: 'Approved' },
+    reject:   { test: v => v.decision === 2,       label: 'Rejected' },
+    cast:     { test: v => v.decision !== null,    label: 'Votes Cast' },
+    notVoted: { test: v => v.decision === null,    label: 'Not Voted' },
+  };
+
+  let activeFilter = 'all';
+
+  const fmt = n => n.toLocaleString('en-US');
+  const fmt2 = n => n.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+  const voteLabel = d => d === 1 ? 'Approved' : d === 2 ? 'Rejected' : '—';
+  const voteClass = d => d === 1 ? 'vote-approved' : d === 2 ? 'vote-rejected' : 'vote-none';
+
+  function visibleRows() { return VOTERS.filter(FILTERS[activeFilter].test); }
+
+  function renderRoster() {
+    const rows = visibleRows();
+    const body = document.getElementById('rosterBody');
+    body.innerHTML = rows.map(v => `
+      <tr>
+        <td>${v.linked
+              ? `<a class="name-link" data-name="${v.name}">${v.name}</a>`
+              : `<span>${v.name}</span>`}</td>
+        <td>${v.hid}</td>
+        <td>${v.ecf}</td>
+        <td class="num-cell">${fmt(v.shares)}</td>
+        <td class="num-cell">${fmt2(v.invested)}</td>
+        <td><span class="vote-tag ${voteClass(v.decision)}">${voteLabel(v.decision)}</span></td>
+        <td>${v.votedAt || '—'}</td>
+      </tr>`).join('');
+
+    // filter pill
+    const pill = document.getElementById('filterPill');
+    const f = FILTERS[activeFilter];
+    if (f.label) {
+      pill.style.display = 'inline-block';
+      pill.textContent = `Filtered: ${f.label} — ${rows.length} of ${VOTERS.length}`;
+    } else {
+      pill.style.display = 'none';
+    }
+    document.getElementById('emptyHint').style.display = rows.length ? 'none' : 'block';
+    document.getElementById('exportBtn').disabled = rows.length === 0;
+
+    // wire name links
+    body.querySelectorAll('.name-link').forEach(a => {
+      a.addEventListener('click', () => toast(`In the admin system this opens ${a.dataset.name}’s investor profile.`));
+    });
+  }
+
+  // Tally box clicks
+  document.getElementById('tallyRow').addEventListener('click', e => {
+    const box = e.target.closest('.tally-box');
+    if (!box) return;
+    const f = box.dataset.filter;
+    // clicking the active box (or Total Eligible) clears the filter
+    activeFilter = (f === activeFilter && f !== 'all') ? 'all' : f;
+    document.querySelectorAll('.tally-box').forEach(b =>
+      b.classList.toggle('active', b.dataset.filter === activeFilter));
+    renderRoster();
+  });
+
+  // CSV export of the currently visible rows
+  document.getElementById('exportBtn').addEventListener('click', () => {
+    const rows = visibleRows();
+    if (!rows.length) return;
+    const headers = ['Name','Shareholder ID','ECF Account No','Shares Held','Amount Invested','Vote','Voted At'];
+    const esc = s => `"${String(s).replace(/"/g, '""')}"`;
+    const lines = [headers.map(esc).join(',')];
+    rows.forEach(v => lines.push([
+      v.name, v.hid, v.ecf, v.shares, fmt2(v.invested), voteLabel(v.decision), v.votedAt || ''
+    ].map(esc).join(',')));
+    const suffix = FILTERS[activeFilter].label ? '-' + FILTERS[activeFilter].label.replace(/\s+/g,'').toLowerCase() : '';
+    const blob = new Blob([lines.join('\r\n')], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url; a.download = `corporate-action-50-voters${suffix}.csv`;
+    document.body.appendChild(a); a.click(); a.remove();
+    URL.revokeObjectURL(url);
+    toast(`Downloaded ${rows.length} row${rows.length===1?'':'s'} → corporate-action-50-voters${suffix}.csv`);
+  });
+
+  let toastT;
+  function toast(msg) {
+    const t = document.getElementById('toast');
+    t.textContent = msg; t.classList.add('show');
+    clearTimeout(toastT); toastT = setTimeout(() => t.classList.remove('show'), 3200);
+  }
+
+  renderRoster();
+</script>
+</body>
+</html>
