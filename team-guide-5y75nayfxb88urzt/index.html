@@ -1153,6 +1153,13 @@ stage stops: implement &rarr; gates &rarr; review &rarr; draft PR, one sitting. 
 for</strong> money / settlement flows, UI that needs the full design gate, or multi-part changes
 &mdash; those take the standard four stages.</p>
 
+        <p class="fp-lead" style="margin-top:10px"><strong>Even shorter, for a bug:</strong>
+<code>/fix-bug FRC-832</code> is the one-liner front door to this same lean arc &mdash; it makes the
+defaults automatic so you don&rsquo;t have to remember them: no <code>--lean</code> to type,
+<strong>Sonnet</strong> (Opus only for genuinely hard diagnosis), a branch off the product default,
+and the local verification run in a subagent to keep the session small. It stops and routes you back
+to the standard four stages the moment the change turns out not to be simple.</p>
+
         <div class="demo" data-demo="oneshot">
           <div class="demo-term">
             <div class="dt-bar"><span class="d r"></span><span class="d y"></span><span class="d g"></span><span class="dt-title">The session &mdash; just one</span><button class="replay" type="button">&#8635; Replay</button></div>
