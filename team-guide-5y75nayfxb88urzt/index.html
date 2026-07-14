@@ -619,6 +619,7 @@ it leaves behind</strong> &mdash; the ticket, the doc, the PR.</p>
           <div class="fg-label">Delivery</div>
           <button class="fnode" data-fstage="ship" type="button" role="tab" aria-selected="false"><span class="fn-num">8</span><span class="fn-tx">Ship it<small>ticket-to-ship &middot; 4 stages</small></span></button>
           <button class="fnode" data-fstage="oneshot" type="button" role="tab" aria-selected="false"><span class="fn-num">9</span><span class="fn-tx">One-shot<small>ticket-to-ship --lean</small></span></button>
+          <button class="fnode" data-fstage="fixbug" type="button" role="tab" aria-selected="false"><span class="fn-num">10</span><span class="fn-tx">Fix a bug<small>fix-bug</small></span></button>
         </div>
       </aside>
 
@@ -626,7 +627,7 @@ it leaves behind</strong> &mdash; the ticket, the doc, the PR.</p>
 
       <!-- 1 · Brainstorm -->
       <div class="fpanel active" data-fstage="brainstorm">
-        <div class="fp-kicker">Discovery &middot; 1 of 9</div>
+        <div class="fp-kicker">Discovery &middot; 1 of 10</div>
         <h3>Brainstorm &mdash; a thinking partner, before any direction exists</h3>
         <p class="fp-lead">You bring the one-liner; the agent explores options and challenges
 assumptions until there&rsquo;s a direction worth committing to.</p>
@@ -671,7 +672,7 @@ assumptions until there&rsquo;s a direction worth committing to.</p>
 
       <!-- 2 · Grill -->
       <div class="fpanel" data-fstage="grill">
-        <div class="fp-kicker">Discovery &middot; 2 of 9</div>
+        <div class="fp-kicker">Discovery &middot; 2 of 10</div>
         <h3>Grill &mdash; the plan is stress-tested against our own docs</h3>
         <p class="fp-lead">One question at a time, each with a recommended answer, checked against
 the domain docs and past decisions. Decisions get written into the docs as you go.</p>
@@ -717,7 +718,7 @@ the domain docs and past decisions. Decisions get written into the docs as you g
 
       <!-- 3 · PRD -->
       <div class="fpanel" data-fstage="prd">
-        <div class="fp-kicker">Discovery &middot; 3 of 9</div>
+        <div class="fp-kicker">Discovery &middot; 3 of 10</div>
         <h3>PRD &mdash; the conversation becomes the document</h3>
         <p class="fp-lead">No re-interview. The agent writes the PRD from everything already
 decided, in the project&rsquo;s own vocabulary, and publishes it straight into ClickUp.</p>
@@ -760,7 +761,7 @@ decided, in the project&rsquo;s own vocabulary, and publishes it straight into C
 
       <!-- 4 · Tickets -->
       <div class="fpanel" data-fstage="tickets">
-        <div class="fp-kicker">Discovery &middot; 4 of 9</div>
+        <div class="fp-kicker">Discovery &middot; 4 of 10</div>
         <h3>Tickets &mdash; the PRD becomes buildable pieces</h3>
         <p class="fp-lead">One feature, broken into stories a session can ship &mdash; each with
 testable acceptance criteria. The Definition-of-Ready gate stops vague tickets here.</p>
@@ -810,7 +811,7 @@ testable acceptance criteria. The Definition-of-Ready gate stops vague tickets h
 
       <!-- 5 · Prototype -->
       <div class="fpanel design" data-fstage="prototype">
-        <div class="fp-kicker">Design &middot; 5 of 9</div>
+        <div class="fp-kicker">Design &middot; 5 of 10</div>
         <h3>Prototype &mdash; click the options, don&rsquo;t imagine them</h3>
         <p class="fp-lead">Before committing to a look, the agent builds throwaway variations you
 flick between on one route. <strong>The panel on the right is a real one &mdash; try A, B and C.</strong></p>
@@ -869,7 +870,7 @@ flick between on one route. <strong>The panel on the right is a real one &mdash;
 
       <!-- 6 · Asset forge -->
       <div class="fpanel design" data-fstage="asset-forge">
-        <div class="fp-kicker">Design &middot; 6 of 9</div>
+        <div class="fp-kicker">Design &middot; 6 of 10</div>
         <h3>Asset forge &mdash; brand-safe visuals, made to order</h3>
         <p class="fp-lead">Any new visual the feature needs &mdash; icons, banners, empty-state
 illustrations, share images &mdash; comes from <code>asset-forge</code>, through brand and
@@ -920,7 +921,7 @@ anti-slop gates. Never freeform imagery inline, so nothing off-palette ships.</p
 
       <!-- 7 · Design gate -->
       <div class="fpanel design" data-fstage="design-gate">
-        <div class="fp-kicker">Design &middot; 7 of 9</div>
+        <div class="fp-kicker">Design &middot; 7 of 10</div>
         <h3>Design gate &mdash; the brand is enforced, not remembered</h3>
         <p class="fp-lead">Every UI change is graded against <code>design-system/DESIGN.md</code>
 on the <strong>built, running screen</strong> &mdash; CustomerWeb gets the full brand bar, the
@@ -960,7 +961,7 @@ the Implement stage &mdash; it sits here because it&rsquo;s the design bar every
 
       <!-- 8 · Ship it (ticket-to-ship, four ticket stages) -->
       <div class="fpanel" data-fstage="ship">
-        <div class="fp-kicker">Delivery &middot; 8 of 9 &middot; one skill, four ticket stages</div>
+        <div class="fp-kicker">Delivery &middot; 8 of 10 &middot; one skill, four ticket stages</div>
         <h3>Ship it &mdash; one invocation drives all of delivery</h3>
         <p class="fp-lead">You type <code>/ticket-to-ship FRC-813</code> &mdash; the skill plus your
 ticket ID, nothing else. Delivery runs on the <strong>Feature</strong> (FRC-813) &mdash; it owns the
@@ -1145,20 +1146,13 @@ posts the evidence. Then QA and UAT are genuinely yours.</p>
 
       <!-- 9 · One-shot -->
       <div class="fpanel" data-fstage="oneshot">
-        <div class="fp-kicker">Delivery &middot; 9 of 9 &middot; the trusted shortcut</div>
+        <div class="fp-kicker">Delivery &middot; 9 of 10 &middot; the trusted shortcut</div>
         <h3>One-shot &mdash; the whole arc in a single session</h3>
         <p class="fp-lead"><strong>When to use it:</strong> a change <em>you</em> judge simple &mdash;
 a small bug, a copy fix, a one-screen tweak. Add <code>--lean</code> and the router skips the
 stage stops: implement &rarr; gates &rarr; review &rarr; draft PR, one sitting. <strong>Not
 for</strong> money / settlement flows, UI that needs the full design gate, or multi-part changes
 &mdash; those take the standard four stages.</p>
-
-        <p class="fp-lead" style="margin-top:10px"><strong>Even shorter, for a bug:</strong>
-<code>/fix-bug FRC-832</code> is the one-liner front door to this same lean arc &mdash; it makes the
-defaults automatic so you don&rsquo;t have to remember them: no <code>--lean</code> to type,
-<strong>Sonnet</strong> (Opus only for genuinely hard diagnosis), a branch off the product default,
-and the local verification run in a subagent to keep the session small. It stops and routes you back
-to the standard four stages the moment the change turns out not to be simple.</p>
 
         <div class="demo" data-demo="oneshot">
           <div class="demo-term">
@@ -1195,6 +1189,52 @@ to the standard four stages the moment the change turns out not to be simple.</p
         <p class="micro" style="margin-top:12px">Real example &mdash; the same one-shot arc on an actual staging bug: <a href="../frc-832-filter-fix/">FRC-832, a filter i18n fix from ticket to reviewed PR</a>.</p>
         <div class="fp-foot">
           <button class="fnav prev" data-go="ship" type="button">&larr; Ship it</button>
+          <button class="fnav next" data-go="fixbug" type="button">Next &middot; the bug one-liner &rarr;</button>
+        </div>
+      </div>
+
+      <!-- 10 · Fix a bug (fix-bug — the standalone bug shortcut) -->
+      <div class="fpanel" data-fstage="fixbug">
+        <div class="fp-kicker">Delivery &middot; 10 of 10 &middot; the bug one-liner</div>
+        <h3>Fix a bug &mdash; the one-line front door</h3>
+        <p class="fp-lead"><code>/fix-bug FRC-832</code> is the shortcut for a <strong>simple ClickUp
+bug</strong>. It&rsquo;s a thin wrapper over the one-shot arc that makes the defaults automatic, so you
+don&rsquo;t have to remember them: <strong>lean one-shot</strong> (no <code>--lean</code> to type),
+<strong>Sonnet</strong> (Opus only for genuinely hard diagnosis), a branch off the <strong>product
+default</strong>, and the local verification run in a <strong>subagent</strong> so the main session
+stays small. It <strong>stops and routes you back</strong> to the standard four stages the moment the
+change turns out not to be simple &mdash; money / settlement code, multi-behaviour, or UI needing the
+full design gate.</p>
+
+        <div class="demo" data-demo="fixbug">
+          <div class="demo-term">
+            <div class="dt-bar"><span class="d r"></span><span class="d y"></span><span class="d g"></span><span class="dt-title">The session &mdash; one, on Sonnet</span><button class="replay" type="button">&#8635; Replay</button></div>
+            <div class="dt-body">
+              <div class="dline you" data-step="1" data-delay="250"><span class="pfx">&rsaquo;</span><span class="type">/fix-bug FRC-832</span></div>
+              <div class="dline" data-step="2" data-delay="850">Sonnet &middot; from the repo &middot; branch off <span class="em">staging</span> &middot; ticket read once</div>
+              <div class="dline" data-step="3" data-delay="900">bug &rarr; <span class="em">diagnose</span> writes the fix + regression test &middot; local verify in a <span class="em">subagent</span> &mdash; verdict only</div>
+              <div class="dline" data-step="4" data-delay="850"><span class="ok">&check;</span> review-gated draft PR &mdash; worktree cleanup handed to <span class="em">open-pr</span></div>
+            </div>
+          </div>
+          <div class="demo-side">
+            <div class="out-label">The artifact &middot; a reviewed draft PR, one sitting</div>
+            <div class="mock mock-pr" data-step="5" data-delay="500">
+              <div class="mk-head"><span class="mk-app gh">GitHub</span><span class="mk-pill draft">Draft PR</span></div>
+              <div class="mk-title" style="font-family:ui-monospace,'SF Mono',Menlo,Consolas,monospace;font-size:12.5px">FRC-832 filter shows a proper name, not the internal value</div>
+              <div class="mk-row"><code>feat/FRC-832-filter-labels</code> &rarr; <code>staging</code></div>
+            </div>
+            <p class="micro" style="margin-top:0">Same lean arc as one-shot &mdash; but you never type a flag, and it defaults to Sonnet.</p>
+          </div>
+        </div>
+
+        <div class="fmeta">
+          <span><b>When</b>a simple bug &mdash; label / mapping / copy / display fixes</span>
+          <span><b>Automatic</b>Sonnet &middot; product-default branch &middot; subagent-isolated verify</span>
+          <span><b>Escalates</b>not-simple &rarr; stops, routes you to the standard four stages</span>
+        </div>
+        <p class="micro" style="margin-top:12px">Real example &mdash; this exact skill on an actual staging bug: <a href="../frc-832-filter-fix/">FRC-832, a filter i18n fix from ticket to reviewed PR</a>.</p>
+        <div class="fp-foot">
+          <button class="fnav prev" data-go="oneshot" type="button">&larr; One-shot</button>
           <button class="fnav next" data-href="#git-tickets" type="button">Shipped &middot; now the rules it followed &rarr;</button>
         </div>
       </div>
