@@ -662,6 +662,32 @@ footer .meta a{color:#cfcfcf}
         </div>
       </div>
 
+      <!-- fix-bug -->
+      <div class="skill">
+        <div class="shead">
+          <svg class="ic" viewBox="0 0 24 24"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M9 9v-1a3 3 0 0 1 6 0v1"/><path d="M8 9h8a6 6 0 0 1 1 3v3a5 5 0 0 1 -10 0v-3a6 6 0 0 1 1 -3"/><path d="M3 13l4 0"/><path d="M17 13l4 0"/><path d="M12 20l0 -6"/><path d="M4 19l3.35 -2"/><path d="M20 19l-3.35 -2"/><path d="M4 7l3.75 2.4"/><path d="M20 7l-3.75 2.4"/></svg>
+          <span class="sk-name"><code>fix-bug</code></span>
+          <span class="role">Bug shortcut</span>
+        </div>
+        <p class="what">The <b>one-line front door for a simple ClickUp bug</b> &mdash; a thin wrapper
+          over <code>ticket-to-ship --lean</code> that makes the four things you keep forgetting the
+          <b>defaults</b>: lean one-shot (no flag to type), a branch off the <b>product default</b>
+          (latest staging), <b>Sonnet</b> (escalate to Opus only for genuinely hard diagnosis), and
+          the heavy local verification pushed into a <b>subagent</b> so the main session stays small.</p>
+        <div class="rows">
+          <div class="row"><span class="lbl">Fires</span><span class="val"><span class="fire direct">Direct</span> &mdash; <code>/fix-bug FRC-832</code>, from inside the repo. You never type &ldquo;one-shot&rdquo;.</span></div>
+          <div class="row"><span class="lbl">Escalates</span><span class="val">If the change isn&rsquo;t actually simple &mdash; money/settlement code, multi-behaviour, or UI needing the design gate &mdash; it <b>stops</b> and routes you to the standard <code>ticket-to-ship</code> path.</span></div>
+          <div class="row"><span class="lbl">Produces</span><span class="val">A review-gated draft PR in one session, on Sonnet &mdash; then hands worktree cleanup to <code>open-pr</code>.</span></div>
+        </div>
+        <button class="sd-play" type="button">&#9654;&#xFE0E; Watch it work</button>
+        <div class="sdemo">
+            <div class="dl you"><span class="pfx">&rsaquo;</span>/fix-bug FRC-832</div>
+            <div class="dl">Sonnet &middot; branch off staging &middot; ticket read once</div>
+            <div class="dl">fix + local verify in a <span class="em">subagent</span> &mdash; verdict only</div>
+            <div class="dl"><span class="ok">&check;</span> review-gated draft PR, one sitting</div>
+        </div>
+      </div>
+
       <!-- pr-review -->
       <div class="skill">
         <div class="shead">
