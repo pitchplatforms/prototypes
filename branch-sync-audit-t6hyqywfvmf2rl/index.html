@@ -50,6 +50,8 @@ a.ref{font-weight:600;text-decoration:none;white-space:nowrap;}
 .mono{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:12.5px;white-space:nowrap;}
 .dim{color:var(--mut);font-size:12.5px;white-space:nowrap;}
 .note{font-size:12.5px;color:var(--ink2);min-width:220px;}
+.cmt{font-size:12px;white-space:nowrap;margin:2px 0;}
+.cmt b{font-weight:600;color:var(--ink2);}
 .chip{display:inline-block;font-size:11px;font-weight:600;border-radius:5px;padding:1px 7px;margin:1px 2px 1px 0;white-space:nowrap;}
 .chip-stg{background:var(--chipstg);color:var(--chipstgink);}
 .chip-uat{background:var(--chipuat);color:var(--chipuatink);}
@@ -117,44 +119,50 @@ code{background:var(--chipstg);border-radius:4px;padding:0 4px;font-size:12.5px;
 
     <section id="split" class="cat">
       <h2><span class="sev sev-critical">⛔ critical</span> 1 · Features split across repos — half in production, half not</h2>
-      <p class="catdesc">These tickets have code <strong>live in production in one repo</strong> while their counterpart in a sibling repo is still stuck in UAT/staging. This is the single most direct cause of “works in staging, breaks in prod”: in staging all halves are present; in prod they are not. Each row needs a decision — promote the missing half, or roll back / feature-gate the shipped half.</p>
+      <p class="catdesc">These tickets have code <strong>live in production in one repo</strong> while their counterpart in a sibling repo is still stuck in UAT/staging. This is the single most direct cause of “works in staging, breaks in prod”: in staging all halves are present; in prod they are not. Each row needs a decision — promote the missing half, or roll back / feature-gate the shipped half. In the commits column, a <span class="chip chip-prod">PROD</span>-labelled SHA is the copy on the production branch — the revert target if you roll back.</p>
       <div class="tablewrap"><table>
-        <thead><tr><th></th><th>Ticket</th><th>ClickUp status</th><th>Where each repo's code actually is (git proof)</th><th>What's wrong</th></tr></thead>
+        <thead><tr><th></th><th>Ticket</th><th>ClickUp status</th><th>Where each repo's code actually is (git proof)</th><th>Commits / PRs</th><th>What's wrong</th></tr></thead>
         <tbody><tr>
           <td><input type="checkbox" class="tick" data-id="split-SEC-286" title="mark as handled"></td>
           <td><a class="ref" href="https://app.clickup.com/t/86d2qrchg" target="_blank" rel="noopener">SEC-286</a><div class="tname">Shareholder Portfolio States + eKYC Nudge Placements</div></td>
           <td><span class="pill">staging</span></td>
           <td><span class="chip chip-uat">API: UAT</span> <span class="chip chip-uat">Gateway: UAT</span> <span class="chip chip-prod">CustomerWeb: PROD</span></td>
+          <td><div class="cmt"><b>API</b> · <a class="mono" href="https://github.com/pitchplatforms/pitchinAPI/commit/a6d3f17a9" target="_blank" rel="noopener" title="SEC-416 SEC-286 New flag in Shareholding model (#1603)">a6d3f17a9</a> <a href="https://github.com/pitchplatforms/pitchinAPI/pull/1603" target="_blank" rel="noopener">#1603</a> <span class="chip chip-uat">UAT</span></div><div class="cmt"><b>CustomerWeb</b> · <a class="mono" href="https://github.com/pitchplatforms/PitchinCustomerWeb/commit/0914ed39" target="_blank" rel="noopener" title="SEC-417 SEC-286 Fixed CW UI issue after merge to staging (#1433)">0914ed39</a> <a href="https://github.com/pitchplatforms/PitchinCustomerWeb/pull/1433" target="_blank" rel="noopener">#1433</a> <span class="chip chip-prod">PROD</span><br>&nbsp;&nbsp;<a class="mono" href="https://github.com/pitchplatforms/PitchinCustomerWeb/commit/03e25a42" target="_blank" rel="noopener" title="SEC-417 SEC-286 Fixed CW UI issue after merge to staging (#1433)">03e25a42</a> <a href="https://github.com/pitchplatforms/PitchinCustomerWeb/pull/1433" target="_blank" rel="noopener">#1433</a> <span class="chip chip-uat">UAT</span><br>&nbsp;&nbsp;<a class="mono" href="https://github.com/pitchplatforms/PitchinCustomerWeb/commit/fccb0bc6" target="_blank" rel="noopener" title="SEC-417 SEC-286 Portfolio/counter presentation (#1431)">fccb0bc6</a> <a href="https://github.com/pitchplatforms/PitchinCustomerWeb/pull/1431" target="_blank" rel="noopener">#1431</a> <span class="chip chip-uat">UAT</span></div></td>
           <td class="note">CustomerWeb prod carries the SEC-286 “UI fix after merge” commit but <em>not</em> the underlying feature commit (<a href='https://github.com/pitchplatforms/PitchinCustomerWeb/pull/1431' target='_blank' rel='noopener'>#1431</a>); the API-side flag (SEC-416) and endpoints (SEC-418) are UAT-only. Prod UI shipped ahead of its backend.</td>
         </tr><tr>
           <td><input type="checkbox" class="tick" data-id="split-SEC-319" title="mark as handled"></td>
           <td><a class="ref" href="https://app.clickup.com/t/86d2r5g0v" target="_blank" rel="noopener">SEC-319</a><div class="tname">[BUG] Document Approval feature implemented in incorrect module</div></td>
           <td><span class="pill">uat</span></td>
           <td><span class="chip chip-uat">API: UAT</span> <span class="chip chip-uat">AdminWeb: UAT</span> <span class="chip chip-prod">CustomerWeb: PROD</span></td>
+          <td><div class="cmt"><b>API</b> · <a class="mono" href="https://github.com/pitchplatforms/pitchinAPI/commit/9ed8ee886" target="_blank" rel="noopener" title="SEC-319 Document Approval feature implemented in incorrect module (#1482)">9ed8ee886</a> <a href="https://github.com/pitchplatforms/pitchinAPI/pull/1482" target="_blank" rel="noopener">#1482</a> <span class="chip chip-uat">UAT</span><br>&nbsp;&nbsp;<a class="mono" href="https://github.com/pitchplatforms/pitchinAPI/commit/822b89ede" target="_blank" rel="noopener" title="SEC-319 Document Approval feature implemented in incorrect module (#1482)">822b89ede</a> <a href="https://github.com/pitchplatforms/pitchinAPI/pull/1482" target="_blank" rel="noopener">#1482</a> <span class="chip chip-uat">UAT</span></div><div class="cmt"><b>AdminWeb</b> · <a class="mono" href="https://github.com/pitchplatforms/PitchinAdminWeb/commit/2e9c2ebe" target="_blank" rel="noopener" title="SEC-319 [BUG] Document Approval feature implemented in incorrect module (#732)">2e9c2ebe</a> <a href="https://github.com/pitchplatforms/PitchinAdminWeb/pull/732" target="_blank" rel="noopener">#732</a> <span class="chip chip-uat">UAT</span><br>&nbsp;&nbsp;<a class="mono" href="https://github.com/pitchplatforms/PitchinAdminWeb/commit/0608e71d" target="_blank" rel="noopener" title="SEC-319 [BUG] Document Approval feature implemented in incorrect module (#732)">0608e71d</a> <a href="https://github.com/pitchplatforms/PitchinAdminWeb/pull/732" target="_blank" rel="noopener">#732</a> <span class="chip chip-uat">UAT</span></div><div class="cmt"><b>CustomerWeb</b> · <a class="mono" href="https://github.com/pitchplatforms/PitchinCustomerWeb/commit/4fb3bbb1" target="_blank" rel="noopener" title="SEC-319 [BUG] Document Approval feature implemented in incorrect module (#1315)">4fb3bbb1</a> <a href="https://github.com/pitchplatforms/PitchinCustomerWeb/pull/1315" target="_blank" rel="noopener">#1315</a> <span class="chip chip-prod">PROD</span><br>&nbsp;&nbsp;<a class="mono" href="https://github.com/pitchplatforms/PitchinCustomerWeb/commit/4ba8711a" target="_blank" rel="noopener" title="SEC-319 [BUG] Document Approval feature implemented in incorrect module (#1315)">4ba8711a</a> <a href="https://github.com/pitchplatforms/PitchinCustomerWeb/pull/1315" target="_blank" rel="noopener">#1315</a> <span class="chip chip-uat">UAT</span><br>&nbsp;&nbsp;<a class="mono" href="https://github.com/pitchplatforms/PitchinCustomerWeb/commit/5c60318a" target="_blank" rel="noopener" title="SEC-319 [BUG] Document Approval feature implemented in incorrect module (#1315)">5c60318a</a> <a href="https://github.com/pitchplatforms/PitchinCustomerWeb/pull/1315" target="_blank" rel="noopener">#1315</a> <span class="chip chip-uat">UAT</span></div></td>
           <td class="note">CustomerWeb half is in prod; AdminWeb + API halves are in UAT only.</td>
         </tr><tr>
           <td><input type="checkbox" class="tick" data-id="split-SEC-90" title="mark as handled"></td>
           <td><a class="ref" href="https://app.clickup.com/t/86d22h16d" target="_blank" rel="noopener">SEC-90</a><div class="tname">Move DR eligibility gate to post-email verification</div></td>
           <td><span class="pill">verified</span></td>
           <td><span class="chip chip-uat">API: UAT</span> <span class="chip chip-prod">Gateway: PROD</span> <span class="chip chip-uat">AdminWeb: UAT</span> <span class="chip chip-uat">CustomerWeb: UAT</span></td>
+          <td><div class="cmt"><b>API</b> · <a class="mono" href="https://github.com/pitchplatforms/pitchinAPI/commit/ee8f911e0" target="_blank" rel="noopener" title="SEC-90 Move DR eligibility gate to post-email verification (#1439)">ee8f911e0</a> <a href="https://github.com/pitchplatforms/pitchinAPI/pull/1439" target="_blank" rel="noopener">#1439</a> <span class="chip chip-uat">UAT</span></div><div class="cmt"><b>Gateway</b> · <a class="mono" href="https://github.com/pitchplatforms/pitchInNewApiGateway/commit/8b621ce" target="_blank" rel="noopener" title="SEC-90 Move DR eligibility gate to post-email verification, added gateway API (#39)">8b621ce</a> <a href="https://github.com/pitchplatforms/pitchInNewApiGateway/pull/39" target="_blank" rel="noopener">#39</a> <span class="chip chip-prod">PROD</span></div><div class="cmt"><b>AdminWeb</b> · <a class="mono" href="https://github.com/pitchplatforms/PitchinAdminWeb/commit/914126ce" target="_blank" rel="noopener" title="SEC-90 Move DR eligibility gate to post-email verification, added Create Digital Registry for company investors (#714)">914126ce</a> <a href="https://github.com/pitchplatforms/PitchinAdminWeb/pull/714" target="_blank" rel="noopener">#714</a> <span class="chip chip-uat">UAT</span></div><div class="cmt"><b>CustomerWeb</b> · <a class="mono" href="https://github.com/pitchplatforms/PitchinCustomerWeb/commit/409825ac" target="_blank" rel="noopener" title="SEC-90 Move DR eligibility gate to post-email verification (#1280)">409825ac</a> <a href="https://github.com/pitchplatforms/PitchinCustomerWeb/pull/1280" target="_blank" rel="noopener">#1280</a> <span class="chip chip-uat">UAT</span></div></td>
           <td class="note">Gateway half is in prod; API, AdminWeb and CustomerWeb halves are in UAT only.</td>
         </tr><tr>
           <td><input type="checkbox" class="tick" data-id="split-FRC-708" title="mark as handled"></td>
           <td><a class="ref" href="https://app.clickup.com/t/86d2nt39e" target="_blank" rel="noopener">FRC-708</a><div class="tname">PSTX Order Module Enhancement</div></td>
           <td><span class="pill">staging</span></td>
           <td><span class="chip chip-prod">API: PROD</span> <span class="chip chip-uat">CustomerWeb: UAT</span></td>
+          <td><div class="cmt"><b>API</b> · <a class="mono" href="https://github.com/pitchplatforms/pitchinAPI/commit/8a42d1857" target="_blank" rel="noopener" title="FRC-708 PSTX Order Module — investor fills + safe rejection reason (#73) (#1583)">8a42d1857</a> <a href="https://github.com/pitchplatforms/pitchinAPI/pull/73" target="_blank" rel="noopener">#73</a> <a href="https://github.com/pitchplatforms/pitchinAPI/pull/1583" target="_blank" rel="noopener">#1583</a> <span class="chip chip-uat">UAT</span></div><div class="cmt"><b>CustomerWeb</b> · <a class="mono" href="https://github.com/pitchplatforms/PitchinCustomerWeb/commit/b71df5b9" target="_blank" rel="noopener" title="FRC-708 PSTX Order Module — investor order screen redesign (Customer Web) (#1400)">b71df5b9</a> <a href="https://github.com/pitchplatforms/PitchinCustomerWeb/pull/1400" target="_blank" rel="noopener">#1400</a> <span class="chip chip-uat">UAT</span></div></td>
           <td class="note">API half is in prod; CustomerWeb half is in UAT only.</td>
         </tr><tr>
           <td><input type="checkbox" class="tick" data-id="split-GEC-201" title="mark as handled"></td>
           <td><a class="ref" href="https://app.clickup.com/t/86d1p723q" target="_blank" rel="noopener">GEC-201</a><div class="tname">[BUG] PSTX Counter list does not reflect latest Buy/Sell order after transaction</div></td>
           <td><span class="pill">in production</span></td>
           <td><span class="chip chip-prod">API: PROD</span> <span class="chip chip-uat">CustomerWeb: UAT</span></td>
+          <td><div class="cmt"><b>API</b> · <a class="mono" href="https://github.com/pitchplatforms/pitchinAPI/commit/dcd26bc31" target="_blank" rel="noopener" title="GEC-201 Creating buy/sell order, it still not reflecting on counter (#1390)">dcd26bc31</a> <a href="https://github.com/pitchplatforms/pitchinAPI/pull/1390" target="_blank" rel="noopener">#1390</a> <span class="chip chip-prod">PROD</span><br>&nbsp;&nbsp;<a class="mono" href="https://github.com/pitchplatforms/pitchinAPI/commit/bfd2a2acc" target="_blank" rel="noopener" title="fix: persist last-transacted price for live-matched PSTX trades (GEC-201 sibling) (#1615)">bfd2a2acc</a> <a href="https://github.com/pitchplatforms/pitchinAPI/pull/1615" target="_blank" rel="noopener">#1615</a> <span class="chip chip-uat">UAT</span><br>&nbsp;&nbsp;<a class="mono" href="https://github.com/pitchplatforms/pitchinAPI/commit/3afc11303" target="_blank" rel="noopener" title="GEC-201 Creating buy/sell order, it still not reflecting on counter (#1390)">3afc11303</a> <a href="https://github.com/pitchplatforms/pitchinAPI/pull/1390" target="_blank" rel="noopener">#1390</a> <span class="chip chip-uat">UAT</span></div><div class="cmt"><b>CustomerWeb</b> · <a class="mono" href="https://github.com/pitchplatforms/PitchinCustomerWeb/commit/4c118b77" target="_blank" rel="noopener" title="GEC-201 PSTX Counter list does not reflect latest Buy/Sell order after transaction (#1226)">4c118b77</a> <a href="https://github.com/pitchplatforms/PitchinCustomerWeb/pull/1226" target="_blank" rel="noopener">#1226</a> <span class="chip chip-uat">UAT</span></div></td>
           <td class="note">ClickUp says “in production”, API half is in prod — but the CustomerWeb half is in UAT only. The prod bug this fixes is at best half-fixed.</td>
         </tr><tr>
           <td><input type="checkbox" class="tick" data-id="split-FRC-586" title="mark as handled"></td>
           <td><a class="ref" href="https://app.clickup.com/t/86d1hz9vb" target="_blank" rel="noopener">FRC-586</a><div class="tname">(BE) create Approve Status column in DB and update investor list filter</div></td>
           <td><span class="pill">canceled</span></td>
           <td><span class="chip chip-uat">API: UAT</span> <span class="chip chip-prod">Gateway: PROD</span></td>
+          <td><div class="cmt"><b>API</b> · <a class="mono" href="https://github.com/pitchplatforms/pitchinAPI/commit/bc9d84c15" target="_blank" rel="noopener" title="FRC-586 Add review status to investments and update filters (#1314)">bc9d84c15</a> <a href="https://github.com/pitchplatforms/pitchinAPI/pull/1314" target="_blank" rel="noopener">#1314</a> <span class="chip chip-uat">UAT</span></div><div class="cmt"><b>Gateway</b> · <a class="mono" href="https://github.com/pitchplatforms/pitchInNewApiGateway/commit/0d35386" target="_blank" rel="noopener" title="FRC-586 Centralize gateway and backend API configuration (#15)">0d35386</a> <a href="https://github.com/pitchplatforms/pitchInNewApiGateway/pull/15" target="_blank" rel="noopener">#15</a> <span class="chip chip-prod">PROD</span></div></td>
           <td class="note">Cancelled ticket, yet its gateway half is in prod while the API half sits in UAT (also listed under Cancelled).</td>
         </tr></tbody>
       </table></div>
@@ -162,56 +170,64 @@ code{background:var(--chipstg);border-radius:4px;padding:0 4px;font-size:12.5px;
 
     <section id="cancelled" class="cat">
       <h2><span class="sev sev-critical">⛔ critical</span> 2 · Cancelled tickets whose code is still on release branches</h2>
-      <p class="catdesc">These tickets are <strong>cancelled in ClickUp but their commits are still sitting on staging/UAT</strong> — they will silently ride the next release train into production unless someone reverts them. Two are already in production: <strong>FRC-692</strong> (in prod in both API <a href="https://github.com/pitchplatforms/pitchinAPI/pull/1429" target="_blank" rel="noopener">#1429</a> and AdminWeb <a href="https://github.com/pitchplatforms/PitchinAdminWeb/pull/708" target="_blank" rel="noopener">#708</a>) and <strong>FRC-586</strong> (gateway half in prod). Decide per row: revert the commits, or un-cancel the ticket if the work is actually wanted.</p>
+      <p class="catdesc">These tickets are <strong>cancelled in ClickUp but their commits are still sitting on staging/UAT</strong> — they will silently ride the next release train into production unless someone reverts them. Two are already in production: <strong>FRC-692</strong> (in prod in both API <a href="https://github.com/pitchplatforms/pitchinAPI/pull/1429" target="_blank" rel="noopener">#1429</a> and AdminWeb <a href="https://github.com/pitchplatforms/PitchinAdminWeb/pull/708" target="_blank" rel="noopener">#708</a>) and <strong>FRC-586</strong> (gateway half in prod). Decide per row: revert the commits, or un-cancel the ticket if the work is actually wanted. The commits column lists every commit carrying the ticket's ref with the branch it sits on — <code>git revert &lt;sha&gt;</code> on that branch (a <span class="chip chip-prod">PROD</span> label means it must be reverted on the production branch too).</p>
       <div class="tablewrap"><table>
-        <thead><tr><th></th><th>Ticket</th><th>ClickUp status</th><th>Where its code is (git proof)</th><th>Oldest commit</th></tr></thead>
+        <thead><tr><th></th><th>Ticket</th><th>ClickUp status</th><th>Where its code is (git proof)</th><th>Commits / PRs to revert</th><th>Oldest commit</th></tr></thead>
         <tbody><tr>
           <td><input type="checkbox" class="tick" data-id="cancel-FRC-308" title="mark as handled"></td>
           <td><a class="ref" href="https://app.clickup.com/t/86d0417vv" target="_blank" rel="noopener">FRC-308</a><div class="tname">Admin able to approve investor list on behalf of issuer [Investor List tab]</div></td>
           <td><span class="pill">canceled</span></td>
           <td><span class="chip chip-uat">API: UAT</span> <span class="chip chip-uat">AdminWeb: UAT</span></td>
+          <td><div class="cmt"><b>API</b> · <a class="mono" href="https://github.com/pitchplatforms/pitchinAPI/commit/c5ac891fe" target="_blank" rel="noopener" title="FRC-308 Admin able to approve investor list on behalf of issuer [Investor List tab] (#1351)">c5ac891fe</a> <a href="https://github.com/pitchplatforms/pitchinAPI/pull/1351" target="_blank" rel="noopener">#1351</a> <span class="chip chip-uat">UAT</span></div><div class="cmt"><b>AdminWeb</b> · <a class="mono" href="https://github.com/pitchplatforms/PitchinAdminWeb/commit/f98bc796" target="_blank" rel="noopener" title="FRC-308 Admin able to approve investor list on behalf of issuer [Investor List tab] (#634)">f98bc796</a> <a href="https://github.com/pitchplatforms/PitchinAdminWeb/pull/634" target="_blank" rel="noopener">#634</a> <span class="chip chip-uat">UAT</span><br>&nbsp;&nbsp;<a class="mono" href="https://github.com/pitchplatforms/PitchinAdminWeb/commit/2f299071" target="_blank" rel="noopener" title="FRC-308-enhance-issuer-managment-investor-list (#603)">2f299071</a> <a href="https://github.com/pitchplatforms/PitchinAdminWeb/pull/603" target="_blank" rel="noopener">#603</a> <span class="chip chip-uat">UAT</span></div></td>
           <td class="mono">2026-02-12</td>
         </tr><tr>
           <td><input type="checkbox" class="tick" data-id="cancel-FRC-586" title="mark as handled"></td>
           <td><a class="ref" href="https://app.clickup.com/t/86d1hz9vb" target="_blank" rel="noopener">FRC-586</a><div class="tname">(BE) create Approve Status column in DB and update investor list filter</div></td>
           <td><span class="pill">canceled</span> <span class="sev sev-critical">already in PROD</span></td>
           <td><span class="chip chip-uat">API: UAT</span> <span class="chip chip-prod">Gateway: PROD</span></td>
+          <td><div class="cmt"><b>API</b> · <a class="mono" href="https://github.com/pitchplatforms/pitchinAPI/commit/bc9d84c15" target="_blank" rel="noopener" title="FRC-586 Add review status to investments and update filters (#1314)">bc9d84c15</a> <a href="https://github.com/pitchplatforms/pitchinAPI/pull/1314" target="_blank" rel="noopener">#1314</a> <span class="chip chip-uat">UAT</span></div><div class="cmt"><b>Gateway</b> · <a class="mono" href="https://github.com/pitchplatforms/pitchInNewApiGateway/commit/0d35386" target="_blank" rel="noopener" title="FRC-586 Centralize gateway and backend API configuration (#15)">0d35386</a> <a href="https://github.com/pitchplatforms/pitchInNewApiGateway/pull/15" target="_blank" rel="noopener">#15</a> <span class="chip chip-prod">PROD</span></div></td>
           <td class="mono">2026-01-28</td>
         </tr><tr>
           <td><input type="checkbox" class="tick" data-id="cancel-FRC-658" title="mark as handled"></td>
           <td><a class="ref" href="https://app.clickup.com/t/86d2b0vpe" target="_blank" rel="noopener">FRC-658</a><div class="tname">[BUG] Incorrect status assignment: &quot;Confirmed&quot; displayed instead of &quot;Approved&quot; in Draft Stage</div></td>
           <td><span class="pill">canceled</span></td>
           <td><span class="chip chip-uat">API: UAT</span> <span class="chip chip-uat">AdminWeb: UAT</span></td>
+          <td><div class="cmt"><b>API</b> · <a class="mono" href="https://github.com/pitchplatforms/pitchinAPI/commit/3db871a53" target="_blank" rel="noopener" title="FRC-658 [BUG] Incorrect status assignment: &quot;Confirmed&quot; displayed instead of &quot;Approved&quot; in Draft Stage1 (#1484)">3db871a53</a> <a href="https://github.com/pitchplatforms/pitchinAPI/pull/1484" target="_blank" rel="noopener">#1484</a> <span class="chip chip-uat">UAT</span></div><div class="cmt"><b>AdminWeb</b> · <a class="mono" href="https://github.com/pitchplatforms/PitchinAdminWeb/commit/c053763e" target="_blank" rel="noopener" title="FRC-731 [BUG] Incorrect status assignment: frontend Admin update, related to FRC-658 (#742)">c053763e</a> <a href="https://github.com/pitchplatforms/PitchinAdminWeb/pull/742" target="_blank" rel="noopener">#742</a> <span class="chip chip-uat">UAT</span></div></td>
           <td class="mono">2026-05-05</td>
         </tr><tr>
           <td><input type="checkbox" class="tick" data-id="cancel-FRC-692" title="mark as handled"></td>
           <td><a class="ref" href="https://app.clickup.com/t/86d2fhrwa" target="_blank" rel="noopener">FRC-692</a><div class="tname">[Bug] Admin unable fill form/upload file in admin portal</div></td>
           <td><span class="pill">canceled</span> <span class="sev sev-critical">already in PROD</span></td>
           <td><span class="chip chip-prod">API: PROD</span> <span class="chip chip-prod">AdminWeb: PROD</span></td>
+          <td><div class="cmt"><b>API</b> · <a class="mono" href="https://github.com/pitchplatforms/pitchinAPI/commit/c0098e1fe" target="_blank" rel="noopener" title="FRC-692 Fixed form filling (#1429)">c0098e1fe</a> <a href="https://github.com/pitchplatforms/pitchinAPI/pull/1429" target="_blank" rel="noopener">#1429</a> <span class="chip chip-prod">PROD</span></div><div class="cmt"><b>AdminWeb</b> · <a class="mono" href="https://github.com/pitchplatforms/PitchinAdminWeb/commit/990f1d86" target="_blank" rel="noopener" title="FRC-692 Fixed form filling (#708)">990f1d86</a> <a href="https://github.com/pitchplatforms/PitchinAdminWeb/pull/708" target="_blank" rel="noopener">#708</a> <span class="chip chip-prod">PROD</span></div></td>
           <td class="mono"></td>
         </tr><tr>
           <td><input type="checkbox" class="tick" data-id="cancel-FRC-693" title="mark as handled"></td>
           <td><a class="ref" href="https://app.clickup.com/t/86d2gt32d" target="_blank" rel="noopener">FRC-693</a><div class="tname">create GoogleLink button under documents for wellness detox campaign</div></td>
           <td><span class="pill">canceled</span></td>
           <td><span class="chip chip-uat">CustomerWeb: UAT</span></td>
+          <td><div class="cmt"><b>CustomerWeb</b> · <a class="mono" href="https://github.com/pitchplatforms/PitchinCustomerWeb/commit/d158c09f" target="_blank" rel="noopener" title="FRC-693 add temporary document link button in campaign finance (#1270)">d158c09f</a> <a href="https://github.com/pitchplatforms/PitchinCustomerWeb/pull/1270" target="_blank" rel="noopener">#1270</a> <span class="chip chip-uat">UAT</span></div></td>
           <td class="mono">2026-04-03</td>
         </tr><tr>
           <td><input type="checkbox" class="tick" data-id="cancel-FRC-731" title="mark as handled"></td>
           <td><a class="ref" href="https://app.clickup.com/t/86d2wkufc" target="_blank" rel="noopener">FRC-731</a><div class="tname">[BUG] Incorrect status assignment: frontend Admin update, related to FRC-658</div></td>
           <td><span class="pill">canceled</span></td>
           <td><span class="chip chip-uat">AdminWeb: UAT</span></td>
+          <td><div class="cmt"><b>AdminWeb</b> · <a class="mono" href="https://github.com/pitchplatforms/PitchinAdminWeb/commit/c053763e" target="_blank" rel="noopener" title="FRC-731 [BUG] Incorrect status assignment: frontend Admin update, related to FRC-658 (#742)">c053763e</a> <a href="https://github.com/pitchplatforms/PitchinAdminWeb/pull/742" target="_blank" rel="noopener">#742</a> <span class="chip chip-uat">UAT</span></div></td>
           <td class="mono">2026-05-06</td>
         </tr><tr>
           <td><input type="checkbox" class="tick" data-id="cancel-GEC-173" title="mark as handled"></td>
           <td><a class="ref" href="https://app.clickup.com/t/86d12f28x" target="_blank" rel="noopener">GEC-173</a><div class="tname">[BUG] Refund Request Fails on UAT — 503 Error &amp; No Record Created</div></td>
           <td><span class="pill">canceled</span></td>
           <td><span class="chip chip-uat">CustomerWeb: UAT</span></td>
+          <td><div class="cmt"><b>CustomerWeb</b> · <a class="mono" href="https://github.com/pitchplatforms/PitchinCustomerWeb/commit/359060b4" target="_blank" rel="noopener" title="Gec 205 fixing duplicate code issue in GEC-173 (#1186)">359060b4</a> <a href="https://github.com/pitchplatforms/PitchinCustomerWeb/pull/1186" target="_blank" rel="noopener">#1186</a> <span class="chip chip-uat">UAT</span><br>&nbsp;&nbsp;<a class="mono" href="https://github.com/pitchplatforms/PitchinCustomerWeb/commit/6a3deef8" target="_blank" rel="noopener" title="GEC-173[STAGING]-[BUG] Refund Request Fails on UAT — 503 Error &amp; No Record Created (#1183)">6a3deef8</a> <a href="https://github.com/pitchplatforms/PitchinCustomerWeb/pull/1183" target="_blank" rel="noopener">#1183</a> <span class="chip chip-uat">UAT</span></div></td>
           <td class="mono">2026-02-10</td>
         </tr><tr>
           <td><input type="checkbox" class="tick" data-id="cancel-GRC-1419" title="mark as handled"></td>
           <td><a class="ref" href="https://app.clickup.com/t/86d24b016" target="_blank" rel="noopener">GRC-1419</a><div class="tname">[BUG] Missing key in form option</div></td>
           <td><span class="pill">canceled</span></td>
           <td><span class="chip chip-uat">AdminWeb: UAT</span></td>
+          <td><div class="cmt"><b>AdminWeb</b> · <a class="mono" href="https://github.com/pitchplatforms/PitchinAdminWeb/commit/4fee1172" target="_blank" rel="noopener" title="GRC-1419 [BUG] Missing key in form option (#628)">4fee1172</a> <a href="https://github.com/pitchplatforms/PitchinAdminWeb/pull/628" target="_blank" rel="noopener">#628</a> <span class="chip chip-uat">UAT</span></div></td>
           <td class="mono">2026-03-02</td>
         </tr></tbody>
       </table></div>
@@ -221,121 +237,144 @@ code{background:var(--chipstg);border-radius:4px;padding:0 4px;font-size:12.5px;
       <h2><span class="sev sev-serious">▲ serious</span> 3 · ClickUp says “in production” — git says the code never reached prod</h2>
       <p class="catdesc">23 tickets are marked <strong>“in production” in ClickUp, but their commits are not ancestors of the production branch</strong> (proof: <code>git merge-base --is-ancestor</code>, not ticket status). Until these are reconciled, ClickUp cannot be trusted to answer “is this live?”. Standouts: <strong>FRC-784</strong> and <strong>FRC-785</strong> are gateway-route fixes for <em>404-in-production</em> bugs, fixed on 12–13 June, marked “in production” — but the gateway hasn't had a production release since <strong>28 June</strong> and the fixes are only in UAT. If their API counterparts are live, those flows 404 in production right now.</p>
       <div class="tablewrap"><table>
-        <thead><tr><th></th><th>Ticket (status = “in production”)</th><th>Where the code actually is</th><th>Oldest commit</th></tr></thead>
+        <thead><tr><th></th><th>Ticket (status = “in production”)</th><th>Where the code actually is</th><th>Commits / PRs</th><th>Oldest commit</th></tr></thead>
         <tbody><tr>
           <td><input type="checkbox" class="tick" data-id="ghost-GRC-1694" title="mark as handled"></td>
           <td><a class="ref" href="https://app.clickup.com/t/86d2qgrgc" target="_blank" rel="noopener">GRC-1694</a><div class="tname">Hi team, can someone check on a production issue?</div></td>
           <td><span class="chip chip-uat">API: UAT</span></td>
+          <td><div class="cmt"><b>API</b> · <a class="mono" href="https://github.com/pitchplatforms/pitchinAPI/commit/e8a176fd8" target="_blank" rel="noopener" title="GRC-1694 change user type query to use identity no instead of ecf account no (#1456)">e8a176fd8</a> <a href="https://github.com/pitchplatforms/pitchinAPI/pull/1456" target="_blank" rel="noopener">#1456</a> <span class="chip chip-uat">UAT</span></div></td>
           <td class="mono">2026-04-21</td>
         </tr><tr>
           <td><input type="checkbox" class="tick" data-id="ghost-FRC-729" title="mark as handled"></td>
           <td><a class="ref" href="https://app.clickup.com/t/86d2u5x74" target="_blank" rel="noopener">FRC-729</a><div class="tname">Task created in localhost still flow into list</div></td>
           <td><span class="chip chip-uat">API: UAT</span></td>
+          <td><div class="cmt"><b>API</b> · <a class="mono" href="https://github.com/pitchplatforms/pitchinAPI/commit/104dc0f6c" target="_blank" rel="noopener" title="FRC-729 add development appsetting file to git (#1473)">104dc0f6c</a> <a href="https://github.com/pitchplatforms/pitchinAPI/pull/1473" target="_blank" rel="noopener">#1473</a> <span class="chip chip-uat">UAT</span></div></td>
           <td class="mono">2026-04-28</td>
         </tr><tr>
           <td><input type="checkbox" class="tick" data-id="ghost-GRC-1784" title="mark as handled"></td>
           <td><a class="ref" href="https://app.clickup.com/t/86d2w2w7x" target="_blank" rel="noopener">GRC-1784</a><div class="tname">Fixing Exceptions in staging env</div></td>
           <td><span class="chip chip-uat">API: UAT</span></td>
+          <td><div class="cmt"><b>API</b> · <a class="mono" href="https://github.com/pitchplatforms/pitchinAPI/commit/82cbac1f6" target="_blank" rel="noopener" title="GRC-1784 Fix exception in DRService (#1485)">82cbac1f6</a> <a href="https://github.com/pitchplatforms/pitchinAPI/pull/1485" target="_blank" rel="noopener">#1485</a> <span class="chip chip-uat">UAT</span></div></td>
           <td class="mono">2026-05-04</td>
         </tr><tr>
           <td><input type="checkbox" class="tick" data-id="ghost-FRC-439" title="mark as handled"></td>
           <td><a class="ref" href="https://app.clickup.com/t/86d0hwkqd" target="_blank" rel="noopener">FRC-439</a><div class="tname">One-pager feature in admin portal</div></td>
           <td><span class="chip chip-uat">API: UAT</span></td>
+          <td><div class="cmt"><b>API</b> · <a class="mono" href="https://github.com/pitchplatforms/pitchinAPI/commit/7ce4e03a6" target="_blank" rel="noopener" title="FRC-439 audit trail error fixed (#1499)">7ce4e03a6</a> <a href="https://github.com/pitchplatforms/pitchinAPI/pull/1499" target="_blank" rel="noopener">#1499</a> <span class="chip chip-uat">UAT</span><br>&nbsp;&nbsp;<a class="mono" href="https://github.com/pitchplatforms/pitchinAPI/commit/33a0d9e22" target="_blank" rel="noopener" title="FRC-439 deploy-fix [Admin Portal Changes] One-pager feature (#1490)">33a0d9e22</a> <a href="https://github.com/pitchplatforms/pitchinAPI/pull/1490" target="_blank" rel="noopener">#1490</a> <span class="chip chip-uat">UAT</span><br>&nbsp;&nbsp;<a class="mono" href="https://github.com/pitchplatforms/pitchinAPI/commit/512a3b631" target="_blank" rel="noopener" title="FRC-439 [Admin Portal Changes] One-pager feature (#1483)">512a3b631</a> <a href="https://github.com/pitchplatforms/pitchinAPI/pull/1483" target="_blank" rel="noopener">#1483</a> <span class="chip chip-uat">UAT</span></div></td>
           <td class="mono">2026-05-07</td>
         </tr><tr>
           <td><input type="checkbox" class="tick" data-id="ghost-GRC-1792" title="mark as handled"></td>
           <td><a class="ref" href="https://app.clickup.com/t/86d2wg114" target="_blank" rel="noopener">GRC-1792</a><div class="tname">Fixing click-up exceptions in production env</div></td>
           <td><span class="chip chip-uat">API: UAT</span></td>
+          <td><div class="cmt"><b>API</b> · <a class="mono" href="https://github.com/pitchplatforms/pitchinAPI/commit/ef47c4753" target="_blank" rel="noopener" title="GRC-1792 Trae AI fixing click-up exception (#1492)">ef47c4753</a> <a href="https://github.com/pitchplatforms/pitchinAPI/pull/1492" target="_blank" rel="noopener">#1492</a> <span class="chip chip-uat">UAT</span></div></td>
           <td class="mono">2026-05-07</td>
         </tr><tr>
           <td><input type="checkbox" class="tick" data-id="ghost-GRC-1818" title="mark as handled"></td>
           <td><a class="ref" href="https://app.clickup.com/t/86d2xjbb1" target="_blank" rel="noopener">GRC-1818</a><div class="tname">Issuer sign-up error in production </div></td>
           <td><span class="chip chip-uat">API: UAT</span></td>
+          <td><div class="cmt"><b>API</b> · <a class="mono" href="https://github.com/pitchplatforms/pitchinAPI/commit/f4dd250df" target="_blank" rel="noopener" title="GRC-1818 change to use FireForgetService to create click-up task after issuer sign-up (#1498)">f4dd250df</a> <a href="https://github.com/pitchplatforms/pitchinAPI/pull/1498" target="_blank" rel="noopener">#1498</a> <span class="chip chip-uat">UAT</span></div></td>
           <td class="mono">2026-05-08</td>
         </tr><tr>
           <td><input type="checkbox" class="tick" data-id="ghost-FRC-738" title="mark as handled"></td>
           <td><a class="ref" href="https://app.clickup.com/t/86d2xgu1v" target="_blank" rel="noopener">FRC-738</a><div class="tname">One pager admin portal frontend tasks related FRC-604,605,607</div></td>
           <td><span class="chip chip-uat">AdminWeb: UAT</span></td>
+          <td><div class="cmt"><b>AdminWeb</b> · <a class="mono" href="https://github.com/pitchplatforms/PitchinAdminWeb/commit/3886c8d0" target="_blank" rel="noopener" title="FRC-738 One pager admin portal frontend tasks related FRC-604,605,607 (#748)">3886c8d0</a> <a href="https://github.com/pitchplatforms/PitchinAdminWeb/pull/748" target="_blank" rel="noopener">#748</a> <span class="chip chip-uat">UAT</span></div></td>
           <td class="mono">2026-05-11</td>
         </tr><tr>
           <td><input type="checkbox" class="tick" data-id="ghost-GRC-1790" title="mark as handled"></td>
           <td><a class="ref" href="https://app.clickup.com/t/86d2wf23n" target="_blank" rel="noopener">GRC-1790</a><div class="tname">Fixing exceptions in staging env</div></td>
           <td><span class="chip chip-uat">API: UAT</span></td>
+          <td><div class="cmt"><b>API</b> · <a class="mono" href="https://github.com/pitchplatforms/pitchinAPI/commit/3b2551639" target="_blank" rel="noopener" title="GRC-1790 fixing exception in staging (#1494)">3b2551639</a> <a href="https://github.com/pitchplatforms/pitchinAPI/pull/1494" target="_blank" rel="noopener">#1494</a> <span class="chip chip-uat">UAT</span></div></td>
           <td class="mono">2026-05-11</td>
         </tr><tr>
           <td><input type="checkbox" class="tick" data-id="ghost-FRC-754" title="mark as handled"></td>
           <td><a class="ref" href="https://app.clickup.com/t/86d2zq7n7" target="_blank" rel="noopener">FRC-754</a><div class="tname">[Bug] File Export in Digital Registry is not displaying accurate data</div></td>
           <td><span class="chip chip-uat">API: UAT</span></td>
+          <td><div class="cmt"><b>API</b> · <a class="mono" href="https://github.com/pitchplatforms/pitchinAPI/commit/e441c88ca" target="_blank" rel="noopener" title="FRC-754 [Bug] File export in DR not showing accurate data (#1539)">e441c88ca</a> <a href="https://github.com/pitchplatforms/pitchinAPI/pull/1539" target="_blank" rel="noopener">#1539</a> <span class="chip chip-uat">UAT</span></div></td>
           <td class="mono">2026-05-26</td>
         </tr><tr>
           <td><input type="checkbox" class="tick" data-id="ghost-FRC-736" title="mark as handled"></td>
           <td><a class="ref" href="https://app.clickup.com/t/86d2xcw86" target="_blank" rel="noopener">FRC-736</a><div class="tname">Service class change to abstract, rename class DtoException and updates</div></td>
           <td><span class="chip chip-uat">API: UAT</span></td>
+          <td><div class="cmt"><b>API</b> · <a class="mono" href="https://github.com/pitchplatforms/pitchinAPI/commit/95852dd56" target="_blank" rel="noopener" title="FRC-736 Service class change to abstract, rename class DtoException and updates (#1551)">95852dd56</a> <a href="https://github.com/pitchplatforms/pitchinAPI/pull/1551" target="_blank" rel="noopener">#1551</a> <span class="chip chip-uat">UAT</span></div></td>
           <td class="mono">2026-05-29</td>
         </tr><tr>
           <td><input type="checkbox" class="tick" data-id="ghost-GRC-1825" title="mark as handled"></td>
           <td><a class="ref" href="https://app.clickup.com/t/86d2xuz93" target="_blank" rel="noopener">GRC-1825</a><div class="tname">Fixing exception in UAT env</div></td>
           <td><span class="chip chip-uat">API: UAT</span></td>
+          <td><div class="cmt"><b>API</b> · <a class="mono" href="https://github.com/pitchplatforms/pitchinAPI/commit/bc1344c00" target="_blank" rel="noopener" title="GRC-1825 06 06 2026 fixing errors in test env (#1560)">bc1344c00</a> <a href="https://github.com/pitchplatforms/pitchinAPI/pull/1560" target="_blank" rel="noopener">#1560</a> <span class="chip chip-uat">UAT</span><br>&nbsp;&nbsp;<a class="mono" href="https://github.com/pitchplatforms/pitchinAPI/commit/e1daafa5d" target="_blank" rel="noopener" title="GRC-1825 fixing exceptions in testing env (#1553)">e1daafa5d</a> <a href="https://github.com/pitchplatforms/pitchinAPI/pull/1553" target="_blank" rel="noopener">#1553</a> <span class="chip chip-uat">UAT</span></div></td>
           <td class="mono">2026-06-03</td>
         </tr><tr>
           <td><input type="checkbox" class="tick" data-id="ghost-FRC-772" title="mark as handled"></td>
           <td><a class="ref" href="https://app.clickup.com/t/86d37ehnq" target="_blank" rel="noopener">FRC-772</a><div class="tname">[BUG] Missing data in counter column</div></td>
           <td><span class="chip chip-uat">API: UAT</span></td>
+          <td><div class="cmt"><b>API</b> · <a class="mono" href="https://github.com/pitchplatforms/pitchinAPI/commit/9ea5b8ab2" target="_blank" rel="noopener" title="FRC-772 [BUG] Missing data in counter column (#1555)">9ea5b8ab2</a> <a href="https://github.com/pitchplatforms/pitchinAPI/pull/1555" target="_blank" rel="noopener">#1555</a> <span class="chip chip-uat">UAT</span></div></td>
           <td class="mono">2026-06-04</td>
         </tr><tr>
           <td><input type="checkbox" class="tick" data-id="ghost-FRC-783" title="mark as handled"></td>
           <td><a class="ref" href="https://app.clickup.com/t/86d3a0f11" target="_blank" rel="noopener">FRC-783</a><div class="tname">[BUG] System block Save As Draft action if there is box with no input</div></td>
           <td><span class="chip chip-uat">AdminWeb: UAT</span></td>
+          <td><div class="cmt"><b>AdminWeb</b> · <a class="mono" href="https://github.com/pitchplatforms/PitchinAdminWeb/commit/340161c9" target="_blank" rel="noopener" title="FRC-783 [BUG] System block Save As Draft action if there is box with no input (#768)">340161c9</a> <a href="https://github.com/pitchplatforms/PitchinAdminWeb/pull/768" target="_blank" rel="noopener">#768</a> <span class="chip chip-uat">UAT</span></div></td>
           <td class="mono">2026-06-12</td>
         </tr><tr>
           <td><input type="checkbox" class="tick" data-id="ghost-FRC-784" title="mark as handled"></td>
           <td><a class="ref" href="https://app.clickup.com/t/86d3a0few" target="_blank" rel="noopener">FRC-784</a><div class="tname">[BUG] Unable to Save as Draft (404 Error)</div></td>
           <td><span class="chip chip-uat">Gateway: UAT</span></td>
+          <td><div class="cmt"><b>Gateway</b> · <a class="mono" href="https://github.com/pitchplatforms/pitchInNewApiGateway/commit/cb6210e" target="_blank" rel="noopener" title="FRC-784 [BUG] Unable to Save as Draft (404 Error) (#73)">cb6210e</a> <a href="https://github.com/pitchplatforms/pitchInNewApiGateway/pull/73" target="_blank" rel="noopener">#73</a> <span class="chip chip-uat">UAT</span></div></td>
           <td class="mono">2026-06-12</td>
         </tr><tr>
           <td><input type="checkbox" class="tick" data-id="ghost-FRC-785" title="mark as handled"></td>
           <td><a class="ref" href="https://app.clickup.com/t/86d3a0hgz" target="_blank" rel="noopener">FRC-785</a><div class="tname">[BUG] Unable to Submit the Summary Page (404 Error)</div></td>
           <td><span class="chip chip-uat">Gateway: UAT</span></td>
+          <td><div class="cmt"><b>Gateway</b> · <a class="mono" href="https://github.com/pitchplatforms/pitchInNewApiGateway/commit/ae5bbb3" target="_blank" rel="noopener" title="FRC-785 [BUG] Unable to Submit the Summary Page (404 Error) (#74)">ae5bbb3</a> <a href="https://github.com/pitchplatforms/pitchInNewApiGateway/pull/74" target="_blank" rel="noopener">#74</a> <span class="chip chip-uat">UAT</span></div></td>
           <td class="mono">2026-06-13</td>
         </tr><tr>
           <td><input type="checkbox" class="tick" data-id="ghost-FRC-782" title="mark as handled"></td>
           <td><a class="ref" href="https://app.clickup.com/t/86d3a05dg" target="_blank" rel="noopener">FRC-782</a><div class="tname">[BUG] No Character Limit on Text Block Configuration and Key Highlight Grid Configuration</div></td>
           <td><span class="chip chip-uat">AdminWeb: UAT</span></td>
+          <td><div class="cmt"><b>AdminWeb</b> · <a class="mono" href="https://github.com/pitchplatforms/PitchinAdminWeb/commit/1825a3c3" target="_blank" rel="noopener" title="GRC-2094 FRC-782 deploy fix (#770)">1825a3c3</a> <a href="https://github.com/pitchplatforms/PitchinAdminWeb/pull/770" target="_blank" rel="noopener">#770</a> <span class="chip chip-uat">UAT</span><br>&nbsp;&nbsp;<a class="mono" href="https://github.com/pitchplatforms/PitchinAdminWeb/commit/46b29310" target="_blank" rel="noopener" title="FRC-782 [BUG] No Character Limit on Text Block Configuration and Key Highlight Grid Configuration (#769)">46b29310</a> <a href="https://github.com/pitchplatforms/PitchinAdminWeb/pull/769" target="_blank" rel="noopener">#769</a> <span class="chip chip-uat">UAT</span></div></td>
           <td class="mono">2026-06-15</td>
         </tr><tr>
           <td><input type="checkbox" class="tick" data-id="ghost-FRC-789" title="mark as handled"></td>
           <td><a class="ref" href="https://app.clickup.com/t/86d3c3w4u" target="_blank" rel="noopener">FRC-789</a><div class="tname">[BUG] No checking for empty box when click Submit button</div></td>
           <td><span class="chip chip-uat">AdminWeb: UAT</span></td>
+          <td><div class="cmt"><b>AdminWeb</b> · <a class="mono" href="https://github.com/pitchplatforms/PitchinAdminWeb/commit/ad6a8dd1" target="_blank" rel="noopener" title="FRC-789 [BUG] No checking for empty box when click Submit button (#772)">ad6a8dd1</a> <a href="https://github.com/pitchplatforms/PitchinAdminWeb/pull/772" target="_blank" rel="noopener">#772</a> <span class="chip chip-uat">UAT</span></div></td>
           <td class="mono">2026-06-17</td>
         </tr><tr>
           <td><input type="checkbox" class="tick" data-id="ghost-GRC-2094" title="mark as handled"></td>
           <td><a class="ref" href="https://app.clickup.com/t/86d3by82e" target="_blank" rel="noopener">GRC-2094</a><div class="tname">FRC-782 deploy fix</div></td>
           <td><span class="chip chip-uat">AdminWeb: UAT</span></td>
+          <td><div class="cmt"><b>AdminWeb</b> · <a class="mono" href="https://github.com/pitchplatforms/PitchinAdminWeb/commit/1825a3c3" target="_blank" rel="noopener" title="GRC-2094 FRC-782 deploy fix (#770)">1825a3c3</a> <a href="https://github.com/pitchplatforms/PitchinAdminWeb/pull/770" target="_blank" rel="noopener">#770</a> <span class="chip chip-uat">UAT</span></div></td>
           <td class="mono">2026-06-17</td>
         </tr><tr>
           <td><input type="checkbox" class="tick" data-id="ghost-FRC-798" title="mark as handled"></td>
           <td><a class="ref" href="https://app.clickup.com/t/86d3h0mxe" target="_blank" rel="noopener">FRC-798</a><div class="tname">[Bug] Words is exceeded the box UI</div></td>
           <td><span class="chip chip-uat">AdminWeb: UAT</span></td>
+          <td><div class="cmt"><b>AdminWeb</b> · <a class="mono" href="https://github.com/pitchplatforms/PitchinAdminWeb/commit/e0196f32" target="_blank" rel="noopener" title="FRC-798 [Bug] Words is exceeded the box UI (#796)">e0196f32</a> <a href="https://github.com/pitchplatforms/PitchinAdminWeb/pull/796" target="_blank" rel="noopener">#796</a> <span class="chip chip-uat">UAT</span></div></td>
           <td class="mono">2026-07-03</td>
         </tr><tr>
           <td><input type="checkbox" class="tick" data-id="ghost-GRC-2173" title="mark as handled"></td>
           <td><a class="ref" href="https://app.clickup.com/t/86d3ft0yh" target="_blank" rel="noopener">GRC-2173</a><div class="tname">[Bug] internal server error when searching in Wallet Transaction &amp; Order Execution</div></td>
           <td><span class="chip chip-uat">API: UAT</span></td>
+          <td><div class="cmt"><b>API</b> · <a class="mono" href="https://github.com/pitchplatforms/pitchinAPI/commit/206b000cf" target="_blank" rel="noopener" title="bugs/GRC-2173 Internal server error when searching in Wallet Transaction and Order Execution (#1638)">206b000cf</a> <a href="https://github.com/pitchplatforms/pitchinAPI/pull/1638" target="_blank" rel="noopener">#1638</a> <span class="chip chip-uat">UAT</span></div></td>
           <td class="mono">2026-07-08</td>
         </tr><tr>
           <td><input type="checkbox" class="tick" data-id="ghost-GRC-1212" title="mark as handled"></td>
           <td><a class="ref" href="https://app.clickup.com/t/86d1kx37w" target="_blank" rel="noopener">GRC-1212</a><div class="tname">Duitnow payment error in production env</div></td>
           <td><span class="chip chip-uat">API: UAT</span></td>
+          <td><span class="dim">—</span></td>
           <td class="mono"></td>
         </tr><tr>
           <td><input type="checkbox" class="tick" data-id="ghost-GRC-1698" title="mark as handled"></td>
           <td><a class="ref" href="https://app.clickup.com/t/86d2qhz9y" target="_blank" rel="noopener">GRC-1698</a><div class="tname">Fixing the file upload service library version issue</div></td>
           <td><span class="chip chip-uat">API: UAT</span></td>
+          <td><span class="dim">—</span></td>
           <td class="mono"></td>
         </tr><tr>
           <td><input type="checkbox" class="tick" data-id="ghost-GRC-1987" title="mark as handled"></td>
           <td><a class="ref" href="https://app.clickup.com/t/86d35gxjj" target="_blank" rel="noopener">GRC-1987</a><div class="tname">Can help to check if API Gateway is accessible in UAT env?</div></td>
           <td><span class="chip chip-uat">Gateway: UAT</span></td>
+          <td><span class="dim">—</span></td>
           <td class="mono"></td>
         </tr></tbody>
       </table></div>
@@ -3123,705 +3162,845 @@ code{background:var(--chipstg);border-radius:4px;padding:0 4px;font-size:12.5px;
     <section id="backlog" class="cat">
       <h2><span class="sev sev-neutral">○ inventory</span> 9 · Everything else waiting below production (140 tickets)</h2>
       <p class="catdesc">The full promotion backlog by ClickUp status, oldest first within each group. The “verified” and “to deploy” groups are finished work whose only blocker is a release train. Median age of pending code: <strong>~2 months</strong> (API), oldest January. The longer this queue grows, the bigger and riskier each production release becomes.</p>
-      <details><summary><strong>verified (done, waiting on promotion)</strong> — 14 tickets</summary><div class="tablewrap"><table><thead><tr><th>Ticket</th><th>Title</th><th>Highest environment reached</th><th>Oldest commit</th></tr></thead><tbody><tr>
+      <details><summary><strong>verified (done, waiting on promotion)</strong> — 14 tickets</summary><div class="tablewrap"><table><thead><tr><th>Ticket</th><th>Title</th><th>Highest environment reached</th><th>Commits / PRs</th><th>Oldest commit</th></tr></thead><tbody><tr>
               <td><a class="ref" href="https://app.clickup.com/t/86d1f3ynn" target="_blank" rel="noopener">GRC-1132</a></td>
               <td class="tname2">Change file upload service to use engineMailer for notification</td>
               <td><span class="chip chip-uat">API: UAT</span></td>
+              <td><div class="cmt"><b>API</b> · <a class="mono" href="https://github.com/pitchplatforms/pitchinAPI/commit/3e2889860" target="_blank" rel="noopener" title="GRC-1132 Change file upload service to use engineMailer for notification (#1293)">3e2889860</a> <a href="https://github.com/pitchplatforms/pitchinAPI/pull/1293" target="_blank" rel="noopener">#1293</a> <span class="chip chip-uat">UAT</span></div></td>
               <td class="mono">2026-01-14</td>
             </tr><tr>
               <td><a class="ref" href="https://app.clickup.com/t/86d1nkftj" target="_blank" rel="noopener">GRC-1234</a></td>
               <td class="tname2">Make changes in ECF Admin UI to support the latest design with subform feature</td>
               <td><span class="chip chip-uat">API: UAT</span> <span class="chip chip-uat">AdminWeb: UAT</span></td>
+              <td><div class="cmt"><b>API</b> · <a class="mono" href="https://github.com/pitchplatforms/pitchinAPI/commit/7f96d3519" target="_blank" rel="noopener" title="GRC-1234 Make changes in ECF Admin UI to support the latest design with subform feature">7f96d3519</a>  <span class="chip chip-uat">UAT</span></div><div class="cmt"><b>AdminWeb</b> · <a class="mono" href="https://github.com/pitchplatforms/PitchinAdminWeb/commit/57bde9e8" target="_blank" rel="noopener" title="GRC-1234 Make changes in ECF Admin UI to support the latest design with subform feature (#597)">57bde9e8</a> <a href="https://github.com/pitchplatforms/PitchinAdminWeb/pull/597" target="_blank" rel="noopener">#597</a> <span class="chip chip-uat">UAT</span></div></td>
               <td class="mono">2026-01-22</td>
             </tr><tr>
               <td><a class="ref" href="https://app.clickup.com/t/86d22h1fe" target="_blank" rel="noopener">SEC-91</a></td>
               <td class="tname2">[pitchIN Admin] &quot;Add to Digital Registry&quot; button</td>
               <td><span class="chip chip-uat">API: UAT</span> <span class="chip chip-uat">AdminWeb: UAT</span></td>
+              <td><div class="cmt"><b>API</b> · <a class="mono" href="https://github.com/pitchplatforms/pitchinAPI/commit/c2239307a" target="_blank" rel="noopener" title="SEC-91 Add to Digital Registry button (#1431)">c2239307a</a> <a href="https://github.com/pitchplatforms/pitchinAPI/pull/1431" target="_blank" rel="noopener">#1431</a> <span class="chip chip-uat">UAT</span></div><div class="cmt"><b>AdminWeb</b> · <a class="mono" href="https://github.com/pitchplatforms/PitchinAdminWeb/commit/e1dc8f57" target="_blank" rel="noopener" title="SEC-91 Add to Digital Registry button (#711)">e1dc8f57</a> <a href="https://github.com/pitchplatforms/PitchinAdminWeb/pull/711" target="_blank" rel="noopener">#711</a> <span class="chip chip-uat">UAT</span></div></td>
               <td class="mono">2026-04-03</td>
             </tr><tr>
               <td><a class="ref" href="https://app.clickup.com/t/86d2rfe8p" target="_blank" rel="noopener">SEC-320</a></td>
               <td class="tname2">[BUG] Add to DR button is unclickable</td>
               <td><span class="chip chip-uat">AdminWeb: UAT</span></td>
+              <td><div class="cmt"><b>AdminWeb</b> · <a class="mono" href="https://github.com/pitchplatforms/PitchinAdminWeb/commit/a716129a" target="_blank" rel="noopener" title="SEC-320 [BUG] Add to DR button is unclickable (#721)">a716129a</a> <a href="https://github.com/pitchplatforms/PitchinAdminWeb/pull/721" target="_blank" rel="noopener">#721</a> <span class="chip chip-uat">UAT</span></div></td>
               <td class="mono">2026-04-23</td>
             </tr><tr>
               <td><a class="ref" href="https://app.clickup.com/t/86d2tk783" target="_blank" rel="noopener">GRC-1748</a></td>
               <td class="tname2">[BUG] Redundant &quot;Publish&quot; button in Form Management Version History</td>
               <td><span class="chip chip-uat">API: UAT</span> <span class="chip chip-uat">AdminWeb: UAT</span></td>
+              <td><div class="cmt"><b>API</b> · <a class="mono" href="https://github.com/pitchplatforms/pitchinAPI/commit/95ddfb15f" target="_blank" rel="noopener" title="[BUG] GRC-1748 Redundant Publish button in Form Management Version History (#1474)">95ddfb15f</a> <a href="https://github.com/pitchplatforms/pitchinAPI/pull/1474" target="_blank" rel="noopener">#1474</a> <span class="chip chip-uat">UAT</span><br>&nbsp;&nbsp;<a class="mono" href="https://github.com/pitchplatforms/pitchinAPI/commit/1cc315b31" target="_blank" rel="noopener" title="[BUG] GRC-1748 Redundant Publish button in Form Management Version History (#1474)">1cc315b31</a> <a href="https://github.com/pitchplatforms/pitchinAPI/pull/1474" target="_blank" rel="noopener">#1474</a> <span class="chip chip-uat">UAT</span></div><div class="cmt"><b>AdminWeb</b> · <a class="mono" href="https://github.com/pitchplatforms/PitchinAdminWeb/commit/d2c03c3d" target="_blank" rel="noopener" title="[BUG] GRC-1748 Redundant Publish button in Form Management Version History (#729)">d2c03c3d</a> <a href="https://github.com/pitchplatforms/PitchinAdminWeb/pull/729" target="_blank" rel="noopener">#729</a> <span class="chip chip-uat">UAT</span><br>&nbsp;&nbsp;<a class="mono" href="https://github.com/pitchplatforms/PitchinAdminWeb/commit/bdad52ac" target="_blank" rel="noopener" title="[BUG] GRC-1748 Redundant Publish button in Form Management Version History (#729)">bdad52ac</a> <a href="https://github.com/pitchplatforms/PitchinAdminWeb/pull/729" target="_blank" rel="noopener">#729</a> <span class="chip chip-uat">UAT</span></div></td>
               <td class="mono">2026-04-28</td>
             </tr><tr>
               <td><a class="ref" href="https://app.clickup.com/t/86d2tk5rx" target="_blank" rel="noopener">GRC-1747</a></td>
               <td class="tname2">[BUG] Incorrect icon used for Edit action in Version History table</td>
               <td><span class="chip chip-uat">AdminWeb: UAT</span></td>
+              <td><div class="cmt"><b>AdminWeb</b> · <a class="mono" href="https://github.com/pitchplatforms/PitchinAdminWeb/commit/511b7b3e" target="_blank" rel="noopener" title="GRC-1747 Incorrect icon used for Edit action in Version History table (#734)">511b7b3e</a> <a href="https://github.com/pitchplatforms/PitchinAdminWeb/pull/734" target="_blank" rel="noopener">#734</a> <span class="chip chip-uat">UAT</span></div></td>
               <td class="mono">2026-04-30</td>
             </tr><tr>
               <td><a class="ref" href="https://app.clickup.com/t/86d2t1btg" target="_blank" rel="noopener">SEC-327</a></td>
               <td class="tname2">[BUG] New issuer is already in DR list without any import to DR action by admin</td>
               <td><span class="chip chip-uat">API: UAT</span></td>
+              <td><div class="cmt"><b>API</b> · <a class="mono" href="https://github.com/pitchplatforms/pitchinAPI/commit/a09beecae" target="_blank" rel="noopener" title="SEC-366 [BUG] Deployment failure on SEC-327 (#1520)">a09beecae</a> <a href="https://github.com/pitchplatforms/pitchinAPI/pull/1520" target="_blank" rel="noopener">#1520</a> <span class="chip chip-uat">UAT</span><br>&nbsp;&nbsp;<a class="mono" href="https://github.com/pitchplatforms/pitchinAPI/commit/7ab119f29" target="_blank" rel="noopener" title="SEC-327 [BUG] New issuer already in DR list without any import to DR action by admin (#1516)">7ab119f29</a> <a href="https://github.com/pitchplatforms/pitchinAPI/pull/1516" target="_blank" rel="noopener">#1516</a> <span class="chip chip-uat">UAT</span></div></td>
               <td class="mono">2026-05-13</td>
             </tr><tr>
               <td><a class="ref" href="https://app.clickup.com/t/86d2z73rc" target="_blank" rel="noopener">SEC-364</a></td>
               <td class="tname2">[PitchInAW] Audit Trail i18n for Digital Registry events</td>
               <td><span class="chip chip-uat">AdminWeb: UAT</span></td>
+              <td><div class="cmt"><b>AdminWeb</b> · <a class="mono" href="https://github.com/pitchplatforms/PitchinAdminWeb/commit/17eb0105" target="_blank" rel="noopener" title="SEC-364 Audit Trail i18n for Digital Registry events (#754)">17eb0105</a> <a href="https://github.com/pitchplatforms/PitchinAdminWeb/pull/754" target="_blank" rel="noopener">#754</a> <span class="chip chip-uat">UAT</span></div></td>
               <td class="mono">2026-05-13</td>
             </tr><tr>
               <td><a class="ref" href="https://app.clickup.com/t/86d2zk3ee" target="_blank" rel="noopener">SEC-366</a></td>
               <td class="tname2">[BUG] Deployment failure on SEC-327</td>
               <td><span class="chip chip-uat">API: UAT</span></td>
+              <td><div class="cmt"><b>API</b> · <a class="mono" href="https://github.com/pitchplatforms/pitchinAPI/commit/a09beecae" target="_blank" rel="noopener" title="SEC-366 [BUG] Deployment failure on SEC-327 (#1520)">a09beecae</a> <a href="https://github.com/pitchplatforms/pitchinAPI/pull/1520" target="_blank" rel="noopener">#1520</a> <span class="chip chip-uat">UAT</span></div></td>
               <td class="mono">2026-05-13</td>
             </tr><tr>
               <td><a class="ref" href="https://app.clickup.com/t/86d30eed8" target="_blank" rel="noopener">FRC-758</a></td>
               <td class="tname2">[BUG] Remove View Submitted Form button</td>
               <td><span class="chip chip-uat">CustomerWeb: UAT</span></td>
+              <td><div class="cmt"><b>CustomerWeb</b> · <a class="mono" href="https://github.com/pitchplatforms/PitchinCustomerWeb/commit/5d77586c" target="_blank" rel="noopener" title="FRC-758 [BUG] Remove View Submitted Form button (#1345)">5d77586c</a> <a href="https://github.com/pitchplatforms/PitchinCustomerWeb/pull/1345" target="_blank" rel="noopener">#1345</a> <span class="chip chip-uat">UAT</span></div></td>
               <td class="mono">2026-05-16</td>
             </tr><tr>
               <td><a class="ref" href="https://app.clickup.com/t/86d31pn6w" target="_blank" rel="noopener">FRC-760</a></td>
               <td class="tname2">[BUG] Remove &quot;View Submitted Form&quot; button in Raise Page</td>
               <td><span class="chip chip-uat">CustomerWeb: UAT</span></td>
+              <td><div class="cmt"><b>CustomerWeb</b> · <a class="mono" href="https://github.com/pitchplatforms/PitchinCustomerWeb/commit/b3145b5f" target="_blank" rel="noopener" title="FRC-760 [BUG] Remove View Submitted Form button in Raise Page (#1351)">b3145b5f</a> <a href="https://github.com/pitchplatforms/PitchinCustomerWeb/pull/1351" target="_blank" rel="noopener">#1351</a> <span class="chip chip-uat">UAT</span></div></td>
               <td class="mono">2026-05-20</td>
             </tr><tr>
               <td><a class="ref" href="https://app.clickup.com/t/86d3c41hk" target="_blank" rel="noopener">SEC-402</a></td>
               <td class="tname2">[BUG] Clickup Exception for announcement review</td>
               <td><span class="chip chip-uat">API: UAT</span></td>
+              <td><div class="cmt"><b>API</b> · <a class="mono" href="https://github.com/pitchplatforms/pitchinAPI/commit/a8f2f3dd7" target="_blank" rel="noopener" title="bugs/SEC-402 Fix status not found error (#1576)">a8f2f3dd7</a> <a href="https://github.com/pitchplatforms/pitchinAPI/pull/1576" target="_blank" rel="noopener">#1576</a> <span class="chip chip-uat">UAT</span></div></td>
               <td class="mono">2026-06-17</td>
             </tr><tr>
               <td><a class="ref" href="https://app.clickup.com/t/86d3dagy9" target="_blank" rel="noopener">GRC-2125</a></td>
               <td class="tname2">Fix ecf-cw startup error in staging and uat environments</td>
               <td><span class="chip chip-uat">API: UAT</span> <span class="chip chip-uat">CustomerWeb: UAT</span></td>
+              <td><div class="cmt"><b>API</b> · <a class="mono" href="https://github.com/pitchplatforms/pitchinAPI/commit/61d812e7a" target="_blank" rel="noopener" title="GRC-2125 fixing backend api error on is sandbox flag (#1584)">61d812e7a</a> <a href="https://github.com/pitchplatforms/pitchinAPI/pull/1584" target="_blank" rel="noopener">#1584</a> <span class="chip chip-uat">UAT</span></div><div class="cmt"><b>CustomerWeb</b> · <a class="mono" href="https://github.com/pitchplatforms/PitchinCustomerWeb/commit/13f481de" target="_blank" rel="noopener" title="GRC-2125 fixing locale errors (#1398)">13f481de</a> <a href="https://github.com/pitchplatforms/PitchinCustomerWeb/pull/1398" target="_blank" rel="noopener">#1398</a> <span class="chip chip-uat">UAT</span></div></td>
               <td class="mono">2026-06-19</td>
             </tr><tr>
               <td><a class="ref" href="https://app.clickup.com/t/86d3ezc8r" target="_blank" rel="noopener">GRC-2156</a></td>
               <td class="tname2">[PitchInCustomerWeb] Wrapping subform in an enclosed box</td>
               <td><span class="chip chip-uat">CustomerWeb: UAT</span></td>
+              <td><div class="cmt"><b>CustomerWeb</b> · <a class="mono" href="https://github.com/pitchplatforms/PitchinCustomerWeb/commit/efaa8a97" target="_blank" rel="noopener" title="[BUG] GRC-2156 Wrap subform in an enclosed box (#1416)">efaa8a97</a> <a href="https://github.com/pitchplatforms/PitchinCustomerWeb/pull/1416" target="_blank" rel="noopener">#1416</a> <span class="chip chip-uat">UAT</span></div></td>
               <td class="mono">2026-06-26</td>
-            </tr></tbody></table></div></details><details><summary><strong>to deploy</strong> — 7 tickets</summary><div class="tablewrap"><table><thead><tr><th>Ticket</th><th>Title</th><th>Highest environment reached</th><th>Oldest commit</th></tr></thead><tbody><tr>
+            </tr></tbody></table></div></details><details><summary><strong>to deploy</strong> — 7 tickets</summary><div class="tablewrap"><table><thead><tr><th>Ticket</th><th>Title</th><th>Highest environment reached</th><th>Commits / PRs</th><th>Oldest commit</th></tr></thead><tbody><tr>
               <td><a class="ref" href="https://app.clickup.com/t/86d1tx1yh" target="_blank" rel="noopener">FRC-604</a></td>
               <td class="tname2">Create one-pager button in campaign checklist &amp; Campaign Info tab</td>
               <td><span class="chip chip-uat">AdminWeb: UAT</span></td>
+              <td><div class="cmt"><b>AdminWeb</b> · <a class="mono" href="https://github.com/pitchplatforms/PitchinAdminWeb/commit/3886c8d0" target="_blank" rel="noopener" title="FRC-738 One pager admin portal frontend tasks related FRC-604,605,607 (#748)">3886c8d0</a> <a href="https://github.com/pitchplatforms/PitchinAdminWeb/pull/748" target="_blank" rel="noopener">#748</a> <span class="chip chip-uat">UAT</span></div></td>
               <td class="mono">2026-05-11</td>
             </tr><tr>
               <td><a class="ref" href="https://app.clickup.com/t/86d3c6ta0" target="_blank" rel="noopener">FRC-790</a></td>
               <td class="tname2">[BUG] Remove Restriction for Toggle on/off Publish Campaign</td>
               <td><span class="chip chip-uat">API: UAT</span></td>
+              <td><div class="cmt"><b>API</b> · <a class="mono" href="https://github.com/pitchplatforms/pitchinAPI/commit/c49e77b06" target="_blank" rel="noopener" title="FRC-790 [BUG] Remove Restriction for Toggle on/off Publish Campaign (#1610)">c49e77b06</a> <a href="https://github.com/pitchplatforms/pitchinAPI/pull/1610" target="_blank" rel="noopener">#1610</a> <span class="chip chip-uat">UAT</span></div></td>
               <td class="mono">2026-07-02</td>
             </tr><tr>
               <td><a class="ref" href="https://app.clickup.com/t/86d3h0vnv" target="_blank" rel="noopener">FRC-799</a></td>
               <td class="tname2">[Bug] copy pasting will resulting unknown alphabet/symbol</td>
               <td><span class="chip chip-uat">AdminWeb: UAT</span></td>
+              <td><div class="cmt"><b>AdminWeb</b> · <a class="mono" href="https://github.com/pitchplatforms/PitchinAdminWeb/commit/b6d061d2" target="_blank" rel="noopener" title="FRC-799 [Bug] copy pasting will resulting unknown alphabet/symbol (#795)">b6d061d2</a> <a href="https://github.com/pitchplatforms/PitchinAdminWeb/pull/795" target="_blank" rel="noopener">#795</a> <span class="chip chip-uat">UAT</span></div></td>
               <td class="mono">2026-07-03</td>
             </tr><tr>
               <td><a class="ref" href="https://app.clickup.com/t/86d3h137q" target="_blank" rel="noopener">FRC-800</a></td>
               <td class="tname2">[Bug] Key Highlight box is overflow when max 59 char inputted for every box</td>
               <td><span class="chip chip-uat">AdminWeb: UAT</span></td>
+              <td><div class="cmt"><b>AdminWeb</b> · <a class="mono" href="https://github.com/pitchplatforms/PitchinAdminWeb/commit/198900e9" target="_blank" rel="noopener" title="FRC 800 [Bug] Key Highlight box is overflow when max 59 char inputted for every box (#798)">198900e9</a> <a href="https://github.com/pitchplatforms/PitchinAdminWeb/pull/798" target="_blank" rel="noopener">#798</a> <span class="chip chip-uat">UAT</span></div></td>
               <td class="mono">2026-07-06</td>
             </tr><tr>
               <td><a class="ref" href="https://app.clickup.com/t/86d3e12cn" target="_blank" rel="noopener">FRC-794</a></td>
               <td class="tname2">[Bug] Share Qty in Shareholding summary page is not accurate</td>
               <td><span class="chip chip-uat">API: UAT</span></td>
+              <td><span class="dim">—</span></td>
               <td class="mono"></td>
             </tr><tr>
               <td><a class="ref" href="https://app.clickup.com/t/86d2g722r" target="_blank" rel="noopener">GRC-1566</a></td>
               <td class="tname2">Here&#x27;s another exception on CTOS eKYC service:</td>
               <td><span class="chip chip-uat">API: UAT</span></td>
+              <td><span class="dim">—</span></td>
               <td class="mono"></td>
             </tr><tr>
               <td><a class="ref" href="https://app.clickup.com/t/86d3keh8x" target="_blank" rel="noopener">SEC-433</a></td>
               <td class="tname2">[BUG] loading and crash issue on my order tab</td>
               <td><span class="chip chip-uat">API: UAT</span></td>
+              <td><span class="dim">—</span></td>
               <td class="mono"></td>
-            </tr></tbody></table></div></details><details><summary><strong>pr</strong> — 7 tickets</summary><div class="tablewrap"><table><thead><tr><th>Ticket</th><th>Title</th><th>Highest environment reached</th><th>Oldest commit</th></tr></thead><tbody><tr>
+            </tr></tbody></table></div></details><details><summary><strong>pr</strong> — 7 tickets</summary><div class="tablewrap"><table><thead><tr><th>Ticket</th><th>Title</th><th>Highest environment reached</th><th>Commits / PRs</th><th>Oldest commit</th></tr></thead><tbody><tr>
               <td><a class="ref" href="https://app.clickup.com/t/86d3m9ren" target="_blank" rel="noopener">INC-259</a></td>
               <td class="tname2">Re-KYC &amp; self-serve identity change</td>
               <td><span class="chip chip-uat">API: UAT</span> <span class="chip chip-uat">CustomerWeb: UAT</span></td>
+              <td><div class="cmt"><b>API</b> · <a class="mono" href="https://github.com/pitchplatforms/pitchinAPI/commit/5c36efbf3" target="_blank" rel="noopener" title="INC-259: feat(users,ekyc): re-KYC + self-serve name/IC change, held pending (ADR-0016) (#1653)">5c36efbf3</a> <a href="https://github.com/pitchplatforms/pitchinAPI/pull/1653" target="_blank" rel="noopener">#1653</a> <span class="chip chip-uat">UAT</span></div></td>
               <td class="mono">2026-07-10</td>
             </tr><tr>
               <td><a class="ref" href="https://app.clickup.com/t/86d3m9rwf" target="_blank" rel="noopener">INC-275</a></td>
               <td class="tname2">Admin manual-flag endpoint + audit</td>
               <td><span class="chip chip-uat">Gateway: UAT</span> <span class="chip chip-uat">AdminWeb: UAT</span></td>
+              <td><div class="cmt"><b>Gateway</b> · <a class="mono" href="https://github.com/pitchplatforms/pitchInNewApiGateway/commit/acdf2ad" target="_blank" rel="noopener" title="INC-275: feat(gateway): register Admin flagProfileRefresh Ocelot route (ADR-0015) (#92)">acdf2ad</a> <a href="https://github.com/pitchplatforms/pitchInNewApiGateway/pull/92" target="_blank" rel="noopener">#92</a> <span class="chip chip-uat">UAT</span></div></td>
               <td class="mono">2026-07-10</td>
             </tr><tr>
               <td><a class="ref" href="https://app.clickup.com/t/86d3njphf" target="_blank" rel="noopener">GRC-2317</a></td>
               <td class="tname2">Update nlog.development.config to use correct exception email for local testing</td>
               <td><span class="chip chip-stg">API: STAGING</span></td>
+              <td><div class="cmt"><b>API</b> · <a class="mono" href="https://github.com/pitchplatforms/pitchinAPI/commit/891fc21e1" target="_blank" rel="noopener" title="GRC-2317: fix compile break that failed the staging deploy (restore method brace in Program.cs) (#1662)">891fc21e1</a> <a href="https://github.com/pitchplatforms/pitchinAPI/pull/1662" target="_blank" rel="noopener">#1662</a> <span class="chip chip-stg">STAGING</span><br>&nbsp;&nbsp;<a class="mono" href="https://github.com/pitchplatforms/pitchinAPI/commit/bf93f6409" target="_blank" rel="noopener" title="GRC-2317: load nlog.Development.config locally so dev crashes stop emailing the shared inbox (#1658)">bf93f6409</a> <a href="https://github.com/pitchplatforms/pitchinAPI/pull/1658" target="_blank" rel="noopener">#1658</a> <span class="chip chip-stg">STAGING</span></div></td>
               <td class="mono">2026-07-13</td>
             </tr><tr>
               <td><a class="ref" href="https://app.clickup.com/t/86d3p3kkq" target="_blank" rel="noopener">FRC-827</a></td>
               <td class="tname2">[BUG] one-pager hide &#x27;publish campaign&#x27; button</td>
               <td><span class="chip chip-stg">API: STAGING</span> <span class="chip chip-stg">AdminWeb: STAGING</span></td>
+              <td><div class="cmt"><b>API</b> · <a class="mono" href="https://github.com/pitchplatforms/pitchinAPI/commit/af7470631" target="_blank" rel="noopener" title="FRC-830 FRC-827 Publish campaign summary upon admin approval (#1671)">af7470631</a> <a href="https://github.com/pitchplatforms/pitchinAPI/pull/1671" target="_blank" rel="noopener">#1671</a> <span class="chip chip-stg">STAGING</span></div><div class="cmt"><b>AdminWeb</b> · <a class="mono" href="https://github.com/pitchplatforms/PitchinAdminWeb/commit/cd1fdc00" target="_blank" rel="noopener" title="FRC-827 [BUG] one-pager hide &#x27;publish campaign&#x27; button (#822)">cd1fdc00</a> <a href="https://github.com/pitchplatforms/PitchinAdminWeb/pull/822" target="_blank" rel="noopener">#822</a> <span class="chip chip-stg">STAGING</span></div></td>
               <td class="mono">2026-07-15</td>
             </tr><tr>
               <td><a class="ref" href="https://app.clickup.com/t/86d3m9rjh" target="_blank" rel="noopener">INC-262</a></td>
               <td class="tname2">Admin: manual flag &amp; profile-validity visibility</td>
               <td><span class="chip chip-uat">Gateway: UAT</span></td>
+              <td><span class="dim">—</span></td>
               <td class="mono"></td>
             </tr><tr>
               <td><a class="ref" href="https://app.clickup.com/t/86d3m9rvc" target="_blank" rel="noopener">INC-273</a></td>
               <td class="tname2">Enable re-KYC for already-verified investors</td>
               <td><span class="chip chip-uat">API: UAT</span></td>
+              <td><span class="dim">—</span></td>
               <td class="mono"></td>
             </tr><tr>
               <td><a class="ref" href="https://app.clickup.com/t/86d3pztcr" target="_blank" rel="noopener">INC-294</a></td>
               <td class="tname2">Portfolio Holdings table wrongly groups unrelated companies into one aggregate row</td>
               <td><span class="chip chip-stg">CustomerWeb: STAGING</span></td>
+              <td><span class="dim">—</span></td>
               <td class="mono"></td>
-            </tr></tbody></table></div></details><details><summary><strong>qa</strong> — 12 tickets</summary><div class="tablewrap"><table><thead><tr><th>Ticket</th><th>Title</th><th>Highest environment reached</th><th>Oldest commit</th></tr></thead><tbody><tr>
+            </tr></tbody></table></div></details><details><summary><strong>qa</strong> — 12 tickets</summary><div class="tablewrap"><table><thead><tr><th>Ticket</th><th>Title</th><th>Highest environment reached</th><th>Commits / PRs</th><th>Oldest commit</th></tr></thead><tbody><tr>
               <td><a class="ref" href="https://app.clickup.com/t/86d2wdn5g" target="_blank" rel="noopener">SEC-353</a></td>
               <td class="tname2">Investor Trade Gate: Blocked State, Risk Disclosure &amp; Acknowledgment</td>
               <td><span class="chip chip-uat">API: UAT</span> <span class="chip chip-uat">CustomerWeb: UAT</span></td>
+              <td><div class="cmt"><b>CustomerWeb</b> · <a class="mono" href="https://github.com/pitchplatforms/PitchinCustomerWeb/commit/a4e822b4" target="_blank" rel="noopener" title="SEC-353 Investor Trade Gate (#1366)">a4e822b4</a> <a href="https://github.com/pitchplatforms/PitchinCustomerWeb/pull/1366" target="_blank" rel="noopener">#1366</a> <span class="chip chip-uat">UAT</span></div></td>
               <td class="mono">2026-05-29</td>
             </tr><tr>
               <td><a class="ref" href="https://app.clickup.com/t/86d3egnh3" target="_blank" rel="noopener">SEC-408</a></td>
               <td class="tname2">[PitchInAPI] PSTX 2.0 separation and identification</td>
               <td><span class="chip chip-uat">API: UAT</span></td>
+              <td><div class="cmt"><b>API</b> · <a class="mono" href="https://github.com/pitchplatforms/pitchinAPI/commit/974e816e2" target="_blank" rel="noopener" title="SEC-408 Add PSTX separation and identification (#1592)">974e816e2</a> <a href="https://github.com/pitchplatforms/pitchinAPI/pull/1592" target="_blank" rel="noopener">#1592</a> <span class="chip chip-uat">UAT</span></div></td>
               <td class="mono">2026-06-26</td>
             </tr><tr>
               <td><a class="ref" href="https://app.clickup.com/t/86d3jdtx1" target="_blank" rel="noopener">SEC-426</a></td>
               <td class="tname2">Add Refund event to Customer Web and Admin</td>
               <td><span class="chip chip-uat">CustomerWeb: UAT</span></td>
+              <td><div class="cmt"><b>CustomerWeb</b> · <a class="mono" href="https://github.com/pitchplatforms/PitchinCustomerWeb/commit/8b903332" target="_blank" rel="noopener" title="SEC-426 updated en-Us.json file (#1450)">8b903332</a> <a href="https://github.com/pitchplatforms/PitchinCustomerWeb/pull/1450" target="_blank" rel="noopener">#1450</a> <span class="chip chip-uat">UAT</span><br>&nbsp;&nbsp;<a class="mono" href="https://github.com/pitchplatforms/PitchinCustomerWeb/commit/a93e01e3" target="_blank" rel="noopener" title="SEC-426 add wallet transaction refund event to customer web (#1439)">a93e01e3</a> <a href="https://github.com/pitchplatforms/PitchinCustomerWeb/pull/1439" target="_blank" rel="noopener">#1439</a> <span class="chip chip-uat">UAT</span></div></td>
               <td class="mono">2026-07-02</td>
             </tr><tr>
               <td><a class="ref" href="https://app.clickup.com/t/86d39bjj7" target="_blank" rel="noopener">FRC-778</a></td>
               <td class="tname2">Auto-generated Dynamic Banner for legacy campaigns</td>
               <td><span class="chip chip-uat">API: UAT</span></td>
+              <td><div class="cmt"><b>API</b> · <a class="mono" href="https://github.com/pitchplatforms/pitchinAPI/commit/5a1fae03e" target="_blank" rel="noopener" title="FRC-778 copy image to output folder (#1632)">5a1fae03e</a> <a href="https://github.com/pitchplatforms/pitchinAPI/pull/1632" target="_blank" rel="noopener">#1632</a> <span class="chip chip-uat">UAT</span></div></td>
               <td class="mono">2026-07-08</td>
             </tr><tr>
               <td><a class="ref" href="https://app.clickup.com/t/86d3jjw13" target="_blank" rel="noopener">GRC-2222</a></td>
               <td class="tname2">[PitchInAdminWeb] Subform not showing up when admin fill up form</td>
               <td><span class="chip chip-uat">AdminWeb: UAT</span></td>
+              <td><div class="cmt"><b>AdminWeb</b> · <a class="mono" href="https://github.com/pitchplatforms/PitchinAdminWeb/commit/10f6e339" target="_blank" rel="noopener" title="[BUG] GRC-2222 Admin Web Subform Preview (#797)">10f6e339</a> <a href="https://github.com/pitchplatforms/PitchinAdminWeb/pull/797" target="_blank" rel="noopener">#797</a> <span class="chip chip-uat">UAT</span></div></td>
               <td class="mono">2026-07-08</td>
             </tr><tr>
               <td><a class="ref" href="https://app.clickup.com/t/86d3m56ht" target="_blank" rel="noopener">FRC-807</a></td>
               <td class="tname2">[BUG] Generated Image is not being displayed in campaign</td>
               <td><span class="chip chip-uat">API: UAT</span></td>
+              <td><div class="cmt"><b>API</b> · <a class="mono" href="https://github.com/pitchplatforms/pitchinAPI/commit/f8531c9c2" target="_blank" rel="noopener" title="FRC-807 generated image is not being displayed in campaign (#1647)">f8531c9c2</a> <a href="https://github.com/pitchplatforms/pitchinAPI/pull/1647" target="_blank" rel="noopener">#1647</a> <span class="chip chip-uat">UAT</span></div></td>
               <td class="mono">2026-07-10</td>
             </tr><tr>
               <td><a class="ref" href="https://app.clickup.com/t/86d3kav98" target="_blank" rel="noopener">SEC-432</a></td>
               <td class="tname2">[BUG] Unregistered Investor details not showing after importing to DR</td>
               <td><span class="chip chip-uat">API: UAT</span></td>
+              <td><div class="cmt"><b>API</b> · <a class="mono" href="https://github.com/pitchplatforms/pitchinAPI/commit/138e5b592" target="_blank" rel="noopener" title="SEC-432 [BUG] Unregistered Investor details not showing after importing to DR (#1643)">138e5b592</a> <a href="https://github.com/pitchplatforms/pitchinAPI/pull/1643" target="_blank" rel="noopener">#1643</a> <span class="chip chip-uat">UAT</span></div></td>
               <td class="mono">2026-07-12</td>
             </tr><tr>
               <td><a class="ref" href="https://app.clickup.com/t/86d3pfz58" target="_blank" rel="noopener">FRC-832</a></td>
               <td class="tname2">[Bug] Filter show internal variable instead of a proper name</td>
               <td><span class="chip chip-stg">CustomerWeb: STAGING</span></td>
+              <td><div class="cmt"><b>CustomerWeb</b> · <a class="mono" href="https://github.com/pitchplatforms/PitchinCustomerWeb/commit/a8358f11" target="_blank" rel="noopener" title="FRC-832 add missing wallet filter i18n labels (#1480)">a8358f11</a> <a href="https://github.com/pitchplatforms/PitchinCustomerWeb/pull/1480" target="_blank" rel="noopener">#1480</a> <span class="chip chip-stg">STAGING</span></div></td>
               <td class="mono">2026-07-14</td>
             </tr><tr>
               <td><a class="ref" href="https://app.clickup.com/t/86d3mx0ja" target="_blank" rel="noopener">GRC-2274</a></td>
               <td class="tname2">[PitchInCustomerWeb] [BUG] Cannot have more than one subform</td>
               <td><span class="chip chip-stg">CustomerWeb: STAGING</span></td>
+              <td><div class="cmt"><b>CustomerWeb</b> · <a class="mono" href="https://github.com/pitchplatforms/PitchinCustomerWeb/commit/40a6ef6c" target="_blank" rel="noopener" title="[BUG] GRC-2274 Cannot have more than one subform (#1475)">40a6ef6c</a> <a href="https://github.com/pitchplatforms/PitchinCustomerWeb/pull/1475" target="_blank" rel="noopener">#1475</a> <span class="chip chip-stg">STAGING</span></div></td>
               <td class="mono">2026-07-14</td>
             </tr><tr>
               <td><a class="ref" href="https://app.clickup.com/t/86d3n2pm2" target="_blank" rel="noopener">GRC-2284</a></td>
               <td class="tname2">[BUG] Draft announcements visible to all users in PSTX announcement tab</td>
               <td><span class="chip chip-stg">API: STAGING</span></td>
+              <td><div class="cmt"><b>API</b> · <a class="mono" href="https://github.com/pitchplatforms/pitchinAPI/commit/47073e336" target="_blank" rel="noopener" title="bugs/GRC-2284 Draft announcements visible to all users in PSTX announcement tab (#1664)">47073e336</a> <a href="https://github.com/pitchplatforms/pitchinAPI/pull/1664" target="_blank" rel="noopener">#1664</a> <span class="chip chip-stg">STAGING</span></div></td>
               <td class="mono">2026-07-14</td>
             </tr><tr>
               <td><a class="ref" href="https://app.clickup.com/t/86d3ph2t4" target="_blank" rel="noopener">FRC-834</a></td>
               <td class="tname2">[Bug] Tapping the close button did not close the popup</td>
               <td><span class="chip chip-stg">CustomerWeb: STAGING</span></td>
+              <td><div class="cmt"><b>CustomerWeb</b> · <a class="mono" href="https://github.com/pitchplatforms/PitchinCustomerWeb/commit/f76091c4" target="_blank" rel="noopener" title="FRC-834 fix close button z-index to allow click events (#1485)">f76091c4</a> <a href="https://github.com/pitchplatforms/PitchinCustomerWeb/pull/1485" target="_blank" rel="noopener">#1485</a> <span class="chip chip-stg">STAGING</span></div></td>
               <td class="mono">2026-07-15</td>
             </tr><tr>
               <td><a class="ref" href="https://app.clickup.com/t/86d3f8w7q" target="_blank" rel="noopener">FRC-797</a></td>
               <td class="tname2">Save the generated image into pitchIN database</td>
               <td><span class="chip chip-uat">API: UAT</span></td>
+              <td><span class="dim">—</span></td>
               <td class="mono"></td>
-            </tr></tbody></table></div></details><details><summary><strong>uat</strong> — 28 tickets</summary><div class="tablewrap"><table><thead><tr><th>Ticket</th><th>Title</th><th>Highest environment reached</th><th>Oldest commit</th></tr></thead><tbody><tr>
+            </tr></tbody></table></div></details><details><summary><strong>uat</strong> — 28 tickets</summary><div class="tablewrap"><table><thead><tr><th>Ticket</th><th>Title</th><th>Highest environment reached</th><th>Commits / PRs</th><th>Oldest commit</th></tr></thead><tbody><tr>
               <td><a class="ref" href="https://app.clickup.com/t/86d0y30m2" target="_blank" rel="noopener">GRC-894</a></td>
               <td class="tname2">[BUG] “MySecShareHolderInfo not found” error when processing EnqueueOrderRequest</td>
               <td><span class="chip chip-uat">API: UAT</span></td>
+              <td><div class="cmt"><b>API</b> · <a class="mono" href="https://github.com/pitchplatforms/pitchinAPI/commit/ebe14971f" target="_blank" rel="noopener" title="GRC-894 [BUG] “MySecShareHolderInfo not found” error when processing EnqueueOrderRequest (#1347)">ebe14971f</a> <a href="https://github.com/pitchplatforms/pitchinAPI/pull/1347" target="_blank" rel="noopener">#1347</a> <span class="chip chip-uat">UAT</span></div></td>
               <td class="mono">2026-03-03</td>
             </tr><tr>
               <td><a class="ref" href="https://app.clickup.com/t/86d1q4ecc" target="_blank" rel="noopener">GRC-1261</a></td>
               <td class="tname2">Make changes in ECF Admin UI to publish dynamic form and show different version</td>
               <td><span class="chip chip-uat">API: UAT</span> <span class="chip chip-uat">AdminWeb: UAT</span></td>
+              <td><div class="cmt"><b>API</b> · <a class="mono" href="https://github.com/pitchplatforms/pitchinAPI/commit/355992844" target="_blank" rel="noopener" title="GRC-1261 Make changes in ECF Admin UI to publish dynamic form and show different version (#1386)">355992844</a> <a href="https://github.com/pitchplatforms/pitchinAPI/pull/1386" target="_blank" rel="noopener">#1386</a> <span class="chip chip-uat">UAT</span></div><div class="cmt"><b>AdminWeb</b> · <a class="mono" href="https://github.com/pitchplatforms/PitchinAdminWeb/commit/938ee0a0" target="_blank" rel="noopener" title="GRC-1261 Fixing a function call returning error (#676)">938ee0a0</a> <a href="https://github.com/pitchplatforms/PitchinAdminWeb/pull/676" target="_blank" rel="noopener">#676</a> <span class="chip chip-uat">UAT</span><br>&nbsp;&nbsp;<a class="mono" href="https://github.com/pitchplatforms/PitchinAdminWeb/commit/597fc4db" target="_blank" rel="noopener" title="GRC-1261 Make changes in ECF admin UI to publish dynamic form and show different version (#658)">597fc4db</a> <a href="https://github.com/pitchplatforms/PitchinAdminWeb/pull/658" target="_blank" rel="noopener">#658</a> <span class="chip chip-uat">UAT</span></div></td>
               <td class="mono">2026-03-16</td>
             </tr><tr>
               <td><a class="ref" href="https://app.clickup.com/t/86d23540x" target="_blank" rel="noopener">SEC-101</a></td>
               <td class="tname2">[Issuer] Documents Submission</td>
               <td><span class="chip chip-uat">API: UAT</span> <span class="chip chip-uat">AdminWeb: UAT</span> <span class="chip chip-uat">CustomerWeb: UAT</span></td>
+              <td><div class="cmt"><b>API</b> · <a class="mono" href="https://github.com/pitchplatforms/pitchinAPI/commit/2afde956a" target="_blank" rel="noopener" title="SEC-101 API - [Issuer] Documents Submission (#1430)">2afde956a</a> <a href="https://github.com/pitchplatforms/pitchinAPI/pull/1430" target="_blank" rel="noopener">#1430</a> <span class="chip chip-uat">UAT</span></div><div class="cmt"><b>CustomerWeb</b> · <a class="mono" href="https://github.com/pitchplatforms/PitchinCustomerWeb/commit/72696877" target="_blank" rel="noopener" title="SEC-101 [Issuer] Documents Submission (#1271)">72696877</a> <a href="https://github.com/pitchplatforms/PitchinCustomerWeb/pull/1271" target="_blank" rel="noopener">#1271</a> <span class="chip chip-uat">UAT</span></div></td>
               <td class="mono">2026-04-07</td>
             </tr><tr>
               <td><a class="ref" href="https://app.clickup.com/t/86d1xakzb" target="_blank" rel="noopener">SEC-82</a></td>
               <td class="tname2">[Admin] Documents Approval Section</td>
               <td><span class="chip chip-uat">AdminWeb: UAT</span></td>
+              <td><div class="cmt"><b>AdminWeb</b> · <a class="mono" href="https://github.com/pitchplatforms/PitchinAdminWeb/commit/f46efe3b" target="_blank" rel="noopener" title="SEC-82 [Admin] Documents Approval Section (#710)">f46efe3b</a> <a href="https://github.com/pitchplatforms/PitchinAdminWeb/pull/710" target="_blank" rel="noopener">#710</a> <span class="chip chip-uat">UAT</span></div></td>
               <td class="mono">2026-04-07</td>
             </tr><tr>
               <td><a class="ref" href="https://app.clickup.com/t/86d2nt6te" target="_blank" rel="noopener">GRC-1670</a></td>
               <td class="tname2">[BUG] Unable to create a new dynamic sub form with gateway API</td>
               <td><span class="chip chip-uat">AdminWeb: UAT</span></td>
+              <td><div class="cmt"><b>AdminWeb</b> · <a class="mono" href="https://github.com/pitchplatforms/PitchinAdminWeb/commit/257afc48" target="_blank" rel="noopener" title="GRC-1670 [Bug] Unable to create a new dynamic sub form with gateway API (#719)">257afc48</a> <a href="https://github.com/pitchplatforms/PitchinAdminWeb/pull/719" target="_blank" rel="noopener">#719</a> <span class="chip chip-uat">UAT</span></div></td>
               <td class="mono">2026-04-16</td>
             </tr><tr>
               <td><a class="ref" href="https://app.clickup.com/t/86d0mmfve" target="_blank" rel="noopener">GEC-137</a></td>
               <td class="tname2">[BUG] Admin unable to manually cancel old PSTX buy or sell orders</td>
               <td><span class="chip chip-uat">API: UAT</span> <span class="chip chip-uat">AdminWeb: UAT</span></td>
+              <td><div class="cmt"><b>AdminWeb</b> · <a class="mono" href="https://github.com/pitchplatforms/PitchinAdminWeb/commit/3d50c6da" target="_blank" rel="noopener" title="GEC-137 [BUG] Admin unable to manually cancel old PSTX buy or sell orders (#733)">3d50c6da</a> <a href="https://github.com/pitchplatforms/PitchinAdminWeb/pull/733" target="_blank" rel="noopener">#733</a> <span class="chip chip-uat">UAT</span></div></td>
               <td class="mono">2026-04-30</td>
             </tr><tr>
               <td><a class="ref" href="https://app.clickup.com/t/86d2uz5fg" target="_blank" rel="noopener">SEC-349</a></td>
               <td class="tname2">[BUG] Document submitted is not shown in Mobile View</td>
               <td><span class="chip chip-uat">CustomerWeb: UAT</span></td>
+              <td><div class="cmt"><b>CustomerWeb</b> · <a class="mono" href="https://github.com/pitchplatforms/PitchinCustomerWeb/commit/c33f884d" target="_blank" rel="noopener" title="SEC 349 [BUG] document submitted is not shown in mobile view (#1317)">c33f884d</a> <a href="https://github.com/pitchplatforms/PitchinCustomerWeb/pull/1317" target="_blank" rel="noopener">#1317</a> <span class="chip chip-uat">UAT</span><br>&nbsp;&nbsp;<a class="mono" href="https://github.com/pitchplatforms/PitchinCustomerWeb/commit/a2495eaa" target="_blank" rel="noopener" title="SEC 349 [BUG] document submitted is not shown in mobile view (#1317)">a2495eaa</a> <a href="https://github.com/pitchplatforms/PitchinCustomerWeb/pull/1317" target="_blank" rel="noopener">#1317</a> <span class="chip chip-uat">UAT</span></div></td>
               <td class="mono">2026-05-04</td>
             </tr><tr>
               <td><a class="ref" href="https://app.clickup.com/t/86d2wf5pj" target="_blank" rel="noopener">SEC-354</a></td>
               <td class="tname2">[BUG] Document submitted is already approved despite admin not approve it yet</td>
               <td><span class="chip chip-uat">AdminWeb: UAT</span></td>
+              <td><div class="cmt"><b>AdminWeb</b> · <a class="mono" href="https://github.com/pitchplatforms/PitchinAdminWeb/commit/cbd80112" target="_blank" rel="noopener" title="SEC-354 [BUG] Document submitted is already approved despite admin not approve it yet (#755)">cbd80112</a> <a href="https://github.com/pitchplatforms/PitchinAdminWeb/pull/755" target="_blank" rel="noopener">#755</a> <span class="chip chip-uat">UAT</span></div></td>
               <td class="mono">2026-05-15</td>
             </tr><tr>
               <td><a class="ref" href="https://app.clickup.com/t/86d305jpe" target="_blank" rel="noopener">SEC-377</a></td>
               <td class="tname2">[BUG] Investor able to view the not approved document</td>
               <td><span class="chip chip-uat">API: UAT</span></td>
+              <td><div class="cmt"><b>API</b> · <a class="mono" href="https://github.com/pitchplatforms/pitchinAPI/commit/4ab8be828" target="_blank" rel="noopener" title="SEC-377 [BUG] Investor able to view the not approved document (#1524)">4ab8be828</a> <a href="https://github.com/pitchplatforms/pitchinAPI/pull/1524" target="_blank" rel="noopener">#1524</a> <span class="chip chip-uat">UAT</span></div></td>
               <td class="mono">2026-05-19</td>
             </tr><tr>
               <td><a class="ref" href="https://app.clickup.com/t/86d2y9330" target="_blank" rel="noopener">GEC-233</a></td>
               <td class="tname2">[BUG] Unable to cancel PSTX open order due to &quot;Invalid Market Surveillance module&quot; error</td>
               <td><span class="chip chip-uat">AdminWeb: UAT</span></td>
+              <td><div class="cmt"><b>AdminWeb</b> · <a class="mono" href="https://github.com/pitchplatforms/PitchinAdminWeb/commit/105790fd" target="_blank" rel="noopener" title="bugs/GEC-233 Unable to cancel PSTX open order due to Invalid Market Surveillance module error (#761)">105790fd</a> <a href="https://github.com/pitchplatforms/PitchinAdminWeb/pull/761" target="_blank" rel="noopener">#761</a> <span class="chip chip-uat">UAT</span></div></td>
               <td class="mono">2026-05-26</td>
             </tr><tr>
               <td><a class="ref" href="https://app.clickup.com/t/86d0te01a" target="_blank" rel="noopener">GRC-832</a></td>
               <td class="tname2">Checking on DuitNow Payment Status Update from Paid to Pledged in production</td>
               <td><span class="chip chip-uat">API: UAT</span></td>
+              <td><div class="cmt"><b>API</b> · <a class="mono" href="https://github.com/pitchplatforms/pitchinAPI/commit/4abfaf595" target="_blank" rel="noopener" title="GRC-832 Added audit trail entry (#1541)">4abfaf595</a> <a href="https://github.com/pitchplatforms/pitchinAPI/pull/1541" target="_blank" rel="noopener">#1541</a> <span class="chip chip-uat">UAT</span></div></td>
               <td class="mono">2026-05-26</td>
             </tr><tr>
               <td><a class="ref" href="https://app.clickup.com/t/86d379zm6" target="_blank" rel="noopener">SEC-389</a></td>
               <td class="tname2">[BUG] Digital Registry: Import Shareholder function missing and affecting multiple counters</td>
               <td><span class="chip chip-uat">API: UAT</span></td>
+              <td><div class="cmt"><b>API</b> · <a class="mono" href="https://github.com/pitchplatforms/pitchinAPI/commit/edd1d7823" target="_blank" rel="noopener" title=" SEC-389 [BUG] Digital Registry: Import Shareholder function missing and affecting multiple counters (#1558)">edd1d7823</a> <a href="https://github.com/pitchplatforms/pitchinAPI/pull/1558" target="_blank" rel="noopener">#1558</a> <span class="chip chip-uat">UAT</span></div></td>
               <td class="mono">2026-06-08</td>
             </tr><tr>
               <td><a class="ref" href="https://app.clickup.com/t/86d39h4vh" target="_blank" rel="noopener">GRC-2046</a></td>
               <td class="tname2">Add a feature to upload image feature to compress &amp; resize the image if it is too big</td>
               <td><span class="chip chip-uat">API: UAT</span></td>
+              <td><div class="cmt"><b>API</b> · <a class="mono" href="https://github.com/pitchplatforms/pitchinAPI/commit/5a66a2322" target="_blank" rel="noopener" title="GRC-2046 Fix image ratio issue &amp; change resize limit to 1280 pixels (#1567)">5a66a2322</a> <a href="https://github.com/pitchplatforms/pitchinAPI/pull/1567" target="_blank" rel="noopener">#1567</a> <span class="chip chip-uat">UAT</span><br>&nbsp;&nbsp;<a class="mono" href="https://github.com/pitchplatforms/pitchinAPI/commit/d2261ef88" target="_blank" rel="noopener" title="GRC-2046 add new feature to compress and resize image upload (#1566)">d2261ef88</a> <a href="https://github.com/pitchplatforms/pitchinAPI/pull/1566" target="_blank" rel="noopener">#1566</a> <span class="chip chip-uat">UAT</span> <span class="dim">+1 more</span></div></td>
               <td class="mono">2026-06-09</td>
             </tr><tr>
               <td><a class="ref" href="https://app.clickup.com/t/86d3a4crc" target="_blank" rel="noopener">SEC-397</a></td>
               <td class="tname2">Change submit announcement clickup task to specific announcement channel</td>
               <td><span class="chip chip-uat">API: UAT</span></td>
+              <td><div class="cmt"><b>API</b> · <a class="mono" href="https://github.com/pitchplatforms/pitchinAPI/commit/62042b707" target="_blank" rel="noopener" title="bugs/SEC-397 Change submit announcement clickup task to specific announcement channel (#1570)">62042b707</a> <a href="https://github.com/pitchplatforms/pitchinAPI/pull/1570" target="_blank" rel="noopener">#1570</a> <span class="chip chip-uat">UAT</span></div></td>
               <td class="mono">2026-06-10</td>
             </tr><tr>
               <td><a class="ref" href="https://app.clickup.com/t/86d2w9xc4" target="_blank" rel="noopener">SEC-351</a></td>
               <td class="tname2">Sandbox Checkbox — PSTX 2.0 Company Flag </td>
               <td><span class="chip chip-uat">API: UAT</span> <span class="chip chip-uat">AdminWeb: UAT</span></td>
+              <td><div class="cmt"><b>API</b> · <a class="mono" href="https://github.com/pitchplatforms/pitchinAPI/commit/d6f64de31" target="_blank" rel="noopener" title="SEC-351 Sandbox Checkbox (#1563)">d6f64de31</a> <a href="https://github.com/pitchplatforms/pitchinAPI/pull/1563" target="_blank" rel="noopener">#1563</a> <span class="chip chip-uat">UAT</span></div></td>
               <td class="mono">2026-06-11</td>
             </tr><tr>
               <td><a class="ref" href="https://app.clickup.com/t/86d38b7pv" target="_blank" rel="noopener">SEC-394</a></td>
               <td class="tname2">[PitchInAdminWeb] Sandbox Check UI</td>
               <td><span class="chip chip-uat">AdminWeb: UAT</span></td>
+              <td><div class="cmt"><b>AdminWeb</b> · <a class="mono" href="https://github.com/pitchplatforms/PitchinAdminWeb/commit/62d4b297" target="_blank" rel="noopener" title="SEC-394 Sandbox Checkbox UI (#766)">62d4b297</a> <a href="https://github.com/pitchplatforms/PitchinAdminWeb/pull/766" target="_blank" rel="noopener">#766</a> <span class="chip chip-uat">UAT</span></div></td>
               <td class="mono">2026-06-12</td>
             </tr><tr>
               <td><a class="ref" href="https://app.clickup.com/t/86d3dd1q6" target="_blank" rel="noopener">GRC-2127</a></td>
               <td class="tname2">[Bug] Could not select subform in mainform</td>
               <td><span class="chip chip-uat">AdminWeb: UAT</span></td>
+              <td><div class="cmt"><b>AdminWeb</b> · <a class="mono" href="https://github.com/pitchplatforms/PitchinAdminWeb/commit/668b10a7" target="_blank" rel="noopener" title="GRC-2127 [BUG] Could not select subform in mainform (#777)">668b10a7</a> <a href="https://github.com/pitchplatforms/PitchinAdminWeb/pull/777" target="_blank" rel="noopener">#777</a> <span class="chip chip-uat">UAT</span></div></td>
               <td class="mono">2026-06-20</td>
             </tr><tr>
               <td><a class="ref" href="https://app.clickup.com/t/86d3571jk" target="_blank" rel="noopener">SEC-386</a></td>
               <td class="tname2">[BUG] Document upload consistently returns error across multiple issuers</td>
               <td><span class="chip chip-uat">CustomerWeb: UAT</span></td>
+              <td><div class="cmt"><b>CustomerWeb</b> · <a class="mono" href="https://github.com/pitchplatforms/PitchinCustomerWeb/commit/e978a175" target="_blank" rel="noopener" title="SEC-386 Document upload consistently returns error across multiple issuers (#1406)">e978a175</a> <a href="https://github.com/pitchplatforms/PitchinCustomerWeb/pull/1406" target="_blank" rel="noopener">#1406</a> <span class="chip chip-uat">UAT</span></div></td>
               <td class="mono">2026-06-23</td>
             </tr><tr>
               <td><a class="ref" href="https://app.clickup.com/t/86d3ej4a7" target="_blank" rel="noopener">SEC-411</a></td>
               <td class="tname2">[BUG] API - Document upload consistently returns error across multiple issuers</td>
               <td><span class="chip chip-uat">API: UAT</span></td>
+              <td><div class="cmt"><b>API</b> · <a class="mono" href="https://github.com/pitchplatforms/pitchinAPI/commit/43e6e5ac0" target="_blank" rel="noopener" title="SEC-411 API - Document upload consistently returns error across multiple issuers (#1588)">43e6e5ac0</a> <a href="https://github.com/pitchplatforms/pitchinAPI/pull/1588" target="_blank" rel="noopener">#1588</a> <span class="chip chip-uat">UAT</span></div></td>
               <td class="mono">2026-06-23</td>
             </tr><tr>
               <td><a class="ref" href="https://app.clickup.com/t/86d3cwe1u" target="_blank" rel="noopener">FRC-792</a></td>
               <td class="tname2">Disallow issuer to reject/approve flow CW, only maintain PREVIEW</td>
               <td><span class="chip chip-uat">API: UAT</span> <span class="chip chip-uat">CustomerWeb: UAT</span></td>
+              <td><div class="cmt"><b>CustomerWeb</b> · <a class="mono" href="https://github.com/pitchplatforms/PitchinCustomerWeb/commit/3645b0fc" target="_blank" rel="noopener" title="FRC-792 Disallow issuer to reject/approve flow CW, only maintain PREVIEW (#1415)">3645b0fc</a> <a href="https://github.com/pitchplatforms/PitchinCustomerWeb/pull/1415" target="_blank" rel="noopener">#1415</a> <span class="chip chip-uat">UAT</span></div></td>
               <td class="mono">2026-06-26</td>
             </tr><tr>
               <td><a class="ref" href="https://app.clickup.com/t/86d3frvu2" target="_blank" rel="noopener">SEC-414</a></td>
               <td class="tname2">Change the config announcementListId of Staging and UAT env</td>
               <td><span class="chip chip-uat">API: UAT</span></td>
+              <td><div class="cmt"><b>API</b> · <a class="mono" href="https://github.com/pitchplatforms/pitchinAPI/commit/cd9441152" target="_blank" rel="noopener" title="bugs/SEC-414 Change the config announcementListId of Staging and UAT env (#1593)">cd9441152</a> <a href="https://github.com/pitchplatforms/pitchinAPI/pull/1593" target="_blank" rel="noopener">#1593</a> <span class="chip chip-uat">UAT</span></div></td>
               <td class="mono">2026-06-26</td>
             </tr><tr>
               <td><a class="ref" href="https://app.clickup.com/t/86d3e36au" target="_blank" rel="noopener">SEC-407</a></td>
               <td class="tname2">[BUG] &quot;Sandbox&quot; option is checked by default and unable to uncheck the &quot;Sandbox&quot; option</td>
               <td><span class="chip chip-uat">API: UAT</span> <span class="chip chip-uat">AdminWeb: UAT</span></td>
+              <td><div class="cmt"><b>AdminWeb</b> · <a class="mono" href="https://github.com/pitchplatforms/PitchinAdminWeb/commit/08f649d5" target="_blank" rel="noopener" title="[BUG] SEC-407 Preserve Sandbox flag after funding round update (#787)">08f649d5</a> <a href="https://github.com/pitchplatforms/PitchinAdminWeb/pull/787" target="_blank" rel="noopener">#787</a> <span class="chip chip-uat">UAT</span></div></td>
               <td class="mono">2026-06-29</td>
             </tr><tr>
               <td><a class="ref" href="https://app.clickup.com/t/86d3j5hm5" target="_blank" rel="noopener">SEC-423</a></td>
               <td class="tname2">[BUG] Internal Server Error when trying to approve shareholder in superadmin</td>
               <td><span class="chip chip-uat">API: UAT</span></td>
+              <td><div class="cmt"><b>API</b> · <a class="mono" href="https://github.com/pitchplatforms/pitchinAPI/commit/3faa44801" target="_blank" rel="noopener" title="SEC-423 [BUG] Internal Server Error when trying to approve shareholder in superadmin (#1620)">3faa44801</a> <a href="https://github.com/pitchplatforms/pitchinAPI/pull/1620" target="_blank" rel="noopener">#1620</a> <span class="chip chip-uat">UAT</span></div></td>
               <td class="mono">2026-07-03</td>
             </tr><tr>
               <td><a class="ref" href="https://app.clickup.com/t/86d3hjyan" target="_blank" rel="noopener">FRC-802</a></td>
               <td class="tname2">[BUG] Fix admin save as draft status and view page errors</td>
               <td><span class="chip chip-uat">API: UAT</span> <span class="chip chip-uat">CustomerWeb: UAT</span></td>
+              <td><div class="cmt"><b>CustomerWeb</b> · <a class="mono" href="https://github.com/pitchplatforms/PitchinCustomerWeb/commit/298d2c79" target="_blank" rel="noopener" title="FRC-802 Fix admin save as draft status and view page errors (#1448)">298d2c79</a> <a href="https://github.com/pitchplatforms/PitchinCustomerWeb/pull/1448" target="_blank" rel="noopener">#1448</a> <span class="chip chip-uat">UAT</span></div></td>
               <td class="mono">2026-07-06</td>
             </tr><tr>
               <td><a class="ref" href="https://app.clickup.com/t/86d3hjymy" target="_blank" rel="noopener">FRC-803</a></td>
               <td class="tname2">[BUG] Fix status display and view button navigation after admin submits summary</td>
               <td><span class="chip chip-uat">API: UAT</span> <span class="chip chip-uat">CustomerWeb: UAT</span></td>
+              <td><div class="cmt"><b>CustomerWeb</b> · <a class="mono" href="https://github.com/pitchplatforms/PitchinCustomerWeb/commit/0a56869f" target="_blank" rel="noopener" title="FRC-803 Fix status display and view button navigation after admin submits summary (#1447)">0a56869f</a> <a href="https://github.com/pitchplatforms/PitchinCustomerWeb/pull/1447" target="_blank" rel="noopener">#1447</a> <span class="chip chip-uat">UAT</span></div></td>
               <td class="mono">2026-07-06</td>
             </tr><tr>
               <td><a class="ref" href="https://app.clickup.com/t/86d39crr7" target="_blank" rel="noopener">GEC-238</a></td>
               <td class="tname2">[BUG] Still unable to cancel the order</td>
               <td><span class="chip chip-uat">API: UAT</span> <span class="chip chip-uat">AdminWeb: UAT</span></td>
+              <td><div class="cmt"><b>AdminWeb</b> · <a class="mono" href="https://github.com/pitchplatforms/PitchinAdminWeb/commit/84395f9d" target="_blank" rel="noopener" title="GEC-238 [BUG] Still unable to cancel the order (#801)">84395f9d</a> <a href="https://github.com/pitchplatforms/PitchinAdminWeb/pull/801" target="_blank" rel="noopener">#801</a> <span class="chip chip-uat">UAT</span></div></td>
               <td class="mono">2026-07-07</td>
             </tr><tr>
               <td><a class="ref" href="https://app.clickup.com/t/86d3gjhkd" target="_blank" rel="noopener">SEC-415</a></td>
               <td class="tname2">[BUG] Risk disclosure gate still appearing even though acknowledgement is already completed</td>
               <td><span class="chip chip-uat">API: UAT</span> <span class="chip chip-uat">Gateway: UAT</span></td>
+              <td><div class="cmt"><b>Gateway</b> · <a class="mono" href="https://github.com/pitchplatforms/pitchInNewApiGateway/commit/5b61746" target="_blank" rel="noopener" title="SEC-415 [BUG] Risk disclosure gate  still appearing even though acknowledge is already completed (#87)">5b61746</a> <a href="https://github.com/pitchplatforms/pitchInNewApiGateway/pull/87" target="_blank" rel="noopener">#87</a> <span class="chip chip-uat">UAT</span></div></td>
               <td class="mono">2026-07-09</td>
             </tr><tr>
               <td><a class="ref" href="https://app.clickup.com/t/86d3n1x76" target="_blank" rel="noopener">SEC-439</a></td>
               <td class="tname2">Corporate action voting — outcome screen still offers voting to non-voters after the window has closed; vote submission fails with &quot;unable to record the vote&quot; — prod</td>
               <td><span class="chip chip-uat">API: UAT</span> <span class="chip chip-uat">CustomerWeb: UAT</span></td>
+              <td><div class="cmt"><b>API</b> · <a class="mono" href="https://github.com/pitchplatforms/pitchinAPI/commit/c35566a94" target="_blank" rel="noopener" title="SEC-439: fix(corporate-actions): expose voting-open state so the investor vote CTA can&#x27;t outlive the window (#1645)">c35566a94</a> <a href="https://github.com/pitchplatforms/pitchinAPI/pull/1645" target="_blank" rel="noopener">#1645</a> <span class="chip chip-uat">UAT</span></div><div class="cmt"><b>CustomerWeb</b> · <a class="mono" href="https://github.com/pitchplatforms/PitchinCustomerWeb/commit/258d6643" target="_blank" rel="noopener" title="SEC-439: fix(corporate-action): hide vote CTA once voting has closed (#1462)">258d6643</a> <a href="https://github.com/pitchplatforms/PitchinCustomerWeb/pull/1462" target="_blank" rel="noopener">#1462</a> <span class="chip chip-uat">UAT</span></div></td>
               <td class="mono">2026-07-09</td>
-            </tr></tbody></table></div></details><details><summary><strong>staging</strong> — 66 tickets</summary><div class="tablewrap"><table><thead><tr><th>Ticket</th><th>Title</th><th>Highest environment reached</th><th>Oldest commit</th></tr></thead><tbody><tr>
+            </tr></tbody></table></div></details><details><summary><strong>staging</strong> — 66 tickets</summary><div class="tablewrap"><table><thead><tr><th>Ticket</th><th>Title</th><th>Highest environment reached</th><th>Commits / PRs</th><th>Oldest commit</th></tr></thead><tbody><tr>
               <td><a class="ref" href="https://app.clickup.com/t/86d1gtcan" target="_blank" rel="noopener">GRC-1157</a></td>
               <td class="tname2">Enhance existing dynamic form to support sub-form navigation</td>
               <td><span class="chip chip-uat">API: UAT</span> <span class="chip chip-uat">AdminWeb: UAT</span></td>
+              <td><div class="cmt"><b>API</b> · <a class="mono" href="https://github.com/pitchplatforms/pitchinAPI/commit/c00d21ba0" target="_blank" rel="noopener" title="GRC-1157 Enhance existing dynamic form to support sub-form navigation">c00d21ba0</a>  <span class="chip chip-uat">UAT</span></div><div class="cmt"><b>AdminWeb</b> · <a class="mono" href="https://github.com/pitchplatforms/PitchinAdminWeb/commit/fe94ea28" target="_blank" rel="noopener" title="[GRC 1157] Enhance existing dynamic form to support sub-form navigation (#592)">fe94ea28</a> <a href="https://github.com/pitchplatforms/PitchinAdminWeb/pull/592" target="_blank" rel="noopener">#592</a> <span class="chip chip-uat">UAT</span></div></td>
               <td class="mono">2026-01-19</td>
             </tr><tr>
               <td><a class="ref" href="https://app.clickup.com/t/86d1uda8u" target="_blank" rel="noopener">GRC-1305</a></td>
               <td class="tname2">[BUG] Fix errors in ECF-CW</td>
               <td><span class="chip chip-uat">CustomerWeb: UAT</span></td>
+              <td><div class="cmt"><b>CustomerWeb</b> · <a class="mono" href="https://github.com/pitchplatforms/PitchinCustomerWeb/commit/100d43d6" target="_blank" rel="noopener" title="GRC-1305 Fixing the errors by AI (#1179)">100d43d6</a> <a href="https://github.com/pitchplatforms/PitchinCustomerWeb/pull/1179" target="_blank" rel="noopener">#1179</a> <span class="chip chip-uat">UAT</span></div></td>
               <td class="mono">2026-02-05</td>
             </tr><tr>
               <td><a class="ref" href="https://app.clickup.com/t/86d2jw45x" target="_blank" rel="noopener">FRC-696</a></td>
               <td class="tname2">[Bug] Updates On Campaign Data is not reflecting accurately in production</td>
               <td><span class="chip chip-uat">API: UAT</span></td>
+              <td><div class="cmt"><b>API</b> · <a class="mono" href="https://github.com/pitchplatforms/pitchinAPI/commit/8e0dad58f" target="_blank" rel="noopener" title="FRC-696 [Bug] Updates on Campaign Data is not reflecting accurately in production (#1434)">8e0dad58f</a> <a href="https://github.com/pitchplatforms/pitchinAPI/pull/1434" target="_blank" rel="noopener">#1434</a> <span class="chip chip-uat">UAT</span></div></td>
               <td class="mono">2026-04-13</td>
             </tr><tr>
               <td><a class="ref" href="https://app.clickup.com/t/86d26kjvh" target="_blank" rel="noopener">SEC-129</a></td>
               <td class="tname2">[Notifications]ClickUp Task Integration for Document Approval</td>
               <td><span class="chip chip-uat">API: UAT</span></td>
+              <td><div class="cmt"><b>API</b> · <a class="mono" href="https://github.com/pitchplatforms/pitchinAPI/commit/c16965596" target="_blank" rel="noopener" title="SEC-129 [Notifications] ClickUp Task Integration for Document Approval (#1445)">c16965596</a> <a href="https://github.com/pitchplatforms/pitchinAPI/pull/1445" target="_blank" rel="noopener">#1445</a> <span class="chip chip-uat">UAT</span></div></td>
               <td class="mono">2026-04-17</td>
             </tr><tr>
               <td><a class="ref" href="https://app.clickup.com/t/86d2r52t6" target="_blank" rel="noopener">SEC-317</a></td>
               <td class="tname2">[BUG] Incorrect ClickUp Task Title Format for Document Approvals</td>
               <td><span class="chip chip-uat">API: UAT</span></td>
+              <td><div class="cmt"><b>API</b> · <a class="mono" href="https://github.com/pitchplatforms/pitchinAPI/commit/15b9da6b9" target="_blank" rel="noopener" title="SEC-317 change the title for click up task">15b9da6b9</a>  <span class="chip chip-uat">UAT</span><br>&nbsp;&nbsp;<a class="mono" href="https://github.com/pitchplatforms/pitchinAPI/commit/7b1b54eeb" target="_blank" rel="noopener" title="SEC-317 Incorrect ClickUp Task Title Format for Document Approvals (#1496)">7b1b54eeb</a> <a href="https://github.com/pitchplatforms/pitchinAPI/pull/1496" target="_blank" rel="noopener">#1496</a> <span class="chip chip-uat">UAT</span></div></td>
               <td class="mono">2026-05-08</td>
             </tr><tr>
               <td><a class="ref" href="https://app.clickup.com/t/86d2x19d3" target="_blank" rel="noopener">FRC-732</a></td>
               <td class="tname2">[PitchInAW] List and approve new issuer application</td>
               <td><span class="chip chip-uat">AdminWeb: UAT</span></td>
+              <td><div class="cmt"><b>AdminWeb</b> · <a class="mono" href="https://github.com/pitchplatforms/PitchinAdminWeb/commit/ff93b27b" target="_blank" rel="noopener" title="FRC-732 List and approve new issuer application (#745)">ff93b27b</a> <a href="https://github.com/pitchplatforms/PitchinAdminWeb/pull/745" target="_blank" rel="noopener">#745</a> <span class="chip chip-uat">UAT</span></div></td>
               <td class="mono">2026-05-11</td>
             </tr><tr>
               <td><a class="ref" href="https://app.clickup.com/t/86d2x1a74" target="_blank" rel="noopener">FRC-733</a></td>
               <td class="tname2">[PitchInCW] New user submit application and create default issuer account</td>
               <td><span class="chip chip-uat">CustomerWeb: UAT</span></td>
+              <td><div class="cmt"><b>CustomerWeb</b> · <a class="mono" href="https://github.com/pitchplatforms/PitchinCustomerWeb/commit/61abfba0" target="_blank" rel="noopener" title="FRC-733 New user submit application and create default issuer account (#1324)">61abfba0</a> <a href="https://github.com/pitchplatforms/PitchinCustomerWeb/pull/1324" target="_blank" rel="noopener">#1324</a> <span class="chip chip-uat">UAT</span></div></td>
               <td class="mono">2026-05-13</td>
             </tr><tr>
               <td><a class="ref" href="https://app.clickup.com/t/86d2x1ayz" target="_blank" rel="noopener">FRC-734</a></td>
               <td class="tname2">[PitchInAPI] Implement public API for new user to submit application without login</td>
               <td><span class="chip chip-uat">API: UAT</span></td>
+              <td><div class="cmt"><b>API</b> · <a class="mono" href="https://github.com/pitchplatforms/pitchinAPI/commit/9bb9bac77" target="_blank" rel="noopener" title="FRC-734 Implement public API for new user to submit application without login (#1488)">9bb9bac77</a> <a href="https://github.com/pitchplatforms/pitchinAPI/pull/1488" target="_blank" rel="noopener">#1488</a> <span class="chip chip-uat">UAT</span></div></td>
               <td class="mono">2026-05-13</td>
             </tr><tr>
               <td><a class="ref" href="https://app.clickup.com/t/86d2zhpy4" target="_blank" rel="noopener">GRC-1866</a></td>
               <td class="tname2">[BUG] Fix migration files still using IsPublish</td>
               <td><span class="chip chip-uat">API: UAT</span></td>
+              <td><div class="cmt"><b>API</b> · <a class="mono" href="https://github.com/pitchplatforms/pitchinAPI/commit/de1a797c8" target="_blank" rel="noopener" title="GRC-1866 [BUG] Fix migration file still using IsPublish (#1518)">de1a797c8</a> <a href="https://github.com/pitchplatforms/pitchinAPI/pull/1518" target="_blank" rel="noopener">#1518</a> <span class="chip chip-uat">UAT</span></div></td>
               <td class="mono">2026-05-13</td>
             </tr><tr>
               <td><a class="ref" href="https://app.clickup.com/t/86d31hvtq" target="_blank" rel="noopener">GRC-1906</a></td>
               <td class="tname2">Build error task fixing related to FRC-678</td>
               <td><span class="chip chip-uat">API: UAT</span></td>
+              <td><div class="cmt"><b>API</b> · <a class="mono" href="https://github.com/pitchplatforms/pitchinAPI/commit/c3521a8e6" target="_blank" rel="noopener" title="GRC-1906 Build error task fixing related to FRC-678 (#1529)">c3521a8e6</a> <a href="https://github.com/pitchplatforms/pitchinAPI/pull/1529" target="_blank" rel="noopener">#1529</a> <span class="chip chip-uat">UAT</span></div></td>
               <td class="mono">2026-05-19</td>
             </tr><tr>
               <td><a class="ref" href="https://app.clickup.com/t/86d320ugh" target="_blank" rel="noopener">GRC-1920</a></td>
               <td class="tname2">[BUG] Remove &quot;Approved&quot; status from Document List API</td>
               <td><span class="chip chip-uat">API: UAT</span></td>
+              <td><div class="cmt"><b>API</b> · <a class="mono" href="https://github.com/pitchplatforms/pitchinAPI/commit/e4d7eaa06" target="_blank" rel="noopener" title="GRC-1920 [BUG] Remove &quot;Approved&quot; status from Document List API (#1533)">e4d7eaa06</a> <a href="https://github.com/pitchplatforms/pitchinAPI/pull/1533" target="_blank" rel="noopener">#1533</a> <span class="chip chip-uat">UAT</span></div></td>
               <td class="mono">2026-05-20</td>
             </tr><tr>
               <td><a class="ref" href="https://app.clickup.com/t/86d3216cy" target="_blank" rel="noopener">GRC-1922</a></td>
               <td class="tname2">[BUG] CW Update Investor Document List Condition</td>
               <td><span class="chip chip-uat">CustomerWeb: UAT</span></td>
+              <td><div class="cmt"><b>CustomerWeb</b> · <a class="mono" href="https://github.com/pitchplatforms/PitchinCustomerWeb/commit/b09ae10c" target="_blank" rel="noopener" title="GRC-1922 [BUG] CW Update Investor Document List Condition (#1352)">b09ae10c</a> <a href="https://github.com/pitchplatforms/PitchinCustomerWeb/pull/1352" target="_blank" rel="noopener">#1352</a> <span class="chip chip-uat">UAT</span></div></td>
               <td class="mono">2026-05-20</td>
             </tr><tr>
               <td><a class="ref" href="https://app.clickup.com/t/86d33xm5b" target="_blank" rel="noopener">GRC-1960</a></td>
               <td class="tname2">Hi, I having issue running the API service locally, error on migration script for CampaignOnePager</td>
               <td><span class="chip chip-uat">API: UAT</span></td>
+              <td><div class="cmt"><b>API</b> · <a class="mono" href="https://github.com/pitchplatforms/pitchinAPI/commit/9cab89a80" target="_blank" rel="noopener" title="GRC-1960 Updated migration scripts (#1537)">9cab89a80</a> <a href="https://github.com/pitchplatforms/pitchinAPI/pull/1537" target="_blank" rel="noopener">#1537</a> <span class="chip chip-uat">UAT</span></div></td>
               <td class="mono">2026-05-25</td>
             </tr><tr>
               <td><a class="ref" href="https://app.clickup.com/t/86d38j4k9" target="_blank" rel="noopener">SEC-395</a></td>
               <td class="tname2">Fix system error in shareholder history page in Admin DR</td>
               <td><span class="chip chip-uat">API: UAT</span></td>
+              <td><div class="cmt"><b>API</b> · <a class="mono" href="https://github.com/pitchplatforms/pitchinAPI/commit/3140265bd" target="_blank" rel="noopener" title="SEC-395 Fix error in MySecService (#1562)">3140265bd</a> <a href="https://github.com/pitchplatforms/pitchinAPI/pull/1562" target="_blank" rel="noopener">#1562</a> <span class="chip chip-uat">UAT</span></div></td>
               <td class="mono">2026-06-06</td>
             </tr><tr>
               <td><a class="ref" href="https://app.clickup.com/t/86d1tx1jq" target="_blank" rel="noopener">FRC-603</a></td>
               <td class="tname2">Issuer can preview one-pager from item checklist during onboarding process</td>
               <td><span class="chip chip-uat">CustomerWeb: UAT</span></td>
+              <td><div class="cmt"><b>CustomerWeb</b> · <a class="mono" href="https://github.com/pitchplatforms/PitchinCustomerWeb/commit/0bb1832d" target="_blank" rel="noopener" title="FRC-603 Issuer can preview one-pager from item checklist during onboarding process (#1371)">0bb1832d</a> <a href="https://github.com/pitchplatforms/PitchinCustomerWeb/pull/1371" target="_blank" rel="noopener">#1371</a> <span class="chip chip-uat">UAT</span></div></td>
               <td class="mono">2026-06-08</td>
             </tr><tr>
               <td><a class="ref" href="https://app.clickup.com/t/86d38zbcz" target="_blank" rel="noopener">FRC-776</a></td>
               <td class="tname2">API - Issuer can preview one-pager from item checklist during onboarding process</td>
               <td><span class="chip chip-uat">API: UAT</span></td>
+              <td><div class="cmt"><b>API</b> · <a class="mono" href="https://github.com/pitchplatforms/pitchinAPI/commit/a91503eae" target="_blank" rel="noopener" title="FRC-776 API - Issuer can preview one-pager from item checklist during onboarding process (#1564)">a91503eae</a> <a href="https://github.com/pitchplatforms/pitchinAPI/pull/1564" target="_blank" rel="noopener">#1564</a> <span class="chip chip-uat">UAT</span></div></td>
               <td class="mono">2026-06-11</td>
             </tr><tr>
               <td><a class="ref" href="https://app.clickup.com/t/86d3ad75e" target="_blank" rel="noopener">GRC-2069</a></td>
               <td class="tname2">MySecService Deployment Bug</td>
               <td><span class="chip chip-uat">API: UAT</span></td>
+              <td><div class="cmt"><b>API</b> · <a class="mono" href="https://github.com/pitchplatforms/pitchinAPI/commit/699be6371" target="_blank" rel="noopener" title="GRC-2069 MySecService Deployment Bug (#1572)">699be6371</a> <a href="https://github.com/pitchplatforms/pitchinAPI/pull/1572" target="_blank" rel="noopener">#1572</a> <span class="chip chip-uat">UAT</span></div></td>
               <td class="mono">2026-06-11</td>
             </tr><tr>
               <td><a class="ref" href="https://app.clickup.com/t/86d0q0p43" target="_blank" rel="noopener">FRC-478</a></td>
               <td class="tname2">User can see accurate one-pager content information in CW</td>
               <td><span class="chip chip-uat">CustomerWeb: UAT</span></td>
+              <td><div class="cmt"><b>CustomerWeb</b> · <a class="mono" href="https://github.com/pitchplatforms/PitchinCustomerWeb/commit/a86aff74" target="_blank" rel="noopener" title="FRC-478 User can see accurate one-pager content information in CW (#1383)">a86aff74</a> <a href="https://github.com/pitchplatforms/PitchinCustomerWeb/pull/1383" target="_blank" rel="noopener">#1383</a> <span class="chip chip-uat">UAT</span></div></td>
               <td class="mono">2026-06-13</td>
             </tr><tr>
               <td><a class="ref" href="https://app.clickup.com/t/86d3b72u7" target="_blank" rel="noopener">FRC-788</a></td>
               <td class="tname2">API - User can see accurate one-pager content information in CW</td>
               <td><span class="chip chip-uat">API: UAT</span></td>
+              <td><div class="cmt"><b>API</b> · <a class="mono" href="https://github.com/pitchplatforms/pitchinAPI/commit/d8467df61" target="_blank" rel="noopener" title="FRC-788 API - User can see accurate one-pager content information in CW (#1575)">d8467df61</a> <a href="https://github.com/pitchplatforms/pitchinAPI/pull/1575" target="_blank" rel="noopener">#1575</a> <span class="chip chip-uat">UAT</span></div></td>
               <td class="mono">2026-06-13</td>
             </tr><tr>
               <td><a class="ref" href="https://app.clickup.com/t/86d3ajc8z" target="_blank" rel="noopener">GRC-2075</a></td>
               <td class="tname2">Include Campaign Summary Fetch and Publish endpoints in gateway</td>
               <td><span class="chip chip-uat">Gateway: UAT</span></td>
+              <td><div class="cmt"><b>Gateway</b> · <a class="mono" href="https://github.com/pitchplatforms/pitchInNewApiGateway/commit/3de2f33" target="_blank" rel="noopener" title="GRC-2075 Include Campaign Summary Fetch and Publish endpoints in gateway (#76)">3de2f33</a> <a href="https://github.com/pitchplatforms/pitchInNewApiGateway/pull/76" target="_blank" rel="noopener">#76</a> <span class="chip chip-uat">UAT</span></div></td>
               <td class="mono">2026-06-15</td>
             </tr><tr>
               <td><a class="ref" href="https://app.clickup.com/t/86d3bp1cm" target="_blank" rel="noopener">GRC-2091</a></td>
               <td class="tname2">[PitchInCustomerWeb] Display subforms to fill and submit</td>
               <td><span class="chip chip-uat">CustomerWeb: UAT</span></td>
+              <td><div class="cmt"><b>CustomerWeb</b> · <a class="mono" href="https://github.com/pitchplatforms/PitchinCustomerWeb/commit/4964efaa" target="_blank" rel="noopener" title="GRC-2091 Display subforms to fill and submit (#1387)">4964efaa</a> <a href="https://github.com/pitchplatforms/PitchinCustomerWeb/pull/1387" target="_blank" rel="noopener">#1387</a> <span class="chip chip-uat">UAT</span></div></td>
               <td class="mono">2026-06-17</td>
             </tr><tr>
               <td><a class="ref" href="https://app.clickup.com/t/86d2ajrvc" target="_blank" rel="noopener">FRC-657</a></td>
               <td class="tname2">Track user data that access one-pager</td>
               <td><span class="chip chip-uat">CustomerWeb: UAT</span></td>
+              <td><div class="cmt"><b>CustomerWeb</b> · <a class="mono" href="https://github.com/pitchplatforms/PitchinCustomerWeb/commit/277b0cc9" target="_blank" rel="noopener" title="FRC-657-Track user data that access one-pager (#1393)">277b0cc9</a> <a href="https://github.com/pitchplatforms/PitchinCustomerWeb/pull/1393" target="_blank" rel="noopener">#1393</a> <span class="chip chip-uat">UAT</span></div></td>
               <td class="mono">2026-06-18</td>
             </tr><tr>
               <td><a class="ref" href="https://app.clickup.com/t/86d2wdn1p" target="_blank" rel="noopener">SEC-352</a></td>
               <td class="tname2">PSTX 2.0 Counter Identification &amp; Investor Eligibility Gate</td>
               <td><span class="chip chip-uat">API: UAT</span> <span class="chip chip-uat">CustomerWeb: UAT</span></td>
+              <td><div class="cmt"><b>CustomerWeb</b> · <a class="mono" href="https://github.com/pitchplatforms/PitchinCustomerWeb/commit/729d7736" target="_blank" rel="noopener" title="SEC-352 Counter Identification and Investor Eligibility Gate (#1390)">729d7736</a> <a href="https://github.com/pitchplatforms/PitchinCustomerWeb/pull/1390" target="_blank" rel="noopener">#1390</a> <span class="chip chip-uat">UAT</span></div></td>
               <td class="mono">2026-06-18</td>
             </tr><tr>
               <td><a class="ref" href="https://app.clickup.com/t/86d3cgjhz" target="_blank" rel="noopener">SEC-403</a></td>
               <td class="tname2">[PitchInAPI] Counter Identification Sandbox Support</td>
               <td><span class="chip chip-uat">API: UAT</span></td>
+              <td><div class="cmt"><b>API</b> · <a class="mono" href="https://github.com/pitchplatforms/pitchinAPI/commit/2ef01d20e" target="_blank" rel="noopener" title="SEC-403 Counter Identification Sandbox Support (#1577)">2ef01d20e</a> <a href="https://github.com/pitchplatforms/pitchinAPI/pull/1577" target="_blank" rel="noopener">#1577</a> <span class="chip chip-uat">UAT</span></div></td>
               <td class="mono">2026-06-18</td>
             </tr><tr>
               <td><a class="ref" href="https://app.clickup.com/t/86d30ee3g" target="_blank" rel="noopener">FRC-757</a></td>
               <td class="tname2">Update the Issuer Submit ECF Application UI</td>
               <td><span class="chip chip-uat">CustomerWeb: UAT</span></td>
+              <td><div class="cmt"><b>CustomerWeb</b> · <a class="mono" href="https://github.com/pitchplatforms/PitchinCustomerWeb/commit/c0e41300" target="_blank" rel="noopener" title="FRC-757 Update the Issuer Submit ECF Application UI (#1399)">c0e41300</a> <a href="https://github.com/pitchplatforms/PitchinCustomerWeb/pull/1399" target="_blank" rel="noopener">#1399</a> <span class="chip chip-uat">UAT</span></div></td>
               <td class="mono">2026-06-20</td>
             </tr><tr>
               <td><a class="ref" href="https://app.clickup.com/t/86d160mz7" target="_blank" rel="noopener">GRC-1004</a></td>
               <td class="tname2">We are getting error in production on MailChimp email</td>
               <td><span class="chip chip-uat">API: UAT</span></td>
+              <td><div class="cmt"><b>API</b> · <a class="mono" href="https://github.com/pitchplatforms/pitchinAPI/commit/907b93ac4" target="_blank" rel="noopener" title="GRC-1004 Error in MailChimp email in production (#1581)">907b93ac4</a> <a href="https://github.com/pitchplatforms/pitchinAPI/pull/1581" target="_blank" rel="noopener">#1581</a> <span class="chip chip-uat">UAT</span></div></td>
               <td class="mono">2026-06-20</td>
             </tr><tr>
               <td><a class="ref" href="https://app.clickup.com/t/86d3a00b8" target="_blank" rel="noopener">GRC-2057</a></td>
               <td class="tname2">[Bug] Mandrill Email service errors in staging env</td>
               <td><span class="chip chip-uat">API: UAT</span></td>
+              <td><div class="cmt"><b>API</b> · <a class="mono" href="https://github.com/pitchplatforms/pitchinAPI/commit/686753e1e" target="_blank" rel="noopener" title="GRC-2057 Mandrill Email service errors in staging env (#1582)">686753e1e</a> <a href="https://github.com/pitchplatforms/pitchinAPI/pull/1582" target="_blank" rel="noopener">#1582</a> <span class="chip chip-uat">UAT</span></div></td>
               <td class="mono">2026-06-22</td>
             </tr><tr>
               <td><a class="ref" href="https://app.clickup.com/t/86d3e2614" target="_blank" rel="noopener">GRC-2139</a></td>
               <td class="tname2">[Bug] Fix FRC-649, error found by product team</td>
               <td><span class="chip chip-uat">CustomerWeb: UAT</span></td>
+              <td><div class="cmt"><b>CustomerWeb</b> · <a class="mono" href="https://github.com/pitchplatforms/PitchinCustomerWeb/commit/c73bf2bf" target="_blank" rel="noopener" title="GRC-2139 [Bug] Fix FRC-649, error found by product team (#1405)">c73bf2bf</a> <a href="https://github.com/pitchplatforms/PitchinCustomerWeb/pull/1405" target="_blank" rel="noopener">#1405</a> <span class="chip chip-uat">UAT</span></div></td>
               <td class="mono">2026-06-23</td>
             </tr><tr>
               <td><a class="ref" href="https://app.clickup.com/t/86d2qrcqd" target="_blank" rel="noopener">SEC-287</a></td>
               <td class="tname2">Shareholder Account Matching (4 paths)</td>
               <td><span class="chip chip-uat">API: UAT</span></td>
+              <td><div class="cmt"><b>API</b> · <a class="mono" href="https://github.com/pitchplatforms/pitchinAPI/commit/2ecddca41" target="_blank" rel="noopener" title="SEC-287 Shareholder Account Matching (4 paths) (#1604)">2ecddca41</a> <a href="https://github.com/pitchplatforms/pitchinAPI/pull/1604" target="_blank" rel="noopener">#1604</a> <span class="chip chip-uat">UAT</span></div></td>
               <td class="mono">2026-06-30</td>
             </tr><tr>
               <td><a class="ref" href="https://app.clickup.com/t/86d3gkwet" target="_blank" rel="noopener">SEC-416</a></td>
               <td class="tname2">SEC-286 New flag in Shareholding model</td>
               <td><span class="chip chip-uat">API: UAT</span></td>
+              <td><div class="cmt"><b>API</b> · <a class="mono" href="https://github.com/pitchplatforms/pitchinAPI/commit/a6d3f17a9" target="_blank" rel="noopener" title="SEC-416 SEC-286 New flag in Shareholding model (#1603)">a6d3f17a9</a> <a href="https://github.com/pitchplatforms/pitchinAPI/pull/1603" target="_blank" rel="noopener">#1603</a> <span class="chip chip-uat">UAT</span></div></td>
               <td class="mono">2026-07-01</td>
             </tr><tr>
               <td><a class="ref" href="https://app.clickup.com/t/86d3fux4m" target="_blank" rel="noopener">ENB-33</a></td>
               <td class="tname2">Readers use a redesigned Knowledge Centre (find + read)</td>
               <td><span class="chip chip-uat">CustomerWeb: UAT</span></td>
+              <td><div class="cmt"><b>CustomerWeb</b> · <a class="mono" href="https://github.com/pitchplatforms/PitchinCustomerWeb/commit/fcabf094" target="_blank" rel="noopener" title="feat(knowledge): Knowledge Centre redesign — hub, search, reader, AI slot, SEO (decoupled) (ENB-33) (#1428)">fcabf094</a> <a href="https://github.com/pitchplatforms/PitchinCustomerWeb/pull/1428" target="_blank" rel="noopener">#1428</a> <span class="chip chip-uat">UAT</span></div></td>
               <td class="mono">2026-07-02</td>
             </tr><tr>
               <td><a class="ref" href="https://app.clickup.com/t/86d13uptf" target="_blank" rel="noopener">GRC-970</a></td>
               <td class="tname2">Investigate and resolve missing investor update emails triggered from customer web</td>
               <td><span class="chip chip-uat">API: UAT</span></td>
+              <td><div class="cmt"><b>API</b> · <a class="mono" href="https://github.com/pitchplatforms/pitchinAPI/commit/d05524da5" target="_blank" rel="noopener" title="GRC-970 Fix campaign completion email dispatch (#1614)">d05524da5</a> <a href="https://github.com/pitchplatforms/pitchinAPI/pull/1614" target="_blank" rel="noopener">#1614</a> <span class="chip chip-uat">UAT</span></div></td>
               <td class="mono">2026-07-03</td>
             </tr><tr>
               <td><a class="ref" href="https://app.clickup.com/t/86d304gvu" target="_blank" rel="noopener">FRC-756</a></td>
               <td class="tname2">Log every DR import in audit trail</td>
               <td><span class="chip chip-uat">API: UAT</span></td>
+              <td><div class="cmt"><b>API</b> · <a class="mono" href="https://github.com/pitchplatforms/pitchinAPI/commit/935dc4232" target="_blank" rel="noopener" title="FRC-756 Log every DR import in audit trail (#1630)">935dc4232</a> <a href="https://github.com/pitchplatforms/pitchinAPI/pull/1630" target="_blank" rel="noopener">#1630</a> <span class="chip chip-uat">UAT</span></div></td>
               <td class="mono">2026-07-07</td>
             </tr><tr>
               <td><a class="ref" href="https://app.clickup.com/t/86d3kehpw" target="_blank" rel="noopener">FRC-805</a></td>
               <td class="tname2">[BUG] Change email configuration to send to Staging group</td>
               <td><span class="chip chip-uat">API: UAT</span></td>
+              <td><div class="cmt"><b>API</b> · <a class="mono" href="https://github.com/pitchplatforms/pitchinAPI/commit/d259c0749" target="_blank" rel="noopener" title="[BUG] FRC-805 Change email configuration to send to Staging  group (#1633)">d259c0749</a> <a href="https://github.com/pitchplatforms/pitchinAPI/pull/1633" target="_blank" rel="noopener">#1633</a> <span class="chip chip-uat">UAT</span></div></td>
               <td class="mono">2026-07-08</td>
             </tr><tr>
               <td><a class="ref" href="https://app.clickup.com/t/86d3mmt75" target="_blank" rel="noopener">FRC-814</a></td>
               <td class="tname2">Portfolio API Gateway</td>
               <td><span class="chip chip-uat">Gateway: UAT</span></td>
+              <td><div class="cmt"><b>Gateway</b> · <a class="mono" href="https://github.com/pitchplatforms/pitchInNewApiGateway/commit/82e3016" target="_blank" rel="noopener" title="FRC-814 create new API route for portfolio page to get GL calculation (#89)">82e3016</a> <a href="https://github.com/pitchplatforms/pitchInNewApiGateway/pull/89" target="_blank" rel="noopener">#89</a> <span class="chip chip-uat">UAT</span></div></td>
               <td class="mono">2026-07-08</td>
             </tr><tr>
               <td><a class="ref" href="https://app.clickup.com/t/86d3f09dm" target="_blank" rel="noopener">GEC-249</a></td>
               <td class="tname2">[BUG] ECF Account Number field is 0 when exporting ROD Report for company that has no prior ECF Campaigns</td>
               <td><span class="chip chip-uat">API: UAT</span></td>
+              <td><div class="cmt"><b>API</b> · <a class="mono" href="https://github.com/pitchplatforms/pitchinAPI/commit/8ddcedd01" target="_blank" rel="noopener" title="GEC-249 [BUG] Fix imports with investor multiple roles (#1642)">8ddcedd01</a> <a href="https://github.com/pitchplatforms/pitchinAPI/pull/1642" target="_blank" rel="noopener">#1642</a> <span class="chip chip-uat">UAT</span><br>&nbsp;&nbsp;<a class="mono" href="https://github.com/pitchplatforms/pitchinAPI/commit/7faa583c6" target="_blank" rel="noopener" title="GEC-249 [BUG] ECF Account Number field is 0 when exporting ROD Report for company that has no prior ECF Campaigns (#1613)">7faa583c6</a> <a href="https://github.com/pitchplatforms/pitchinAPI/pull/1613" target="_blank" rel="noopener">#1613</a> <span class="chip chip-uat">UAT</span></div></td>
               <td class="mono">2026-07-08</td>
             </tr><tr>
               <td><a class="ref" href="https://app.clickup.com/t/86d3gkdrj" target="_blank" rel="noopener">GRC-2189</a></td>
               <td class="tname2">[BUG] Fix sub-form issues: remove pop-up/redirect, radio button uncheck, and sub-form data overwrite</td>
               <td><span class="chip chip-uat">CustomerWeb: UAT</span></td>
+              <td><div class="cmt"><b>CustomerWeb</b> · <a class="mono" href="https://github.com/pitchplatforms/PitchinCustomerWeb/commit/c3d23a85" target="_blank" rel="noopener" title="[BUG]GRC-2189 Fix dynamic subform handling in CustomerWeb (#1443)">c3d23a85</a> <a href="https://github.com/pitchplatforms/PitchinCustomerWeb/pull/1443" target="_blank" rel="noopener">#1443</a> <span class="chip chip-uat">UAT</span></div></td>
               <td class="mono">2026-07-08</td>
             </tr><tr>
               <td><a class="ref" href="https://app.clickup.com/t/86d3m9rd3" target="_blank" rel="noopener">INC-257</a></td>
               <td class="tname2">Flagged detection + login nudge</td>
               <td><span class="chip chip-uat">API: UAT</span> <span class="chip chip-uat">CustomerWeb: UAT</span></td>
+              <td><div class="cmt"><b>API</b> · <a class="mono" href="https://github.com/pitchplatforms/pitchinAPI/commit/626c123f5" target="_blank" rel="noopener" title="INC-257: feat(users): Flagged-investor detection + login-nudge signal (dormant by default) (#1635)">626c123f5</a> <a href="https://github.com/pitchplatforms/pitchinAPI/pull/1635" target="_blank" rel="noopener">#1635</a> <span class="chip chip-uat">UAT</span></div><div class="cmt"><b>CustomerWeb</b> · <a class="mono" href="https://github.com/pitchplatforms/PitchinCustomerWeb/commit/0d2f6511" target="_blank" rel="noopener" title="INC-257: feat(login): Variant B profile-refresh nudge + Flagged routing (#1460)">0d2f6511</a> <a href="https://github.com/pitchplatforms/PitchinCustomerWeb/pull/1460" target="_blank" rel="noopener">#1460</a> <span class="chip chip-uat">UAT</span></div></td>
               <td class="mono">2026-07-08</td>
             </tr><tr>
               <td><a class="ref" href="https://app.clickup.com/t/86d3m9rtu" target="_blank" rel="noopener">INC-270</a></td>
               <td class="tname2">Admin visibility + manual-flag control</td>
               <td><span class="chip chip-uat">API: UAT</span> <span class="chip chip-uat">AdminWeb: UAT</span></td>
+              <td><div class="cmt"><b>AdminWeb</b> · <a class="mono" href="https://github.com/pitchplatforms/PitchinAdminWeb/commit/f7da882b" target="_blank" rel="noopener" title="INC-270: feat(admin-web): show Flagged + LastValidatedAt and add manual flag action (#803)">f7da882b</a> <a href="https://github.com/pitchplatforms/PitchinAdminWeb/pull/803" target="_blank" rel="noopener">#803</a> <span class="chip chip-uat">UAT</span></div></td>
               <td class="mono">2026-07-08</td>
             </tr><tr>
               <td><a class="ref" href="https://app.clickup.com/t/86d33xn99" target="_blank" rel="noopener">FRC-764</a></td>
               <td class="tname2">G/L Calculation Logic (BE)</td>
               <td><span class="chip chip-uat">API: UAT</span> <span class="chip chip-uat">Gateway: UAT</span></td>
+              <td><div class="cmt"><b>API</b> · <a class="mono" href="https://github.com/pitchplatforms/pitchinAPI/commit/0042b6c51" target="_blank" rel="noopener" title="FRC-764 create new API for portfolio page to get GL calculation (#1636)">0042b6c51</a> <a href="https://github.com/pitchplatforms/pitchinAPI/pull/1636" target="_blank" rel="noopener">#1636</a> <span class="chip chip-uat">UAT</span><br>&nbsp;&nbsp;<a class="mono" href="https://github.com/pitchplatforms/pitchinAPI/commit/32932f460" target="_blank" rel="noopener" title="fix(FRC-764): portfolio-gl calculation corrections + UsersControllerTests build fix (#1667)">32932f460</a> <a href="https://github.com/pitchplatforms/pitchinAPI/pull/1667" target="_blank" rel="noopener">#1667</a> <span class="chip chip-stg">STAGING</span> <span class="dim">+1 more</span></div></td>
               <td class="mono">2026-07-09</td>
             </tr><tr>
               <td><a class="ref" href="https://app.clickup.com/t/86d2hkzfw" target="_blank" rel="noopener">GRC-1582</a></td>
               <td class="tname2">Add a step in File Upload process to compress the images and PDF documents</td>
               <td><span class="chip chip-uat">API: UAT</span></td>
+              <td><div class="cmt"><b>API</b> · <a class="mono" href="https://github.com/pitchplatforms/pitchinAPI/commit/58deb0758" target="_blank" rel="noopener" title="GRC-1582 add a step in file upload process to compress the images and pdf documents (#1644)">58deb0758</a> <a href="https://github.com/pitchplatforms/pitchinAPI/pull/1644" target="_blank" rel="noopener">#1644</a> <span class="chip chip-uat">UAT</span></div></td>
               <td class="mono">2026-07-09</td>
             </tr><tr>
               <td><a class="ref" href="https://app.clickup.com/t/86d3mjpfb" target="_blank" rel="noopener">FRC-809</a></td>
               <td class="tname2">Fix the UI</td>
               <td><span class="chip chip-uat">CustomerWeb: UAT</span></td>
+              <td><div class="cmt"><b>CustomerWeb</b> · <a class="mono" href="https://github.com/pitchplatforms/PitchinCustomerWeb/commit/a5b19758" target="_blank" rel="noopener" title="FRC-809 fix error in build PSTX Order (#1471)">a5b19758</a> <a href="https://github.com/pitchplatforms/PitchinCustomerWeb/pull/1471" target="_blank" rel="noopener">#1471</a> <span class="chip chip-uat">UAT</span><br>&nbsp;&nbsp;<a class="mono" href="https://github.com/pitchplatforms/PitchinCustomerWeb/commit/6beef7a4" target="_blank" rel="noopener" title="FRC-809: Fix PSTX Order Module UI (#1456)">6beef7a4</a> <a href="https://github.com/pitchplatforms/PitchinCustomerWeb/pull/1456" target="_blank" rel="noopener">#1456</a> <span class="chip chip-uat">UAT</span></div></td>
               <td class="mono">2026-07-10</td>
             </tr><tr>
               <td><a class="ref" href="https://app.clickup.com/t/86d3mmgkg" target="_blank" rel="noopener">FRC-813</a></td>
               <td class="tname2">ECF Investment tab-BE changes</td>
               <td><span class="chip chip-uat">API: UAT</span></td>
+              <td><div class="cmt"><b>API</b> · <a class="mono" href="https://github.com/pitchplatforms/pitchinAPI/commit/9c6ea3afe" target="_blank" rel="noopener" title="FRC-813 modify filter for ecf investment tab (#1651)">9c6ea3afe</a> <a href="https://github.com/pitchplatforms/pitchinAPI/pull/1651" target="_blank" rel="noopener">#1651</a> <span class="chip chip-uat">UAT</span></div></td>
               <td class="mono">2026-07-10</td>
             </tr><tr>
               <td><a class="ref" href="https://app.clickup.com/t/86d3n4d56" target="_blank" rel="noopener">GRC-2285</a></td>
               <td class="tname2">Generate Ocelot configuration files to align with ECF API endpoints</td>
               <td><span class="chip chip-uat">Gateway: UAT</span></td>
+              <td><div class="cmt"><b>Gateway</b> · <a class="mono" href="https://github.com/pitchplatforms/pitchInNewApiGateway/commit/de3989d" target="_blank" rel="noopener" title="GRC-2285 Generate Ocelot configuration files to align with ECF API endpoints (#90)">de3989d</a> <a href="https://github.com/pitchplatforms/pitchInNewApiGateway/pull/90" target="_blank" rel="noopener">#90</a> <span class="chip chip-uat">UAT</span></div></td>
               <td class="mono">2026-07-10</td>
             </tr><tr>
               <td><a class="ref" href="https://app.clickup.com/t/86d3m9red" target="_blank" rel="noopener">INC-258</a></td>
               <td class="tname2">Self-serve profile refresh journey (individual, non-identity)</td>
               <td><span class="chip chip-uat">API: UAT</span></td>
+              <td><div class="cmt"><b>API</b> · <a class="mono" href="https://github.com/pitchplatforms/pitchinAPI/commit/c61d3f96b" target="_blank" rel="noopener" title="INC-258: feat(users): reset LastValidatedAt on non-identity refresh completion (#1652)">c61d3f96b</a> <a href="https://github.com/pitchplatforms/pitchinAPI/pull/1652" target="_blank" rel="noopener">#1652</a> <span class="chip chip-uat">UAT</span></div></td>
               <td class="mono">2026-07-10</td>
             </tr><tr>
               <td><a class="ref" href="https://app.clickup.com/t/86d3hcaut" target="_blank" rel="noopener">SEC-422</a></td>
               <td class="tname2">Remove &#x27;create corporate action&#x27; button from superadmin view as CA may only be created by admin</td>
               <td><span class="chip chip-uat">AdminWeb: UAT</span></td>
+              <td><div class="cmt"><b>AdminWeb</b> · <a class="mono" href="https://github.com/pitchplatforms/PitchinAdminWeb/commit/cc05078e" target="_blank" rel="noopener" title="SEC-422: Remove &#x27;create corporate action&#x27; button from superadmin view (#809)">cc05078e</a> <a href="https://github.com/pitchplatforms/PitchinAdminWeb/pull/809" target="_blank" rel="noopener">#809</a> <span class="chip chip-uat">UAT</span></div></td>
               <td class="mono">2026-07-10</td>
             </tr><tr>
               <td><a class="ref" href="https://app.clickup.com/t/86d3nc838" target="_blank" rel="noopener">GRC-2302</a></td>
               <td class="tname2">Unify local DB config &amp; retire local-dev (ADR-0012)</td>
               <td><span class="chip chip-uat">API: UAT</span> <span class="chip chip-uat">Gateway: UAT</span> <span class="chip chip-uat">AdminWeb: UAT</span> <span class="chip chip-uat">CustomerWeb: UAT</span></td>
+              <td><div class="cmt"><b>API</b> · <a class="mono" href="https://github.com/pitchplatforms/pitchinAPI/commit/29e745278" target="_blank" rel="noopener" title="GRC-2302: env-gate local-boot carries into staging_v8 (ADR-0012) (#1655)">29e745278</a> <a href="https://github.com/pitchplatforms/pitchinAPI/pull/1655" target="_blank" rel="noopener">#1655</a> <span class="chip chip-uat">UAT</span></div><div class="cmt"><b>Gateway</b> · <a class="mono" href="https://github.com/pitchplatforms/pitchInNewApiGateway/commit/910b18a" target="_blank" rel="noopener" title="GRC-2302: docs(gateway): add CONTEXT.md domain glossary (ADR-0012) (#93)">910b18a</a> <a href="https://github.com/pitchplatforms/pitchInNewApiGateway/pull/93" target="_blank" rel="noopener">#93</a> <span class="chip chip-uat">UAT</span></div><div class="cmt"><b>AdminWeb</b> · <a class="mono" href="https://github.com/pitchplatforms/PitchinAdminWeb/commit/f4d9526a" target="_blank" rel="noopener" title="GRC-2302: chore(local): env-gated local serve config + trusted dev-cert (ADR-0012) (#814)">f4d9526a</a> <a href="https://github.com/pitchplatforms/PitchinAdminWeb/pull/814" target="_blank" rel="noopener">#814</a> <span class="chip chip-uat">UAT</span></div><div class="cmt"><b>CustomerWeb</b> · <a class="mono" href="https://github.com/pitchplatforms/PitchinCustomerWeb/commit/8c398004" target="_blank" rel="noopener" title="GRC-2302: chore(local): carry dev-cert local serve config into staging (ADR-0012) (#1468)">8c398004</a> <a href="https://github.com/pitchplatforms/PitchinCustomerWeb/pull/1468" target="_blank" rel="noopener">#1468</a> <span class="chip chip-uat">UAT</span></div></td>
               <td class="mono">2026-07-11</td>
             </tr><tr>
               <td><a class="ref" href="https://app.clickup.com/t/86d32qmcj" target="_blank" rel="noopener">FRC-763</a></td>
               <td class="tname2">ECF Portfolio UI: Phase 1 MVP Enhancement</td>
               <td><span class="chip chip-stg">CustomerWeb: STAGING</span></td>
+              <td><div class="cmt"><b>CustomerWeb</b> · <a class="mono" href="https://github.com/pitchplatforms/PitchinCustomerWeb/commit/447bcf2c" target="_blank" rel="noopener" title="FRC-763 add functional history tab and banner tooltips on portfolio ui preview (#1484)">447bcf2c</a> <a href="https://github.com/pitchplatforms/PitchinCustomerWeb/pull/1484" target="_blank" rel="noopener">#1484</a> <span class="chip chip-stg">STAGING</span><br>&nbsp;&nbsp;<a class="mono" href="https://github.com/pitchplatforms/PitchinCustomerWeb/commit/a6664c45" target="_blank" rel="noopener" title="FRC-763 ecf portfolio UI phase 1 mvp enhancement (#1461)">a6664c45</a> <a href="https://github.com/pitchplatforms/PitchinCustomerWeb/pull/1461" target="_blank" rel="noopener">#1461</a> <span class="chip chip-stg">STAGING</span></div></td>
               <td class="mono">2026-07-13</td>
             </tr><tr>
               <td><a class="ref" href="https://app.clickup.com/t/86d3c7pjz" target="_blank" rel="noopener">FRC-791</a></td>
               <td class="tname2">[BUG] Investment Panel design layout differ from requirements</td>
               <td><span class="chip chip-stg">CustomerWeb: STAGING</span></td>
+              <td><div class="cmt"><b>CustomerWeb</b> · <a class="mono" href="https://github.com/pitchplatforms/PitchinCustomerWeb/commit/6bb53807" target="_blank" rel="noopener" title="FRC-791 [BUG] Investment Panel design layout differ from requirements (#1476)">6bb53807</a> <a href="https://github.com/pitchplatforms/PitchinCustomerWeb/pull/1476" target="_blank" rel="noopener">#1476</a> <span class="chip chip-stg">STAGING</span></div></td>
               <td class="mono">2026-07-13</td>
             </tr><tr>
               <td><a class="ref" href="https://app.clickup.com/t/86d3n6mzh" target="_blank" rel="noopener">FRC-821</a></td>
               <td class="tname2">[Bug] Unable see preview for summary page in admin</td>
               <td><span class="chip chip-stg">AdminWeb: STAGING</span></td>
+              <td><div class="cmt"><b>AdminWeb</b> · <a class="mono" href="https://github.com/pitchplatforms/PitchinAdminWeb/commit/5905849f" target="_blank" rel="noopener" title="FRC-828 FRC-821 Enhancement: submit processed link for embed content block (#818)">5905849f</a> <a href="https://github.com/pitchplatforms/PitchinAdminWeb/pull/818" target="_blank" rel="noopener">#818</a> <span class="chip chip-stg">STAGING</span><br>&nbsp;&nbsp;<a class="mono" href="https://github.com/pitchplatforms/PitchinAdminWeb/commit/127c95fd" target="_blank" rel="noopener" title="FRC-821 [Bug] Unable see preview for summary page in admin (#816)">127c95fd</a> <a href="https://github.com/pitchplatforms/PitchinAdminWeb/pull/816" target="_blank" rel="noopener">#816</a> <span class="chip chip-stg">STAGING</span></div></td>
               <td class="mono">2026-07-13</td>
             </tr><tr>
               <td><a class="ref" href="https://app.clickup.com/t/86d3p42e2" target="_blank" rel="noopener">FRC-828</a></td>
               <td class="tname2">FRC-821 Enhancement: submit processed link for embed content block</td>
               <td><span class="chip chip-stg">AdminWeb: STAGING</span></td>
+              <td><div class="cmt"><b>AdminWeb</b> · <a class="mono" href="https://github.com/pitchplatforms/PitchinAdminWeb/commit/5905849f" target="_blank" rel="noopener" title="FRC-828 FRC-821 Enhancement: submit processed link for embed content block (#818)">5905849f</a> <a href="https://github.com/pitchplatforms/PitchinAdminWeb/pull/818" target="_blank" rel="noopener">#818</a> <span class="chip chip-stg">STAGING</span></div></td>
               <td class="mono">2026-07-13</td>
             </tr><tr>
               <td><a class="ref" href="https://app.clickup.com/t/86d3hc88t" target="_blank" rel="noopener">SEC-420</a></td>
               <td class="tname2">Optimise Workflow from 3 Screens to 2 Screens</td>
               <td><span class="chip chip-stg">AdminWeb: STAGING</span></td>
+              <td><div class="cmt"><b>AdminWeb</b> · <a class="mono" href="https://github.com/pitchplatforms/PitchinAdminWeb/commit/b5c4e71a" target="_blank" rel="noopener" title="SEC-420: Optimise Corporate Action workflow from 3 screens to 2 screens (#806)">b5c4e71a</a> <a href="https://github.com/pitchplatforms/PitchinAdminWeb/pull/806" target="_blank" rel="noopener">#806</a> <span class="chip chip-stg">STAGING</span></div></td>
               <td class="mono">2026-07-13</td>
             </tr><tr>
               <td><a class="ref" href="https://app.clickup.com/t/86d3mkbuy" target="_blank" rel="noopener">FRC-811</a></td>
               <td class="tname2">[BUG] Use Engine Mailer Email template for OTP</td>
               <td><span class="chip chip-stg">API: STAGING</span></td>
+              <td><div class="cmt"><b>API</b> · <a class="mono" href="https://github.com/pitchplatforms/pitchinAPI/commit/f5f23e562" target="_blank" rel="noopener" title="[BUG] FRC-811 Use EngineMailer email template for OTP (#1669)">f5f23e562</a> <a href="https://github.com/pitchplatforms/pitchinAPI/pull/1669" target="_blank" rel="noopener">#1669</a> <span class="chip chip-stg">STAGING</span></div></td>
               <td class="mono">2026-07-14</td>
             </tr><tr>
               <td><a class="ref" href="https://app.clickup.com/t/86d3pgeux" target="_blank" rel="noopener">FRC-833</a></td>
               <td class="tname2">[BUG] &quot;PSTX Open Orders&quot; widget includes expired orders instead of active orders only</td>
               <td><span class="chip chip-stg">CustomerWeb: STAGING</span></td>
+              <td><div class="cmt"><b>CustomerWeb</b> · <a class="mono" href="https://github.com/pitchplatforms/PitchinCustomerWeb/commit/4cfd2625" target="_blank" rel="noopener" title="FRC-833 filter expired orders out of the dashboard open orders widget (#1481)">4cfd2625</a> <a href="https://github.com/pitchplatforms/PitchinCustomerWeb/pull/1481" target="_blank" rel="noopener">#1481</a> <span class="chip chip-stg">STAGING</span></div></td>
               <td class="mono">2026-07-14</td>
             </tr><tr>
               <td><a class="ref" href="https://app.clickup.com/t/86d3mx2vp" target="_blank" rel="noopener">GRC-2275</a></td>
               <td class="tname2">[PitchInAdminWeb] [BUG] Cannot have more than one subform</td>
               <td><span class="chip chip-stg">AdminWeb: STAGING</span></td>
+              <td><div class="cmt"><b>AdminWeb</b> · <a class="mono" href="https://github.com/pitchplatforms/PitchinAdminWeb/commit/9e812951" target="_blank" rel="noopener" title="[BUG] GRC-2275 Cannot have more than one subform (#815)">9e812951</a> <a href="https://github.com/pitchplatforms/PitchinAdminWeb/pull/815" target="_blank" rel="noopener">#815</a> <span class="chip chip-stg">STAGING</span></div></td>
               <td class="mono">2026-07-14</td>
             </tr><tr>
               <td><a class="ref" href="https://app.clickup.com/t/86d3pmwv9" target="_blank" rel="noopener">INC-287</a></td>
               <td class="tname2">Attest endpoint + flag-reason — server-enforced flag clearing (ADR-0015)</td>
               <td><span class="chip chip-stg">API: STAGING</span> <span class="chip chip-stg">Gateway: STAGING</span></td>
+              <td><div class="cmt"><b>API</b> · <a class="mono" href="https://github.com/pitchplatforms/pitchinAPI/commit/2491f18f8" target="_blank" rel="noopener" title="INC-287 add attest endpoint + flag-reason surface (#1670)">2491f18f8</a> <a href="https://github.com/pitchplatforms/pitchinAPI/pull/1670" target="_blank" rel="noopener">#1670</a> <span class="chip chip-stg">STAGING</span></div><div class="cmt"><b>Gateway</b> · <a class="mono" href="https://github.com/pitchplatforms/pitchInNewApiGateway/commit/fcd3b6f" target="_blank" rel="noopener" title="INC-287: feat(gateway): register attest Ocelot route (ADR-0015) (#97)">fcd3b6f</a> <a href="https://github.com/pitchplatforms/pitchInNewApiGateway/pull/97" target="_blank" rel="noopener">#97</a> <span class="chip chip-stg">STAGING</span></div></td>
               <td class="mono">2026-07-14</td>
             </tr><tr>
               <td><a class="ref" href="https://app.clickup.com/t/86d3p4x3n" target="_blank" rel="noopener">FRC-830</a></td>
               <td class="tname2">FRC-827 Publish campaign summary upon admin approval</td>
               <td><span class="chip chip-stg">API: STAGING</span></td>
+              <td><div class="cmt"><b>API</b> · <a class="mono" href="https://github.com/pitchplatforms/pitchinAPI/commit/af7470631" target="_blank" rel="noopener" title="FRC-830 FRC-827 Publish campaign summary upon admin approval (#1671)">af7470631</a> <a href="https://github.com/pitchplatforms/pitchinAPI/pull/1671" target="_blank" rel="noopener">#1671</a> <span class="chip chip-stg">STAGING</span></div></td>
               <td class="mono">2026-07-15</td>
             </tr><tr>
               <td><a class="ref" href="https://app.clickup.com/t/86d3pj0d4" target="_blank" rel="noopener">FRC-836</a></td>
               <td class="tname2">[Bug] Update the landing page when user click &#x27;View full order in PSTX Order page&#x27; for successful PSTX orders</td>
               <td><span class="chip chip-stg">CustomerWeb: STAGING</span></td>
+              <td><div class="cmt"><b>CustomerWeb</b> · <a class="mono" href="https://github.com/pitchplatforms/PitchinCustomerWeb/commit/7cd98347" target="_blank" rel="noopener" title="FRC-836 [BUG] pass and handle tab filters via query params (#1486)">7cd98347</a> <a href="https://github.com/pitchplatforms/PitchinCustomerWeb/pull/1486" target="_blank" rel="noopener">#1486</a> <span class="chip chip-stg">STAGING</span></div></td>
               <td class="mono">2026-07-15</td>
             </tr><tr>
               <td><a class="ref" href="https://app.clickup.com/t/86d3ghetm" target="_blank" rel="noopener">GRC-2187</a></td>
               <td class="tname2">Upgrade Angular v21 for CW &amp; Admin UI so that it is compatible with Node.JS v22</td>
               <td><span class="chip chip-stg">AdminWeb: STAGING</span> <span class="chip chip-stg">CustomerWeb: STAGING</span></td>
+              <td><div class="cmt"><b>AdminWeb</b> · <a class="mono" href="https://github.com/pitchplatforms/PitchinAdminWeb/commit/57a68621" target="_blank" rel="noopener" title="Revert &quot;GRC-2187 upgrade angular for cw &amp; admin UI so that it is compatible with node.js v20&quot; (#823)">57a68621</a> <a href="https://github.com/pitchplatforms/PitchinAdminWeb/pull/823" target="_blank" rel="noopener">#823</a> <span class="chip chip-stg">STAGING</span><br>&nbsp;&nbsp;<a class="mono" href="https://github.com/pitchplatforms/PitchinAdminWeb/commit/9a81613a" target="_blank" rel="noopener" title="GRC-2187 upgrade angular for cw &amp; admin UI so that it is compatible with node.js v20 (#819)">9a81613a</a> <a href="https://github.com/pitchplatforms/PitchinAdminWeb/pull/819" target="_blank" rel="noopener">#819</a> <span class="chip chip-stg">STAGING</span></div><div class="cmt"><b>CustomerWeb</b> · <a class="mono" href="https://github.com/pitchplatforms/PitchinCustomerWeb/commit/99874958" target="_blank" rel="noopener" title="Revert &quot;GRC-2187 upgrade angular for cw &amp; admin UI so that it is compatible with node.js v20&quot; (#1492)">99874958</a> <a href="https://github.com/pitchplatforms/PitchinCustomerWeb/pull/1492" target="_blank" rel="noopener">#1492</a> <span class="chip chip-stg">STAGING</span></div></td>
               <td class="mono">2026-07-15</td>
             </tr><tr>
               <td><a class="ref" href="https://app.clickup.com/t/86d3mz3x8" target="_blank" rel="noopener">GRC-2278</a></td>
               <td class="tname2">Update wallet withdrawal processing time to 7 working days on website and emails</td>
               <td><span class="chip chip-stg">API: STAGING</span></td>
+              <td><div class="cmt"><b>API</b> · <a class="mono" href="https://github.com/pitchplatforms/pitchinAPI/commit/e82d113a4" target="_blank" rel="noopener" title="GRC-2278 Update templates mentioned in ticket (#1674)">e82d113a4</a> <a href="https://github.com/pitchplatforms/pitchinAPI/pull/1674" target="_blank" rel="noopener">#1674</a> <span class="chip chip-stg">STAGING</span></div></td>
               <td class="mono">2026-07-15</td>
             </tr><tr>
               <td><a class="ref" href="https://app.clickup.com/t/86d232zgx" target="_blank" rel="noopener">FRC-631</a></td>
               <td class="tname2">New user submit application and create default issuer account in CW</td>
               <td><span class="chip chip-uat">API: UAT</span> <span class="chip chip-uat">AdminWeb: UAT</span> <span class="chip chip-uat">CustomerWeb: UAT</span></td>
+              <td><span class="dim">—</span></td>
               <td class="mono"></td>
             </tr><tr>
               <td><a class="ref" href="https://app.clickup.com/t/86d3m9rnn" target="_blank" rel="noopener">INC-263</a></td>
               <td class="tname2">Login nudge for Flagged investors</td>
               <td><span class="chip chip-uat">API: UAT</span> <span class="chip chip-uat">CustomerWeb: UAT</span></td>
+              <td><span class="dim">—</span></td>
               <td class="mono"></td>
             </tr><tr>
               <td><a class="ref" href="https://app.clickup.com/t/86d3m9rut" target="_blank" rel="noopener">INC-271</a></td>
               <td class="tname2">Add LastValidatedAt + validity-window config (migration)</td>
               <td><span class="chip chip-uat">API: UAT</span></td>
+              <td><span class="dim">—</span></td>
               <td class="mono"></td>
             </tr><tr>
               <td><a class="ref" href="https://app.clickup.com/t/86d3m9rv2" target="_blank" rel="noopener">INC-272</a></td>
               <td class="tname2">Flagged predicate service</td>
               <td><span class="chip chip-uat">API: UAT</span></td>
+              <td><span class="dim">—</span></td>
               <td class="mono"></td>
             </tr><tr>
               <td><a class="ref" href="https://app.clickup.com/t/86d3mjpk4" target="_blank" rel="noopener">INC-281</a></td>
               <td class="tname2">Redesign login nudge (Variant B) + open it on profile settings — interim</td>
               <td><span class="chip chip-uat">CustomerWeb: UAT</span></td>
+              <td><span class="dim">—</span></td>
               <td class="mono"></td>
             </tr><tr>
               <td><a class="ref" href="https://app.clickup.com/t/86d3c515t" target="_blank" rel="noopener">SEC-418</a></td>
               <td class="tname2">SEC-286 Shareholding Endpoints</td>
               <td><span class="chip chip-uat">Gateway: UAT</span></td>
+              <td><span class="dim">—</span></td>
               <td class="mono"></td>
-            </tr></tbody></table></div></details><details><summary><strong>in progress</strong> — 6 tickets</summary><div class="tablewrap"><table><thead><tr><th>Ticket</th><th>Title</th><th>Highest environment reached</th><th>Oldest commit</th></tr></thead><tbody><tr>
+            </tr></tbody></table></div></details><details><summary><strong>in progress</strong> — 6 tickets</summary><div class="tablewrap"><table><thead><tr><th>Ticket</th><th>Title</th><th>Highest environment reached</th><th>Commits / PRs</th><th>Oldest commit</th></tr></thead><tbody><tr>
               <td><a class="ref" href="https://app.clickup.com/t/86d26kh1q" target="_blank" rel="noopener">SEC-128</a></td>
               <td class="tname2">[Notifications] ClickUp Task Integration for Annoucement Approval</td>
               <td><span class="chip chip-uat">API: UAT</span></td>
+              <td><div class="cmt"><b>API</b> · <a class="mono" href="https://github.com/pitchplatforms/pitchinAPI/commit/b4bce6cc9" target="_blank" rel="noopener" title="feat/SEC-128 ClickUp Task Integration for Annoucement Approval (#1549)">b4bce6cc9</a> <a href="https://github.com/pitchplatforms/pitchinAPI/pull/1549" target="_blank" rel="noopener">#1549</a> <span class="chip chip-uat">UAT</span></div></td>
               <td class="mono">2026-05-29</td>
             </tr><tr>
               <td><a class="ref" href="https://app.clickup.com/t/86d3fux43" target="_blank" rel="noopener">ENB-32</a></td>
               <td class="tname2">Knowledge content runs on pitchIN&#x27;s own CMS — Prismic &amp;amp; Zendesk retired</td>
               <td><span class="chip chip-uat">API: UAT</span> <span class="chip chip-uat">Gateway: UAT</span></td>
+              <td><div class="cmt"><b>API</b> · <a class="mono" href="https://github.com/pitchplatforms/pitchinAPI/commit/77a557af3" target="_blank" rel="noopener" title="feat(knowledge): API content-proxy foundation for Payload-sourced content (#33) (ENB-32) (#1595)">77a557af3</a> <a href="https://github.com/pitchplatforms/pitchinAPI/pull/33" target="_blank" rel="noopener">#33</a> <a href="https://github.com/pitchplatforms/pitchinAPI/pull/1595" target="_blank" rel="noopener">#1595</a> <span class="chip chip-uat">UAT</span></div><div class="cmt"><b>Gateway</b> · <a class="mono" href="https://github.com/pitchplatforms/pitchInNewApiGateway/commit/6339172" target="_blank" rel="noopener" title="feat(gateway): register Knowledge + StaticUI Ocelot routes (#79) (ENB-32) (#82)">6339172</a> <a href="https://github.com/pitchplatforms/pitchInNewApiGateway/pull/79" target="_blank" rel="noopener">#79</a> <a href="https://github.com/pitchplatforms/pitchInNewApiGateway/pull/82" target="_blank" rel="noopener">#82</a> <span class="chip chip-uat">UAT</span></div></td>
               <td class="mono">2026-07-02</td>
             </tr><tr>
               <td><a class="ref" href="https://app.clickup.com/t/86d3j5z24" target="_blank" rel="noopener">SEC-424</a></td>
               <td class="tname2">PSTX Fee Refund - Aw Chia Soon</td>
               <td><span class="chip chip-uat">API: UAT</span> <span class="chip chip-uat">AdminWeb: UAT</span></td>
+              <td><div class="cmt"><b>API</b> · <a class="mono" href="https://github.com/pitchplatforms/pitchinAPI/commit/435b69aab" target="_blank" rel="noopener" title="SEC-424 Added Refund to WalletTransactionEvent &amp;  WalletTransactionEventFilter (#1612)">435b69aab</a> <a href="https://github.com/pitchplatforms/pitchinAPI/pull/1612" target="_blank" rel="noopener">#1612</a> <span class="chip chip-uat">UAT</span></div><div class="cmt"><b>AdminWeb</b> · <a class="mono" href="https://github.com/pitchplatforms/PitchinAdminWeb/commit/a15a058a" target="_blank" rel="noopener" title="SEC-424 Updated enum with Refund (#793)">a15a058a</a> <a href="https://github.com/pitchplatforms/PitchinAdminWeb/pull/793" target="_blank" rel="noopener">#793</a> <span class="chip chip-uat">UAT</span></div></td>
               <td class="mono">2026-07-02</td>
             </tr><tr>
               <td><a class="ref" href="https://app.clickup.com/t/86d2nt3ac" target="_blank" rel="noopener">FRC-709</a></td>
               <td class="tname2">PSTX Account Enhancement</td>
               <td><span class="chip chip-uat">CustomerWeb: UAT</span></td>
+              <td><div class="cmt"><b>CustomerWeb</b> · <a class="mono" href="https://github.com/pitchplatforms/PitchinCustomerWeb/commit/5e92ce94" target="_blank" rel="noopener" title="FRC-709 fix error in build PSTX Account Enhancement (#1470)">5e92ce94</a> <a href="https://github.com/pitchplatforms/PitchinCustomerWeb/pull/1470" target="_blank" rel="noopener">#1470</a> <span class="chip chip-uat">UAT</span><br>&nbsp;&nbsp;<a class="mono" href="https://github.com/pitchplatforms/PitchinCustomerWeb/commit/07f97e80" target="_blank" rel="noopener" title="FRC-709 fix(pstx-account): polish — filters, mobile cards, event naming (#121, #123, #124) (#1467)">07f97e80</a> <a href="https://github.com/pitchplatforms/PitchinCustomerWeb/pull/121" target="_blank" rel="noopener">#121</a> <a href="https://github.com/pitchplatforms/PitchinCustomerWeb/pull/123" target="_blank" rel="noopener">#123</a> <span class="chip chip-uat">UAT</span></div></td>
               <td class="mono">2026-07-10</td>
             </tr><tr>
               <td><a class="ref" href="https://app.clickup.com/t/86d3mfrpm" target="_blank" rel="noopener">FRC-808</a></td>
               <td class="tname2">ECF Investment Enhancement</td>
               <td><span class="chip chip-uat">CustomerWeb: UAT</span></td>
+              <td><span class="dim">—</span></td>
               <td class="mono"></td>
             </tr><tr>
               <td><a class="ref" href="https://app.clickup.com/t/86d3m9rbv" target="_blank" rel="noopener">INC-256</a></td>
               <td class="tname2">Investor Profile Refresh &amp; Re-KYC</td>
               <td><span class="chip chip-uat">API: UAT</span></td>
+              <td><span class="dim">—</span></td>
               <td class="mono"></td>
             </tr></tbody></table></div></details>
     </section>
