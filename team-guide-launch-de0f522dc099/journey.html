@@ -481,62 +481,6 @@ details.delta summary::-webkit-details-marker{display:none}
 .term{background:var(--white);border:1px solid var(--divider);border-radius:var(--r-md);padding:10px 13px;font-size:13px;color:var(--body);line-height:1.45}
 .term b{display:block;font-family:var(--font-head);color:var(--ink);font-size:13.5px;margin-bottom:1px}
 
-/* ── "You can't break it" reassurance block (git & tickets) ── */
-.safe{background:var(--white);border:1px solid var(--divider);border-left:4px solid var(--green);border-radius:var(--r-lg);padding:18px 20px;margin-top:26px;box-shadow:0 1px 3px #0000000a}
-.safe h3{font-size:18px}
-.safe .terms{margin-top:12px}
-
-/* ── Interactive journey map (git & tickets) ── */
-.jroles{display:flex;flex-wrap:wrap;gap:8px;margin-top:18px}
-.jrole{display:inline-flex;align-items:baseline;gap:7px;background:var(--white);border:1.5px solid var(--divider);border-radius:999px;padding:8px 16px;cursor:pointer;font-family:var(--font-head);font-weight:600;font-size:13.5px;color:var(--body);transition:border-color .15s,background .15s,color .15s}
-.jrole .jr-sub{font-family:var(--font-body);font-weight:400;font-size:11.5px;color:var(--gray)}
-.jrole:hover{border-color:var(--green)}
-.jrole.active{border-color:var(--green);background:var(--green-lightest);color:var(--ink)}
-.jrole:focus-visible,.jstep:focus-visible{outline:2px solid var(--green);outline-offset:2px}
-.jsteps{display:grid;grid-template-columns:repeat(6,1fr);gap:10px;margin-top:16px;align-items:stretch}
-.jstep{position:relative;display:flex;flex-direction:column;align-items:flex-start;gap:5px;text-align:left;background:var(--white);border:1.5px solid var(--divider);border-top:3px solid var(--gray);border-radius:var(--r-lg);padding:11px 12px;cursor:pointer;font-family:var(--font-body);font-size:12px;color:var(--body);box-shadow:0 1px 3px #0000000a;transition:border-color .15s,box-shadow .15s}
-.jstep:hover{border-color:var(--green)}
-.jstep.active{border-color:var(--green);box-shadow:0 2px 10px #0069371f}
-.jstep .jn{width:20px;height:20px;border-radius:50%;flex:none;background:var(--divider-light);color:var(--body);font-family:var(--font-head);font-weight:600;font-size:11px;display:flex;align-items:center;justify-content:center}
-.jstep .jt{font-family:var(--font-head);font-weight:600;font-size:12.5px;color:var(--ink);line-height:1.3}
-.jstep code{font-size:10.5px;overflow-wrap:anywhere}
-.jstep:not(.gate):not([data-step="6"])::after{content:'\2192';position:absolute;top:13px;right:-10px;color:var(--gray);font-size:13px;pointer-events:none}
-/* who drives: green = the selected role's move */
-.jmap[data-role=author] .jstep[data-driver=author],
-.jmap[data-role=integrator] .jstep[data-driver=integrator]{border-top-color:var(--green)}
-.jmap[data-role=author] .jstep[data-driver=author] .jn,
-.jmap[data-role=integrator] .jstep[data-driver=integrator] .jn{background:var(--green-lightest);color:var(--green)}
-.jwho{display:none;font-size:9.5px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;border-radius:999px;padding:2px 8px;margin-top:auto;background:var(--divider-light);color:var(--gray)}
-.jmap[data-role=author] .jstep[data-driver=author] .w-you,
-.jmap[data-role=integrator] .jstep[data-driver=integrator] .w-you{display:inline-block;background:var(--green-lightest);color:var(--green)}
-.jmap[data-role=author] .jstep[data-driver=integrator] .w-auto{display:inline-block}
-.jmap[data-role=integrator] .jstep[data-driver=author] .w-other{display:inline-block}
-/* the gate detour hangs under step 5 */
-.jstep[data-step="6"]{grid-column:6;grid-row:1}
-.jstep.gate{grid-column:5;grid-row:2;border-style:dashed;border-top:3px solid var(--red-light)}
-.jstep.gate .jn{background:var(--red-light);color:var(--red-dark)}
-.jstep.gate::before{content:'';position:absolute;top:-12px;left:24px;height:11px;border-left:2px dashed var(--red-light);pointer-events:none}
-.jstep.gate:hover{border-color:var(--red)}
-.jstep.gate.active{border-color:var(--red);box-shadow:0 2px 10px #bf20261f}
-.jstep.gate:focus-visible{outline-color:var(--red)}
-/* the detail panels */
-.jpanel{display:none;background:var(--white);border:1px solid var(--divider);border-left:4px solid var(--green);border-radius:var(--r-lg);padding:20px 22px;margin-top:16px;box-shadow:0 1px 3px #0000000a}
-.jpanel.active{display:block;animation:fpin .3s cubic-bezier(.2,.7,.2,1)}
-@media(prefers-reduced-motion:reduce){.jpanel.active{animation:none}}
-.jpanel.gate{border-left-color:var(--red)}
-.jpanel h4{font-size:17px;margin-bottom:5px}
-.jp-lead{font-size:14px;line-height:1.55;max-width:720px}
-.jp-see{display:flex;flex-wrap:wrap;gap:6px;align-items:center;background:var(--divider-light);border-radius:var(--r-md);padding:8px 11px;font-size:12.5px;color:var(--ink);margin-top:14px;max-width:560px}
-.jp-foot{display:flex;flex-wrap:wrap;gap:10px;justify-content:space-between;margin-top:18px}
-@media(max-width:880px){
-  .jsteps{grid-template-columns:1fr}
-  .jstep{flex-direction:row;align-items:center;flex-wrap:wrap}
-  .jstep .jwho{margin-top:0;margin-left:auto}
-  .jstep:not(.gate):not([data-step="6"])::after{content:none}
-  .jstep[data-step="6"]{grid-column:auto;grid-row:auto}
-  .jstep.gate{grid-column:auto;grid-row:auto;margin-left:22px}
-  .jstep.gate::before{content:none}
-}
 </style>
 </head>
 <body>
@@ -558,6 +502,7 @@ details.delta summary::-webkit-details-marker{display:none}
     </div>
     <nav class="navlinks">
       <a href="index.html">&larr; All launches</a>
+      <a href="just-landed.html">Just landed</a>
       <a href="#how-we-work">How we work</a>
       <a href="#git-tickets">Git &amp; ClickUp</a>
       <a href="#before-after">What changed</a>
@@ -1340,173 +1285,14 @@ this page happens for you. When something touches the shared repo (a push, a PR)
 /ticket-to-ship &lt;ticket-ID&gt; --lean   one-shot, for changes you judge simple</code>
     </div>
 
-    <!-- Worried you'll break something? -->
-    <div class="safe">
-      <h3>Worried you&rsquo;ll break someone else&rsquo;s work? You can&rsquo;t.</h3>
-      <p style="font-size:14px;margin-top:6px">Three protections are built into the setup:</p>
-      <div class="terms">
-        <div class="term"><b>1. Your branch is yours alone</b>Every change gets its own branch, named after its ticket. Nobody else works on it.</div>
-        <div class="term"><b>2. Shared code only changes by reviewed PR</b>Nothing lands until another person reviews your change and merges it.</div>
-        <div class="term"><b>3. The risky move is never yours</b>One integrator replays the feature onto <code>staging</code>. Anything unclear gets parked as a draft PR for an engineer.</div>
-      </div>
-    </div>
-
-    <!-- The interactive journey map -->
-    <h3 style="margin-top:38px;font-size:22px">Follow one change, step by step</h3>
-    <p style="font-size:15px;max-width:680px">This map follows one small change: ticket
-<strong>FRC-815</strong>, a story under feature <strong>FRC-813</strong>. Pick your role, then
-click a step to see who drives it, what you&rsquo;ll see, and the exact convention. Arrow keys
-work too. Green means your role drives that step; grey steps happen without you.</p>
-
-    <div class="jmap" id="jmap" data-role="author">
-      <div class="jroles" role="group" aria-label="Pick your role">
-        <button type="button" class="jrole active" data-role="author" aria-pressed="true">I author changes <span class="jr-sub">most of us</span></button>
-        <button type="button" class="jrole" data-role="integrator" aria-pressed="false">I integrate features <span class="jr-sub">engineers</span></button>
-      </div>
-
-      <div class="jsteps" role="tablist" aria-label="The journey of one change, six steps plus a safety detour">
-        <button type="button" class="jstep active" role="tab" id="jtab-1" aria-controls="jpanel-1" aria-selected="true" data-step="1" data-driver="author">
-          <span class="jn" aria-hidden="true">1</span>
-          <span class="jt">Ticket ready</span>
-          <code>FRC-815</code>
-          <span class="jwho w-you">you drive</span><span class="jwho w-auto">done for you</span><span class="jwho w-other">the author&rsquo;s</span>
-        </button>
-        <button type="button" class="jstep" role="tab" id="jtab-2" aria-controls="jpanel-2" aria-selected="false" tabindex="-1" data-step="2" data-driver="author">
-          <span class="jn" aria-hidden="true">2</span>
-          <span class="jt">Your own branch</span>
-          <code>feat/FRC-815-&hellip;</code>
-          <span class="jwho w-you">you drive</span><span class="jwho w-auto">done for you</span><span class="jwho w-other">the author&rsquo;s</span>
-        </button>
-        <button type="button" class="jstep" role="tab" id="jtab-3" aria-controls="jpanel-3" aria-selected="false" tabindex="-1" data-step="3" data-driver="author">
-          <span class="jn" aria-hidden="true">3</span>
-          <span class="jt">Your small PR</span>
-          <code>&rarr; feature branch</code>
-          <span class="jwho w-you">you drive</span><span class="jwho w-auto">done for you</span><span class="jwho w-other">the author&rsquo;s</span>
-        </button>
-        <button type="button" class="jstep" role="tab" id="jtab-4" aria-controls="jpanel-4" aria-selected="false" tabindex="-1" data-step="4" data-driver="integrator">
-          <span class="jn" aria-hidden="true">4</span>
-          <span class="jt">Review &amp; squash&#8209;merge</span>
-          <code>&rarr; feat/FRC-813-&hellip;</code>
-          <span class="jwho w-you">you drive</span><span class="jwho w-auto">done for you</span><span class="jwho w-other">the author&rsquo;s</span>
-        </button>
-        <button type="button" class="jstep" role="tab" id="jtab-5" aria-controls="jpanel-5" aria-selected="false" tabindex="-1" data-step="5" data-driver="integrator">
-          <span class="jn" aria-hidden="true">5</span>
-          <span class="jt">One feature PR</span>
-          <code>&rarr; staging</code>
-          <span class="jwho w-you">you drive</span><span class="jwho w-auto">done for you</span><span class="jwho w-other">the author&rsquo;s</span>
-        </button>
-        <button type="button" class="jstep gate" role="tab" id="jtab-gate" aria-controls="jpanel-gate" aria-selected="false" tabindex="-1" data-step="gate" data-driver="integrator">
-          <span class="jn" aria-hidden="true">!</span>
-          <span class="jt">If a check trips</span>
-          <code>draft + handoff</code>
-          <span class="jwho w-you">you drive</span><span class="jwho w-auto">done for you</span><span class="jwho w-other">the author&rsquo;s</span>
-        </button>
-        <button type="button" class="jstep" role="tab" id="jtab-6" aria-controls="jpanel-6" aria-selected="false" tabindex="-1" data-step="6" data-driver="integrator">
-          <span class="jn" aria-hidden="true">6</span>
-          <span class="jt">Merged &amp; promoted</span>
-          <code>&rarr; uat2 &rarr; master</code>
-          <span class="jwho w-you">you drive</span><span class="jwho w-auto">done for you</span><span class="jwho w-other">the author&rsquo;s</span>
-        </button>
-      </div>
-
-      <div class="jpanel active" role="tabpanel" id="jpanel-1" aria-labelledby="jtab-1" tabindex="0" data-step="1">
-        <div class="fp-kicker">Step 1 &middot; You</div>
-        <h4>The ticket is ready in ClickUp</h4>
-        <p class="jp-lead"><strong>FRC-815</strong> (&ldquo;show reward on portfolio&rdquo;) is a story
-under feature <strong>FRC-813</strong> (&ldquo;referral rewards&rdquo;). Its description says what to
-build and how you&rsquo;ll know it&rsquo;s done. You type <code>/ticket-to-ship FRC-815</code> and the
-agent takes it from there. The ticket&rsquo;s ID now follows the change everywhere: branch name,
-commit messages, PR title. That&rsquo;s how anyone traces code back to its ticket.</p>
-        <div class="jp-see"><span class="mk-app cu">ClickUp</span> FRC-815 &rarr; <span class="mk-pill prog">in progress</span> when the build starts</div>
-        <div class="jp-foot"><button class="fnav next" data-jgo="2" type="button">Next: your own branch &rarr;</button></div>
-      </div>
-
-      <div class="jpanel" role="tabpanel" id="jpanel-2" aria-labelledby="jtab-2" tabindex="0" data-step="2">
-        <div class="fp-kicker">Step 2 &middot; You &mdash; the agent does the typing</div>
-        <h4>A branch that is yours alone</h4>
-        <p class="jp-lead">The agent cuts a branch just for this change, off the feature branch.
-Think of it as your private copy. Nobody else works on it, so nothing you do here can touch
-anyone else&rsquo;s work. Every save (a &ldquo;commit&rdquo;) is stamped with the ticket&rsquo;s ID.</p>
-        <div class="cmd" style="padding-right:16px;margin-top:14px">
-          <span class="os">Your branch &mdash; named after your ticket</span>
-          <code>&lt;type&gt;/&lt;SUBTASK-REF&gt;-&lt;slug&gt;        e.g.  feat/FRC-815-reward-display</code>
-        </div>
-        <div class="cmd" style="padding-right:16px;margin-top:14px">
-          <span class="os">Every commit message &mdash; the ticket being built</span>
-          <code>&lt;REF&gt; &lt;short lowercase description&gt;        e.g.  FRC-815 show reward on portfolio</code>
-        </div>
-        <div class="jp-foot"><button class="fnav" data-jgo="1" type="button">&larr; Back</button><button class="fnav next" data-jgo="3" type="button">Next: your small PR &rarr;</button></div>
-      </div>
-
-      <div class="jpanel" role="tabpanel" id="jpanel-3" aria-labelledby="jtab-3" tabindex="0" data-step="3">
-        <div class="fp-kicker">Step 3 &middot; You approve &mdash; the agent opens it</div>
-        <h4>Your small PR into the feature branch</h4>
-        <p class="jp-lead">A PR (pull request) means &ldquo;please review and merge my branch&rdquo;.
-The agent fills it in and asks you before opening. The reviewer is the feature owner, an
-engineer. The moment the PR opens, your ticket flips to <code>pr</code> on its own.</p>
-        <div class="mock" style="max-width:560px;margin-top:14px">
-          <div class="mk-head"><span class="mk-app gh">GitHub</span><span class="mk-pill draft">Draft PR</span><span class="anno">yours &mdash; set up for you</span></div>
-          <div class="mk-title" style="font-family:ui-monospace,'SF Mono',Menlo,Consolas,monospace;font-size:12.5px">FRC-815 show reward on portfolio <span class="anno">title = your ticket ID + what it does</span></div>
-          <div class="mk-row"><code>feat/FRC-815-reward-display</code> &rarr; <code>feat/FRC-813-referral-rewards</code></div>
-          <div class="mk-row">body&rsquo;s first line <code>FRC-815[PR]</code><span class="anno">flips your ticket to pr</span></div>
-          <div class="mk-row">Reviewer: the feature owner &middot; squash-merged</div>
-        </div>
-        <div class="jp-see"><span class="mk-app cu">ClickUp</span> FRC-815 &rarr; <span class="mk-pill prog">pr</span> the moment your PR opens</div>
-        <div class="jp-foot"><button class="fnav" data-jgo="2" type="button">&larr; Back</button><button class="fnav next" data-jgo="4" type="button">Next: the review &rarr;</button></div>
-      </div>
-
-      <div class="jpanel" role="tabpanel" id="jpanel-4" aria-labelledby="jtab-4" tabindex="0" data-step="4">
-        <div class="fp-kicker">Step 4 &middot; The feature owner</div>
-        <h4>Review, then squash-merge</h4>
-        <p class="jp-lead">The feature owner reviews your PR and squash-merges it.
-&ldquo;Squash&rdquo; means your work lands as one clean commit in the feature branch. Your branch
-is now done; the next change starts a fresh one. The feature branch collects everyone&rsquo;s
-merged changes, and it only changes through reviewed PRs like yours.</p>
-        <div class="cmd" style="padding-right:16px;margin-top:14px">
-          <span class="os">The feature branch &mdash; named after the feature&rsquo;s ticket</span>
-          <code>feat/&lt;REF&gt;-&lt;kebab&gt;        e.g.  feat/FRC-813-referral-rewards</code>
-        </div>
-        <div class="jp-foot"><button class="fnav" data-jgo="3" type="button">&larr; Back</button><button class="fnav next" data-jgo="5" type="button">Next: the integrator&rsquo;s move &rarr;</button></div>
-      </div>
-
-      <div class="jpanel" role="tabpanel" id="jpanel-5" aria-labelledby="jtab-5" tabindex="0" data-step="5">
-        <div class="fp-kicker">Step 5 &middot; The integrator</div>
-        <h4>One move takes the whole feature to staging</h4>
-        <p class="jp-lead">The integrator is the engineer who owns the feature branch &mdash; the
-same person who reviewed your PR. They replay the finished feature onto the latest
-<code>staging</code>, then open one PR for the whole feature. Tony reviews it. It merges with a
-merge commit, never squash, so every commit keeps its ticket ID.</p>
-        <div class="mock" style="max-width:560px;margin-top:14px">
-          <div class="mk-head"><span class="mk-app gh">GitHub</span><span class="mk-pill draft">Draft PR</span><span class="anno">the integrator&rsquo;s</span></div>
-          <div class="mk-title" style="font-family:ui-monospace,'SF Mono',Menlo,Consolas,monospace;font-size:12.5px">FRC-813 add referral rewards <span class="anno">title = the feature&rsquo;s ID</span></div>
-          <div class="mk-row"><code>feat/FRC-813-referral-rewards</code> &rarr; <code>staging</code></div>
-          <div class="mk-row">body&rsquo;s first line <code>FRC-813[PR]</code><span class="anno">flips the feature&rsquo;s ticket to pr</span></div>
-          <div class="mk-row">Reviewer: Tony &middot; merge commit, never squash</div>
-        </div>
-        <div class="jp-see"><span class="mk-app cu">ClickUp</span> FRC-813 &rarr; <span class="mk-pill prog">pr</span> when the staging PR opens</div>
-        <div class="jp-foot"><button class="fnav" data-jgo="4" type="button">&larr; Back</button><button class="fnav next" data-jgo="gate" type="button">Next: the safety check &rarr;</button></div>
-      </div>
-
-      <div class="jpanel gate" role="tabpanel" id="jpanel-gate" aria-labelledby="jtab-gate" tabindex="0" data-step="gate">
-        <div class="fp-kicker">The detour &middot; only if a safety check trips</div>
-        <h4>The PR parks itself and an engineer takes over</h4>
-        <p class="jp-lead">Sometimes <code>staging</code> moved and the merge isn&rsquo;t clean.
-A safety check catches that before anything merges. The PR waits as a draft, gets the
-<code>needs-engineer-integration</code> label, and an engineer resolves it on GitHub. This is
-the system working. If no check trips, this step is skipped entirely.</p>
-        <div class="jp-foot"><button class="fnav" data-jgo="5" type="button">&larr; Back</button><button class="fnav next" data-jgo="6" type="button">Next: merged &amp; promoted &rarr;</button></div>
-      </div>
-
-      <div class="jpanel" role="tabpanel" id="jpanel-6" aria-labelledby="jtab-6" tabindex="0" data-step="6">
-        <div class="fp-kicker">Step 6 &middot; Gated promotion</div>
-        <h4>Merged to staging, then promoted rung by rung</h4>
-        <p class="jp-lead">The feature merges into <code>staging</code> and the ticket flips to
-<code>staging</code>. From there the whole feature is promoted <code>staging &rarr; uat2 &rarr;
-master</code>, with a release check at every rung. Nothing skips a rung, and a fix re-enters
-through the same feature branch.</p>
-        <div class="jp-foot"><button class="fnav" data-jgo="gate" type="button">&larr; Back</button><button class="fnav next" data-jgo="1" type="button">Start over &rarr;</button></div>
-      </div>
-    </div>
+    <!-- the interactive map lives on the team page now -->
+    <a class="tl-card" style="max-width:560px;margin-top:26px" href="team.html#relay">
+      <svg class="ic" viewBox="0 0 24 24"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><circle cx="6" cy="6" r="2"/><circle cx="18" cy="18" r="2"/><path d="M6 8v10a2 2 0 0 0 2 2h4"/><path d="M18 16v-6a4 4 0 0 0 -4 -4h-2"/><path d="M9 3l3 3l-3 3"/></svg>
+      <span class="tl-tx">Follow one change, step by step<small>the interactive map lives on the team page &mdash; pick your journey and click through</small></span>
+      <span class="arr">&rarr;</span>
+    </a>
+    <p class="micro" style="max-width:560px">Prefer to work without the AI? The same conventions,
+      typed by hand: <a href="team.html#manual-lane">the manual lane on the team page</a>.</p>
 
     <!-- V5 video slot -->
     <div class="video-slot" data-video-src="videos/v5-two-tier-prs.mp4">
@@ -1594,7 +1380,8 @@ Read the team&rsquo;s <a href="https://app.clickup.com/9008241541/v/dc/8cexpw5-1
     <!-- Author safety rules -->
     <h3 style="margin-top:34px;font-size:22px">Three moves that are never yours &mdash; by design</h3>
     <p style="font-size:15px;max-width:680px">Everything risky sits in the second hop &mdash;
-taking the feature to <code>staging</code> (steps 5&ndash;6 on the map), in the integrator&rsquo;s
+taking the feature to <code>staging</code> (steps 5&ndash;6 on the
+<a href="team.html#relay">team page&rsquo;s map</a>), in the integrator&rsquo;s
 hands. So as an author there are exactly three things you (and your agent)
 never do &mdash; and never need to:</p>
     <div class="terms">
@@ -1838,7 +1625,7 @@ published version. It never touches the product code repos.</p>
     <p class="micro" style="text-align:center;margin-top:8px">(this link works from your <code>ai-setup</code> folder copy)</p>
     <div class="meta">
       The pitchIN AI workspace &middot; team guide<br>
-      Last updated 2026-07-19 &middot; questions &rarr; <a href="#help">ClickUp rollout channel</a><br>
+      Last updated 2026-07-20 &middot; questions &rarr; <a href="#help">ClickUp rollout channel</a><br>
       Bookmark this, or come back any time: double-click <code>guide/Open-Guide.command</code> (Mac) or
       <code>guide\Open-Guide.bat</code> (Windows) inside your <code>ai-setup</code> folder &mdash; opens
       the guide hub. (Mac&rsquo;s first-run &ldquo;unidentified developer&rdquo; right-click &rarr;
@@ -2018,63 +1805,6 @@ published version. It never touches the product code repos.</p>
         /* not ok → keep the placeholder card silently */
       }).catch(function(){ /* network off → keep the card */ });
     }catch(e){ /* keep the card */ }
-  });
-})();
-</script>
-
-<script>
-/* ── Interactive journey map (git & tickets) ── */
-(function(){
-  "use strict";
-  var map = document.getElementById('jmap');
-  if(!map) return;
-
-  /* role lens */
-  var roleBtns = Array.prototype.slice.call(map.querySelectorAll('.jrole'));
-  roleBtns.forEach(function(btn){
-    btn.addEventListener('click', function(){
-      var r = btn.getAttribute('data-role');
-      map.setAttribute('data-role', r);
-      roleBtns.forEach(function(b){
-        var on = b === btn;
-        b.classList.toggle('active', on);
-        b.setAttribute('aria-pressed', on ? 'true' : 'false');
-      });
-    });
-  });
-
-  /* step tabs + panels */
-  var tabs   = Array.prototype.slice.call(map.querySelectorAll('.jstep[data-step]'));
-  var panels = Array.prototype.slice.call(map.querySelectorAll('.jpanel[data-step]'));
-  function go(id, focus){
-    tabs.forEach(function(t){
-      var on = t.getAttribute('data-step') === id;
-      t.classList.toggle('active', on);
-      t.setAttribute('aria-selected', on ? 'true' : 'false');
-      t.tabIndex = on ? 0 : -1;
-      if(on && focus){ t.focus(); }
-    });
-    panels.forEach(function(p){
-      p.classList.toggle('active', p.getAttribute('data-step') === id);
-    });
-  }
-  tabs.forEach(function(t){
-    t.addEventListener('click', function(){ go(t.getAttribute('data-step'), false); });
-    t.addEventListener('keydown', function(e){
-      var i = tabs.indexOf(t), n = null;
-      if(e.key === 'ArrowRight' || e.key === 'ArrowDown'){ n = (i + 1) % tabs.length; }
-      else if(e.key === 'ArrowLeft' || e.key === 'ArrowUp'){ n = (i - 1 + tabs.length) % tabs.length; }
-      else if(e.key === 'Home'){ n = 0; }
-      else if(e.key === 'End'){ n = tabs.length - 1; }
-      if(n === null) return;
-      e.preventDefault();
-      go(tabs[n].getAttribute('data-step'), true);
-    });
-  });
-
-  /* prev / next inside the panels */
-  map.querySelectorAll('.fnav[data-jgo]').forEach(function(b){
-    b.addEventListener('click', function(){ go(b.getAttribute('data-jgo'), false); });
   });
 })();
 </script>
