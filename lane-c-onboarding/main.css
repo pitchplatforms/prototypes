@@ -13957,432 +13957,432 @@ input[type=number] {
 }
 
 .pitchin-icon-app {
-  background-image: url("/assets/img/brand/pitchin_logo.svg");
+  background-image: url("./assets/img/brand/pitchin_logo.svg");
 }
 
 .pitchin-icon-invest {
-  background-image: url("/assets/img/icons/menu/invest_icon_grey@2x.png");
+  background-image: url("./assets/img/icons/menu/invest_icon_grey@2x.png");
 }
 
 .pitchin-icon-raise {
-  background-image: url("/assets/img/icons/menu/raise_icon_grey@2x.png");
+  background-image: url("./assets/img/icons/menu/raise_icon_grey@2x.png");
 }
 
 .pitchin-icon-representative {
-  background-image: url("/assets/img/icons/common/profile_icon_grey@2x.png");
+  background-image: url("./assets/img/icons/common/profile_icon_grey@2x.png");
 }
 
 .pitchin-icon-documents {
-  background-image: url("/assets/img/icons/common/document_2_icon_grey@2x.png");
+  background-image: url("./assets/img/icons/common/document_2_icon_grey@2x.png");
 }
 
 .pitchin-icon-details {
-  background-image: url("/assets/img/icons/common/group_icon_grey@2x.png");
+  background-image: url("./assets/img/icons/common/group_icon_grey@2x.png");
 }
 
 .pitchin-icon-add {
-  background-image: url("/assets/img/icons/common/add_icon_circle_red@2x.png");
+  background-image: url("./assets/img/icons/common/add_icon_circle_red@2x.png");
 }
 
 .pitchin-icon-profile {
-  background-image: url("/assets/img/icons/common/profile_icon_red_180@2x.png");
+  background-image: url("./assets/img/icons/common/profile_icon_red_180@2x.png");
 }
 
 .pitchin-icon-upload {
-  background-image: url("/assets/img/icons/common/upload_files_icon@2x.png");
+  background-image: url("./assets/img/icons/common/upload_files_icon@2x.png");
 }
 
 .pitchin-icon-delete {
-  background-image: url("/assets/img/icons/common/delete_icon@2x.png");
+  background-image: url("./assets/img/icons/common/delete_icon@2x.png");
 }
 
 .pitchin-icon-company {
-  background-image: url("/assets/img/icons/common/clipboard_icon_grey@2x.png");
+  background-image: url("./assets/img/icons/common/clipboard_icon_grey@2x.png");
 }
 
 .pitchin-icon-company-logo {
-  background-image: url("/assets/img/icons/common/add_business_logo_icon@2x.png");
+  background-image: url("./assets/img/icons/common/add_business_logo_icon@2x.png");
 }
 
 .pitchin-icon-notification {
-  background-image: url("/assets/img/icons/menu/bell_icon_black@2x.png");
+  background-image: url("./assets/img/icons/menu/bell_icon_black@2x.png");
 }
 
 .pitchin-icon-company-profile {
-  background-image: url("/assets/img/icons/common/profile_icon_red@2x.png");
+  background-image: url("./assets/img/icons/common/profile_icon_red@2x.png");
 }
 
 .pitchin-icon-coins {
-  background-image: url("/assets/img/icons/common/coins_icon_grey@2x.png");
+  background-image: url("./assets/img/icons/common/coins_icon_grey@2x.png");
 }
 
 .active .pitchin-icon-invest {
-  background-image: url("/assets/img/icons/menu/invest_icon_red@2x.png");
+  background-image: url("./assets/img/icons/menu/invest_icon_red@2x.png");
 }
 .active .pitchin-icon-raise {
-  background-image: url("/assets/img/icons/menu/raise_icon_red@2x.png");
+  background-image: url("./assets/img/icons/menu/raise_icon_red@2x.png");
 }
 .active .pitchin-icon-documents {
-  background-image: url("/assets/img/icons/common/document_2_icon_red@2x.png");
+  background-image: url("./assets/img/icons/common/document_2_icon_red@2x.png");
 }
 .active .pitchin-icon-company {
-  background-image: url("/assets/img/icons/common/clipboard_icon_red@2x.png");
+  background-image: url("./assets/img/icons/common/clipboard_icon_red@2x.png");
 }
 .active .pitchin-icon-coins {
-  background-image: url("/assets/img/icons/common/coins_icon_red@2x.png");
+  background-image: url("./assets/img/icons/common/coins_icon_red@2x.png");
 }
 .active .pitchin-icon-representative {
-  background-image: url("/assets/img/icons/common/profile_icon_red@2x.png");
+  background-image: url("./assets/img/icons/common/profile_icon_red@2x.png");
 }
 .active .pitchin-icon-details {
-  background-image: url("/assets/img/icons/common/group_icon_red@2x.png");
+  background-image: url("./assets/img/icons/common/group_icon_red@2x.png");
 }
 .active .pitchin-icon-wallet {
-  background-image: url("/assets/img/icons/common/icon_wallet@2x.png");
+  background-image: url("./assets/img/icons/common/icon_wallet@2x.png");
 }
 
 .pitchin-icon-check-grey {
-  background-image: url("/assets/img/icons/common/check_icon_grey@2x.png");
+  background-image: url("./assets/img/icons/common/check_icon_grey@2x.png");
 }
 
 .pitchin-icon-check-green {
-  background-image: url("/assets/img/icons/common/check_icon_green@2x.png");
+  background-image: url("./assets/img/icons/common/check_icon_green@2x.png");
 }
 
 .pitchin-icon-edit {
-  background-image: url("/assets/img/icons/common/edit_icon_white@2x.png");
+  background-image: url("./assets/img/icons/common/edit_icon_white@2x.png");
 }
 
 .pitchin-icon-shield-white {
-  background-image: url("/assets/img/icons/common/shield_icon_white@2x.png");
+  background-image: url("./assets/img/icons/common/shield_icon_white@2x.png");
 }
 
 .pitchin-icon-shield-red {
-  background-image: url("/assets/img/icons/common/shield_icon_red@2x.png");
+  background-image: url("./assets/img/icons/common/shield_icon_red@2x.png");
 }
 
 .pitchin-icon-shield-green {
-  background-image: url("/assets/img/icons/common/shield_icon_green@2x.png");
+  background-image: url("./assets/img/icons/common/shield_icon_green@2x.png");
 }
 
 .pitchin-icon-next-arrow {
-  background-image: url("/assets/img/icons/common/right_arrow_icon_red@2x.png");
+  background-image: url("./assets/img/icons/common/right_arrow_icon_red@2x.png");
 }
 
 .pitchin-icon-next-arrow-green {
-  background-image: url("/assets/img/icons/common/right_arrow_icon_green@2x.png");
+  background-image: url("./assets/img/icons/common/right_arrow_icon_green@2x.png");
 }
 
 .pitchin-icon-up-arrow {
-  background-image: url("/assets/img/icons/common/up_arrow_icon_red@2x.png");
+  background-image: url("./assets/img/icons/common/up_arrow_icon_red@2x.png");
 }
 
 .pitchin-icon-clock-ongoing {
-  background-image: url("/assets/img/icons/common/clock_ongoing_icon@2x.png");
+  background-image: url("./assets/img/icons/common/clock_ongoing_icon@2x.png");
 }
 
 .pitchin-icon-invest-ecf {
-  background-image: url("/assets/img/icons/common/invest-ecf.png");
+  background-image: url("./assets/img/icons/common/invest-ecf.png");
 }
 
 .pitchin-icon-invest-pstx {
-  background-image: url("/assets/img/logo/logo_pstx_square.png");
+  background-image: url("./assets/img/logo/logo_pstx_square.png");
 }
 
 .pitchin-icon-invest-ieo {
-  background-image: url("/assets/img/icons/common/invest-ieo.png");
+  background-image: url("./assets/img/icons/common/invest-ieo.png");
 }
 
 .pitchin-icon-invest-shariah {
-  background-image: url("/assets/img/icons/common/icons8-mosque-66.png");
+  background-image: url("./assets/img/icons/common/icons8-mosque-66.png");
 }
 
 .pitchin-icon-learn-learning-portal {
-  background-image: url("/assets/img/icons/common/learn-learning-portal.png");
+  background-image: url("./assets/img/icons/common/learn-learning-portal.png");
 }
 
 .pitchin-icon-learn-faq {
-  background-image: url("/assets/img/icons/common/learn-faq.png");
+  background-image: url("./assets/img/icons/common/learn-faq.png");
 }
 
 .pitchin-icon-learn-academy {
-  background-image: url("/assets/img/icons/common/learn-academy.png");
+  background-image: url("./assets/img/icons/common/learn-academy.png");
 }
 
 .logo-icon-alpha-red {
-  background-image: url("/assets/img/logo/logo_alpha_red.png");
+  background-image: url("./assets/img/logo/logo_alpha_red.png");
 }
 
 .logo-icon-apex {
-  background-image: url("/assets/img/logo/logo_apex.png");
+  background-image: url("./assets/img/logo/logo_apex.png");
 }
 
 .logo-icon-coffeeprint {
-  background-image: url("/assets/img/logo/logo_coffeeprint.png");
+  background-image: url("./assets/img/logo/logo_coffeeprint.png");
 }
 
 .logo-icon-spurr {
-  background-image: url("/assets/img/logo/logo_spurr.png");
+  background-image: url("./assets/img/logo/logo_spurr.png");
 }
 
 .pitchin-icon-add-red {
-  background-image: url("/assets/img/icons/common/add_icon_red.png");
+  background-image: url("./assets/img/icons/common/add_icon_red.png");
 }
 
 .pitchin-icon-add-grey-transparent {
-  background-image: url("/assets/img/icons/common/add_icon_grey@2x.png");
+  background-image: url("./assets/img/icons/common/add_icon_grey@2x.png");
 }
 
 .pitchin-icon-view-more-red {
-  background-image: url("/assets/img/icons/common/icon_view_more_red@2x.png");
+  background-image: url("./assets/img/icons/common/icon_view_more_red@2x.png");
 }
 
 .pitchin-icon-add-red-transparent {
-  background-image: url("/assets/img/icons/common/add_icon_red@2x.png");
+  background-image: url("./assets/img/icons/common/add_icon_red@2x.png");
 }
 
 .pitchin-icon-minus-red {
-  background-image: url("/assets/img/icons/common/minus_icon_red.png");
+  background-image: url("./assets/img/icons/common/minus_icon_red.png");
 }
 
 .pitchin-icon-investor {
-  background-image: url("/assets/img/icons/common/iconinvestor-black@2x.png");
+  background-image: url("./assets/img/icons/common/iconinvestor-black@2x.png");
 }
 
 .pitchin-icon-minimum {
-  background-image: url("/assets/img/icons/common/icon-up-arrow-black@2x.png");
+  background-image: url("./assets/img/icons/common/icon-up-arrow-black@2x.png");
 }
 
 .pitchin-icon-valuation {
-  background-image: url("/assets/img/icons/common/icon-diamond-black@2x.png");
+  background-image: url("./assets/img/icons/common/icon-diamond-black@2x.png");
 }
 
 .pitchin-icon-edit-black {
-  background-image: url("/assets/img/icons/common/edit_icon_black@2x.png");
+  background-image: url("./assets/img/icons/common/edit_icon_black@2x.png");
 }
 
 .pitchin-icon-pitchin-logo-white {
-  background-image: url("/assets/img/brand/pitchin_logo_white.svg");
+  background-image: url("./assets/img/brand/pitchin_logo_white.svg");
 }
 
 .pitchin-icon-facebook {
-  background-image: url("/assets/img/icons/common/facebook_icon@2x.png");
+  background-image: url("./assets/img/icons/common/facebook_icon@2x.png");
 }
 
 .pitchin-icon-linkedin {
-  background-image: url("/assets/img/icons/common/linkedin_icon@2x.png");
+  background-image: url("./assets/img/icons/common/linkedin_icon@2x.png");
 }
 
 .pitchin-icon-tiktok {
-  background-image: url("/assets/img/icons/common/tiktok_icon@2x.png");
+  background-image: url("./assets/img/icons/common/tiktok_icon@2x.png");
 }
 
 .pitchin-icon-filter {
-  background-image: url("/assets/img/icons/common/icon-filter@2x.png");
+  background-image: url("./assets/img/icons/common/icon-filter@2x.png");
 }
 
 .pitchin-icon-search {
-  background-image: url("/assets/img/icons/common/search_icon_grey@2x.png");
+  background-image: url("./assets/img/icons/common/search_icon_grey@2x.png");
   height: 1.25rem;
   width: 1.25rem;
 }
 
 .pitchin-icon-star {
-  background-image: url("/assets/img/icons/common/star_icon_black@2x.png");
+  background-image: url("./assets/img/icons/common/star_icon_black@2x.png");
 }
 
 .pitchin-icon-yellow-star {
-  background-image: url("/assets/img/icons/common/star_icon_yellow@2x.png");
+  background-image: url("./assets/img/icons/common/star_icon_yellow@2x.png");
 }
 
 .pitchin-icon-share {
-  background-image: url("/assets/img/icons/common/share_icon_black@2x.png");
+  background-image: url("./assets/img/icons/common/share_icon_black@2x.png");
 }
 
 .pitchin-icon-whatsapp {
-  background-image: url("/assets/img/icons/common/whatsapp_icon_circle_2@2x.png");
+  background-image: url("./assets/img/icons/common/whatsapp_icon_circle_2@2x.png");
 }
 
 .pitchin-icon-facebook {
-  background-image: url("/assets/img/icons/common/facebook_icon_circle_2@2x.png");
+  background-image: url("./assets/img/icons/common/facebook_icon_circle_2@2x.png");
 }
 
 .pitchin-icon-instagram {
-  background-image: url("/assets/img/icons/common/instagram_icon_circle_2@2x.png");
+  background-image: url("./assets/img/icons/common/instagram_icon_circle_2@2x.png");
 }
 
 .pitchin-icon-linkedin {
-  background-image: url("/assets/img/icons/common/linkedin_icon_circle_2@2x.png");
+  background-image: url("./assets/img/icons/common/linkedin_icon_circle_2@2x.png");
 }
 
 .pitchin-icon-tiktok {
-  background-image: url("/assets/img/icons/common/tiktok_icon_circle@2x.png");
+  background-image: url("./assets/img/icons/common/tiktok_icon_circle@2x.png");
 }
 
 .pitchin-icon-twitter {
-  background-image: url("/assets/img/icons/common/x_icon_round.png");
+  background-image: url("./assets/img/icons/common/x_icon_round.png");
 }
 
 .pitchin-icon-document {
-  background-image: url("/assets/img/icons/common/document_3_icon_grey@2x.png");
+  background-image: url("./assets/img/icons/common/document_3_icon_grey@2x.png");
 }
 
 .pitchin-icon-document-red {
-  background-image: url("/assets/img/icons/common/icon-documents@2x.png");
+  background-image: url("./assets/img/icons/common/icon-documents@2x.png");
 }
 
 .pitchin-icon-apostrophe-1 {
-  background-image: url("/assets/img/icons/common/apostrophe_icon_grey_1@2x.png");
+  background-image: url("./assets/img/icons/common/apostrophe_icon_grey_1@2x.png");
 }
 
 .pitchin-icon-apostrophe-2 {
-  background-image: url("/assets/img/icons/common/apostrophe_icon_grey_2@2x.png");
+  background-image: url("./assets/img/icons/common/apostrophe_icon_grey_2@2x.png");
 }
 
 .pitchin-icon-bell-icon-blue {
-  background-image: url("/assets/img/icons/common/bell_icon_blue@2x.png");
+  background-image: url("./assets/img/icons/common/bell_icon_blue@2x.png");
 }
 
 .pitchin-icon-bell-icon-red {
-  background-image: url("/assets/img/icons/menu/bell_icon_red@2x.png");
+  background-image: url("./assets/img/icons/menu/bell_icon_red@2x.png");
 }
 
 .pitchin-icon-check-icon-red {
-  background-image: url("/assets/img/icons/common/check_icon_red.png");
+  background-image: url("./assets/img/icons/common/check_icon_red.png");
 }
 
 .pitchin-icon-warning_icon_white {
-  background-image: url("/assets/img/icons/common/warning_icon_white@2x.png");
+  background-image: url("./assets/img/icons/common/warning_icon_white@2x.png");
 }
 
 .pitchin-icon-warning_icon_red {
-  background-image: url("/assets/img/icons/common/warning_icon_red@2x.png");
+  background-image: url("./assets/img/icons/common/warning_icon_red@2x.png");
 }
 
 .pitchin-icon-calendar {
-  background-image: url("/assets/img/icons/common/calendar_icon@2x.png");
+  background-image: url("./assets/img/icons/common/calendar_icon@2x.png");
 }
 
 .pitchin-icon-clock {
-  background-image: url("/assets/img/icons/common/clock_icon@2x.png");
+  background-image: url("./assets/img/icons/common/clock_icon@2x.png");
 }
 
 .pitchin-icon-info-icon {
-  background-image: url("/assets/img/icons/common/info_icon.png");
+  background-image: url("./assets/img/icons/common/info_icon.png");
 }
 
 .pitchin-icon-info-icon-grey {
-  background-image: url("/assets/img/icons/common/info_icon_grey@2x.png");
+  background-image: url("./assets/img/icons/common/info_icon_grey@2x.png");
 }
 
 .pitchin-icon-info-icon-green {
-  background-image: url("/assets/img/icons/common/info_icon_green@2x.png");
+  background-image: url("./assets/img/icons/common/info_icon_green@2x.png");
 }
 
 .pitchin-icon-info-icon-red {
-  background-image: url("/assets/img/icons/common/info_icon_red@2x.png");
+  background-image: url("./assets/img/icons/common/info_icon_red@2x.png");
 }
 
 .pitchin-icon-help-icon-green {
-  background-image: url("/assets/img/icons/common/help_icon_green@2x.png");
+  background-image: url("./assets/img/icons/common/help_icon_green@2x.png");
 }
 
 .pitchin-icon-help-icon-red {
-  background-image: url("/assets/img/icons/common/help_icon_red@2x.png");
+  background-image: url("./assets/img/icons/common/help_icon_red@2x.png");
 }
 
 .pitchin-icon-more {
-  background-image: url("/assets/img/icons/common/more_grey_icon@2x.png");
+  background-image: url("./assets/img/icons/common/more_grey_icon@2x.png");
   opacity: 0.4;
 }
 
 .pitchin-icon-more-horizontal {
-  background-image: url("/assets/img/icons/common/more_grey_icon_h@2x.png");
+  background-image: url("./assets/img/icons/common/more_grey_icon_h@2x.png");
   opacity: 0.4;
 }
 
 .pitchin-icon-arrow-down-red {
-  background-image: url("/assets/img/icons/common/arrow_down_icon_red@2x.png");
+  background-image: url("./assets/img/icons/common/arrow_down_icon_red@2x.png");
 }
 
 .pitchin-icon-arrow-up-green {
-  background-image: url("/assets/img/icons/common/arrow_up_icon_green@2x.png");
+  background-image: url("./assets/img/icons/common/arrow_up_icon_green@2x.png");
 }
 
 .pitchin-icon-arrow-down-black {
-  background-image: url("/assets/img/icons/common/arrow_down_black@2x.png");
+  background-image: url("./assets/img/icons/common/arrow_down_black@2x.png");
 }
 
 .pitchin-icon-rejected-icon-red {
-  background-image: url("/assets/img/icons/common/rejected_icon_red@2x.png");
+  background-image: url("./assets/img/icons/common/rejected_icon_red@2x.png");
 }
 
 .pitchin-icon-email-icon-grey {
-  background-image: url("/assets/img/icons/common/email_icon_grey@2x.png");
+  background-image: url("./assets/img/icons/common/email_icon_grey@2x.png");
 }
 
 .pitchin-icon-phone-icon-grey {
-  background-image: url("/assets/img/icons/common/phone_icon_grey@2x.png");
+  background-image: url("./assets/img/icons/common/phone_icon_grey@2x.png");
 }
 
 .pitchin-icon-fpx {
-  background-image: url("/assets/img/icons/common/fpx-1.png");
+  background-image: url("./assets/img/icons/common/fpx-1.png");
 }
 
 .pitchin-icon-duitnow {
-  background-image: url("/assets/img/icons/common/duitnow.png");
+  background-image: url("./assets/img/icons/common/duitnow.png");
 }
 
 .pitchin-icon-blockchain {
-  background-image: url("/assets/img/icons/common/blockchain-icon.png");
+  background-image: url("./assets/img/icons/common/blockchain-icon.png");
 }
 
 .pitchin-icon-close {
-  background-image: url("/assets/img/icons/common/close_icon_circle@2x.png");
+  background-image: url("./assets/img/icons/common/close_icon_circle@2x.png");
 }
 
 .pitchin-icon-add-grey {
-  background-image: url("/assets/img/icons/common/add_icon_circle_grey@2x.png");
+  background-image: url("./assets/img/icons/common/add_icon_circle_grey@2x.png");
 }
 
 .pitchin-icon-wallet {
-  background-image: url("/assets/img/icons/common/wallet_icon_grey@2x.png");
+  background-image: url("./assets/img/icons/common/wallet_icon_grey@2x.png");
 }
 
 .pitchin-icon-download {
-  background-image: url("/assets/img/icons/common/icon-download.svg");
+  background-image: url("./assets/img/icons/common/icon-download.svg");
 }
 
 .pitchin-icon-info-grey-small {
-  background-image: url("/assets/img/icons/common/info_icon_grey_small@2x.png");
+  background-image: url("./assets/img/icons/common/info_icon_grey_small@2x.png");
 }
 
 .pitchin-icon-caution {
-  background-image: url("/assets/img/icons/common/caution_icon@2x.png");
+  background-image: url("./assets/img/icons/common/caution_icon@2x.png");
 }
 
 .pitchin-icon-credit {
-  background-image: url("/assets/img/icons/common/credit_icon_green@2x.png");
+  background-image: url("./assets/img/icons/common/credit_icon_green@2x.png");
 }
 
 .pitchin-icon-debit {
-  background-image: url("/assets/img/icons/common/debit_icon_red@2x.png");
+  background-image: url("./assets/img/icons/common/debit_icon_red@2x.png");
 }
 
 .pitchin-icon-withdraw {
-  background-image: url("/assets/img/icons/common/withdraw_icon_circle_red@2x.png");
+  background-image: url("./assets/img/icons/common/withdraw_icon_circle_red@2x.png");
 }
 
 .pitchin-icon-deposit {
-  background-image: url("/assets/img/icons/common/deposit_icon_circle_green@2x.png");
+  background-image: url("./assets/img/icons/common/deposit_icon_circle_green@2x.png");
 }
 
 .pitchin-icon-withdraw-arrow {
-  background-image: url("/assets/img/icons/svgs/withdraw.svg");
+  background-image: url("./assets/img/icons/svgs/withdraw.svg");
 }
 
 .pitchin-icon-deposit-arrow {
-  background-image: url("/assets/img/icons/svgs/deposit.svg");
+  background-image: url("./assets/img/icons/svgs/deposit.svg");
 }
 
 .fa-eye-slash,
@@ -14391,111 +14391,111 @@ input[type=number] {
 }
 
 .pitchin-icon-edit-red {
-  background-image: url("/assets/img/icons/common/icon_edit@2x.png");
+  background-image: url("./assets/img/icons/common/icon_edit@2x.png");
 }
 
 .pitchin-icon-delete-red {
-  background-image: url("/assets/img/icons/common/icon_delete@2x.png");
+  background-image: url("./assets/img/icons/common/icon_delete@2x.png");
 }
 
 .pitchin-icon-rewards {
-  background-image: url("/assets/img/icons/common/rewards_icon.png");
+  background-image: url("./assets/img/icons/common/rewards_icon.png");
 }
 
 .pitchin-icon-shariah {
-  background-image: url("/assets/img/icons/common/shariah_icon.svg");
+  background-image: url("./assets/img/icons/common/shariah_icon.svg");
 }
 
 .pitchin-icon-why-invest-diversify {
-  background-image: url("/assets/img/icons/common/why-invest-diversify.svg");
+  background-image: url("./assets/img/icons/common/why-invest-diversify.svg");
 }
 
 .pitchin-icon-why-invest-fire {
-  background-image: url("/assets/img/icons/common/why-invest-fire.svg");
+  background-image: url("./assets/img/icons/common/why-invest-fire.svg");
 }
 
 .pitchin-icon-why-invest-hand-good {
-  background-image: url("/assets/img/icons/common/why-invest-hand-good.svg");
+  background-image: url("./assets/img/icons/common/why-invest-hand-good.svg");
 }
 
 .pitchin-icon-why-invest-hand-high5 {
-  background-image: url("/assets/img/icons/common/why-invest-hand-high5.svg");
+  background-image: url("./assets/img/icons/common/why-invest-hand-high5.svg");
 }
 
 .pitchin-icon-why-invest-hand-ok {
-  background-image: url("/assets/img/icons/common/why-invest-hand-ok.svg");
+  background-image: url("./assets/img/icons/common/why-invest-hand-ok.svg");
 }
 
 .pitchin-icon-why-invest-low-investment {
-  background-image: url("/assets/img/icons/common/why-invest-low-investment.svg");
+  background-image: url("./assets/img/icons/common/why-invest-low-investment.svg");
 }
 
 .pitchin-icon-why-invest-report {
-  background-image: url("/assets/img/icons/common/why-invest-report.svg");
+  background-image: url("./assets/img/icons/common/why-invest-report.svg");
 }
 
 .pitchin-icon-why-invest-screening {
-  background-image: url("/assets/img/icons/common/why-invest-screening.svg");
+  background-image: url("./assets/img/icons/common/why-invest-screening.svg");
 }
 
 .pitchin-icon-why-invest-due-diligence {
-  background-image: url("/assets/img/icons/common/why-invest-due-diligence.svg");
+  background-image: url("./assets/img/icons/common/why-invest-due-diligence.svg");
 }
 
 .pitchin-icon-why-invest-campaign-live {
-  background-image: url("/assets/img/icons/common/why-invest-campaign-live.svg");
+  background-image: url("./assets/img/icons/common/why-invest-campaign-live.svg");
 }
 
 .pitchin-icon-invest-ecf {
-  background-image: url("/assets/img/icons/common/invest-ecf.png");
+  background-image: url("./assets/img/icons/common/invest-ecf.png");
 }
 
 .pitchin-icon-question-cirle-small {
-  background-image: url("/assets/img/icons/common/icon_question_circle.svg");
+  background-image: url("./assets/img/icons/common/icon_question_circle.svg");
 }
 
 .pitchin-icon-arrow-left {
-  background-image: url("/assets/img/icons/common/arrow-left.svg");
+  background-image: url("./assets/img/icons/common/arrow-left.svg");
 }
 
 .pitchin-icon-arrow-right {
-  background-image: url("/assets/img/icons/common/arrow-right.svg");
+  background-image: url("./assets/img/icons/common/arrow-right.svg");
 }
 
 .pitchin-icon-help-circle {
-  background-image: url("/assets/img/icons/common/help-circle.svg");
+  background-image: url("./assets/img/icons/common/help-circle.svg");
 }
 
 .pitchin-icon-help-circle-light {
-  background-image: url("/assets/img/icons/common/help-circle-white.svg");
+  background-image: url("./assets/img/icons/common/help-circle-white.svg");
 }
 
 .pitchin-icon-increase-arrow {
-  background-image: url("/assets/img/icons/common/arrow-increase.svg");
+  background-image: url("./assets/img/icons/common/arrow-increase.svg");
 }
 
 .pitchin-icon-decrease-arrow {
-  background-image: url("/assets/img/icons/common/arrow-decrease.svg");
+  background-image: url("./assets/img/icons/common/arrow-decrease.svg");
 }
 
 .pitchin-icon-flat-arrow {
-  background-image: url("/assets/img/icons/common/arrow-flat.svg");
+  background-image: url("./assets/img/icons/common/arrow-flat.svg");
 }
 
 .pitchin-icon-filter-lines {
-  background-image: url("/assets/img/icons/common/filter-lines.svg");
+  background-image: url("./assets/img/icons/common/filter-lines.svg");
 }
 
 .pitchin-icon-left-arrow {
-  background-image: url("/assets/img/icons/common/icon_arrow-left.svg");
+  background-image: url("./assets/img/icons/common/icon_arrow-left.svg");
 }
 
 .pitchin-icon-clear {
-  background-image: url("/assets/img/icons/common/clear.svg");
+  background-image: url("./assets/img/icons/common/clear.svg");
 }
 
 .pitchin-icon-info-circle {
-  background-image: url("/assets/img/icons/svgs/info-circle.svg");
+  background-image: url("./assets/img/icons/svgs/info-circle.svg");
 }
 
 .input-group {
@@ -17681,61 +17681,61 @@ ngb-datepicker .ngb-dp-months ngb-datepicker-month .ngb-dp-week .ngb-dp-day .tex
 
 @font-face {
   font-family: "Poppins";
-  src: url("/assets/font/poppins/Poppins-Light.ttf");
+  src: url("./assets/font/poppins/Poppins-Light.ttf");
   font-weight: 300;
   font-display: swap;
 }
 @font-face {
   font-family: "Poppins";
-  src: url("/assets/font/poppins/Poppins-Regular.ttf");
+  src: url("./assets/font/poppins/Poppins-Regular.ttf");
   font-weight: 400;
   font-display: swap;
 }
 @font-face {
   font-family: "Poppins";
-  src: url("/assets/font/poppins/Poppins-Medium.ttf");
+  src: url("./assets/font/poppins/Poppins-Medium.ttf");
   font-weight: 500;
   font-display: swap;
 }
 @font-face {
   font-family: "Poppins";
-  src: url("/assets/font/poppins/Poppins-SemiBold.ttf");
+  src: url("./assets/font/poppins/Poppins-SemiBold.ttf");
   font-weight: 600;
   font-display: swap;
 }
 @font-face {
   font-family: "Poppins";
-  src: url("/assets/font/poppins/Poppins-Bold.ttf");
+  src: url("./assets/font/poppins/Poppins-Bold.ttf");
   font-weight: 700;
   font-display: swap;
 }
 @font-face {
   font-family: "Inter";
-  src: url("/assets/font/inter/Inter-Light.ttf");
+  src: url("./assets/font/inter/Inter-Light.ttf");
   font-weight: 300;
   font-display: swap;
 }
 @font-face {
   font-family: "Inter";
-  src: url("/assets/font/inter/Inter-Regular.ttf");
+  src: url("./assets/font/inter/Inter-Regular.ttf");
   font-weight: 400;
   font-display: swap;
 }
 @font-face {
   font-family: "Inter";
-  src: url("/assets/font/inter/Inter-Medium.ttf");
+  src: url("./assets/font/inter/Inter-Medium.ttf");
   font-weight: 500;
   font-display: swap;
 }
 @font-face {
   font-family: "Inter";
-  src: url("/assets/font/inter/Inter-SemiBold.ttf");
+  src: url("./assets/font/inter/Inter-SemiBold.ttf");
   font-weight: 600;
   font-display: swap;
 }
 @font-face {
   font-family: "Inter";
-  src: url("/assets/font/inter/Inter-Bold.ttf");
+  src: url("./assets/font/inter/Inter-Bold.ttf");
   font-weight: 700;
   font-display: swap;
 }
@@ -22659,10 +22659,10 @@ body.modal-open {
   background-image: linear-gradient(320deg, var(--tw-gradient-stops));
 }
 .tw-bg-pitchin-logo {
-  background-image: url('/assets/img/banner/why-invest-cta-bg.png');
+  background-image: url('./assets/img/banner/why-invest-cta-bg.png');
 }
 .tw-bg-skeleton {
-  background-image: url('/assets/img/banner/skeleton.png');
+  background-image: url('./assets/img/banner/skeleton.png');
 }
 .tw-from-\[\#2a2a2a0a\] {
   --tw-gradient-from: #2a2a2a0a var(--tw-gradient-from-position);
@@ -24693,7 +24693,7 @@ body.modal-open {
   background-size: contain;
   background-repeat: no-repeat;
   opacity: 0.5;
-  background-image: url("/assets/img/icons/svgs/circle-check.svg");
+  background-image: url("./assets/img/icons/svgs/circle-check.svg");
 }
 
 .list--dot {
@@ -25400,7 +25400,7 @@ body.modal-open {
   border-radius: 1rem;
   height: 2rem;
   z-index: -1;
-  background-image: url("/assets/img/icons/svgs/map.svg");
+  background-image: url("./assets/img/icons/svgs/map.svg");
   background-repeat: no-repeat;
   background-position-x: calc(100% - 0.4375rem);
   background-position-y: calc(100% - 0.4375rem);
