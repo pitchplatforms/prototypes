@@ -1,0 +1,289 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>The life of a tokenised fund — a guided walkthrough</title>
+<link rel="icon" href="data:,">
+<link rel="stylesheet" href="assets/tokens.css">
+<link rel="stylesheet" href="assets/site.css">
+<style>
+  .wrap { max-width: 880px; margin: 0 auto; padding: 64px 24px 96px; }
+  .lede { font-size: var(--fs-lg); color: var(--ink-2); line-height: 1.65; }
+  .orientation { border-left: 3px solid var(--accent); background: var(--accent-soft); border-radius: var(--r-sm); padding: 16px 20px; margin: 24px 0; font-size: var(--fs-md); color: var(--ink-1); }
+  .chapter { margin-top: 72px; }
+  .ch-kicker { font-size: var(--fs-xs); font-weight: var(--w-bold); letter-spacing: .1em; text-transform: uppercase; color: var(--accent); }
+  .chapter h2 { font-size: var(--fs-2xl); font-weight: var(--w-bold); color: var(--ink-1); margin: 8px 0 16px; line-height: var(--lh-tight); }
+  .video-slot { aspect-ratio: 16/9; border-radius: var(--r-lg); position: relative; overflow: hidden; display: flex; align-items: center; justify-content: center; margin: 20px 0;
+    background:
+      radial-gradient(circle at 82% 18%, rgba(255,255,255,.07), transparent 42%),
+      radial-gradient(circle at 12% 88%, rgba(255,255,255,.05), transparent 40%),
+      linear-gradient(135deg, var(--hero-a1), var(--hero-b2)); }
+  .video-slot .vs-num { position: absolute; left: 18px; top: 4px; font-size: 120px; font-weight: 800; color: rgba(255,255,255,.06); line-height: 1; font-variant-numeric: tabular-nums; }
+  .video-slot .play { width: 74px; height: 74px; border-radius: 999px; background: rgba(255,255,255,.12); border: 1.5px solid rgba(255,255,255,.45); display: flex; align-items: center; justify-content: center; color: #fff; }
+  .video-slot .play .ic { width: 26px; height: 26px; margin-left: 3px; }
+  .video-slot .vs-label { position: absolute; left: 20px; bottom: 16px; color: rgba(255,255,255,.85); font-size: var(--fs-sm); font-weight: var(--w-semibold); letter-spacing: .02em; }
+  .video-slot .vs-dur { position: absolute; right: 20px; bottom: 16px; background: rgba(0,0,0,.45); color: rgba(255,255,255,.85); font-size: var(--fs-xs); font-weight: var(--w-semibold); padding: 3px 10px; border-radius: var(--r-full); font-variant-numeric: tabular-nums; }
+  .specifics { margin: 16px 0 0 0; padding: 0; list-style: none; }
+  .specifics li { display: flex; gap: 12px; padding: 8px 0; align-items: flex-start; }
+  .specifics .m { color: var(--accent); font-weight: var(--w-bold); flex: 0 0 auto; }
+  .screens-link { font-size: var(--fs-sm); color: var(--ink-4); margin-top: 12px; }
+  .funds-note { border: 1px solid var(--line-1); background: var(--bg-card); border-radius: var(--r-lg); padding: 24px 28px; margin-top: 72px; box-shadow: var(--sh-sm); }
+  .gap-note { border: 1px solid var(--warn-line); background: var(--warn-soft); border-radius: var(--r-lg); padding: 20px 24px; margin-top: 28px; font-size: var(--fs-sm); }
+  .divider { border: 0; border-top: 1px solid var(--line-1); margin: 0; }
+</style>
+</head>
+<body>
+<header style="background:linear-gradient(135deg,var(--hero-a1),var(--hero-b2)); color:var(--ink-inverse)">
+  <div style="max-width:880px; margin:0 auto; padding:52px 24px 44px">
+    <div style="font-size:var(--fs-xs); font-weight:var(--w-bold); letter-spacing:.14em; text-transform:uppercase; color:rgba(255,255,255,.55)">Guided walkthrough</div>
+    <h1 style="font-size:34px; line-height:1.25; font-weight:var(--w-bold); margin-top:10px">The life of a tokenised fund,<br>from first filing to final buyback</h1>
+    <div style="display:flex; gap:10px; margin-top:22px; flex-wrap:wrap">
+      <span style="border:1px solid rgba(255,255,255,.25); border-radius:999px; padding:6px 14px; font-size:var(--fs-sm); font-weight:var(--w-semibold); color:rgba(255,255,255,.9)">7 chapters</span>
+      <span style="border:1px solid rgba(255,255,255,.25); border-radius:999px; padding:6px 14px; font-size:var(--fs-sm); font-weight:var(--w-semibold); color:rgba(255,255,255,.9)">≈ 28 minutes</span>
+      <span style="border:1px solid rgba(255,255,255,.25); border-radius:999px; padding:6px 14px; font-size:var(--fs-sm); font-weight:var(--w-semibold); color:rgba(255,255,255,.9)">All figures in USD</span>
+    </div>
+  </div>
+</header>
+<div class="wrap" style="padding-top:40px">
+  <p class="lede" style="margin-top:16px">Seven short chapters walk the entire life of a
+  tokenised fund on the platform — shown across two sibling funds, one newly created and
+  one eight months into its life: the regulated intake, investor onboarding and custody,
+  the raise, allotment and token minting, quarterly reporting and voting, secondary
+  trading, and finally redemption — where the units are bought back, the cash lands, and
+  the tokens are burned. Each chapter is a video tour of finished product screens; this
+  page carries the story between them.</p>
+
+  <div class="orientation">The platform is a licensed operator of regulated investment
+  crowdfunding and secondary trading, supervised by its home securities regulator.</div>
+
+  <nav style="display:flex; gap:8px; flex-wrap:wrap; margin-top:8px">
+    <a href="#ch1" class="pill">1 · Intake</a>
+    <a href="#ch2" class="pill">2 · Onboarding &amp; custody</a>
+    <a href="#ch3" class="pill">3 · Campaign page</a>
+    <a href="#ch4" class="pill">4 · Allotment &amp; tokens</a>
+    <a href="#ch5" class="pill">5 · Reporting &amp; voting</a>
+    <a href="#ch6" class="pill">6 · Secondary market</a>
+    <a href="#ch7" class="pill">7 · Redemption</a>
+  </nav>
+
+  <!-- ================= CHAPTER 1 ================= -->
+  <section class="chapter" id="ch1">
+    <span class="ch-kicker">Chapter 1 · ~4 min</span>
+    <h2>A regulated intake for funds</h2>
+    <div class="video-slot">
+      <span class="vs-num">01</span>
+      <span class="play"><svg class="ic"><use href="assets/icons.svg#play"/></svg></span>
+      <span class="vs-label">Chapter 1 — A regulated intake for funds</span>
+      <span class="vs-dur">~4 min</span>
+      <!-- <iframe width="100%" height="100%" src="https://www.youtube.com/embed/VIDEO_ID" title="Chapter 1 — A regulated intake for funds" frameborder="0" allowfullscreen style="border-radius:10px"></iframe> -->
+    </div>
+    <p>Nusantara Micro Fund I enters the platform the way every issuer does: through a
+    gated intake. Four gates — Fundraise Application, Due Diligence, Offer Creation,
+    Create Campaign — each reviewed and approved item by item before anything can be
+    published. The chapter walks the completed checklist, what the manager filed, the
+    approved offer terms, the campaign story written on the fund template, and the same
+    checklist from the back office where the reviews were done and the campaign was set
+    live.</p>
+    <ul class="specifics">
+      <li><span class="m">→</span><span>An offer cannot go live without passing every
+      gate — the checklist shows a review date and status on each item.</span></li>
+      <li><span class="m">→</span><span>The story template speaks fund, not startup:
+      Strategy &amp; Mandate, Portfolio &amp; Pipeline, Fee Structure &amp; Waterfall,
+      Term &amp; Liquidity, Manager &amp; Track Record, Governance.</span></li>
+      <li><span class="m">→</span><span>The fund's offer carries no valuation and no
+      equity percentage — it is priced per unit against minimum and maximum
+      targets.</span></li>
+    </ul>
+  </section>
+
+  <!-- ================= CHAPTER 2 ================= -->
+  <section class="chapter" id="ch2">
+    <span class="ch-kicker">Chapter 2 · ~3 min</span>
+    <h2>Investor onboarding and custody</h2>
+    <div class="video-slot">
+      <span class="vs-num">02</span>
+      <span class="play"><svg class="ic"><use href="assets/icons.svg#play"/></svg></span>
+      <span class="vs-label">Chapter 2 — Investor onboarding and custody</span>
+      <span class="vs-dur">~3 min</span>
+    </div>
+    <p>One onboarding covers everything an investor will do — subscribing, trading, and
+    holding tokens. The platform gates investing until identity is verified and an
+    investor classification is assigned, and each classification carries annual
+    investment limits the platform enforces automatically. A custodial token wallet is
+    created for every investor without ceremony: no seed phrase, no gas, no chain
+    interface.</p>
+    <ul class="specifics">
+      <li><span class="m">→</span><span>Three classifications with hard annual limits,
+      enforced at the moment of investment — not by policy, by software.</span></li>
+      <li><span class="m">→</span><span>The wallet shows balances, per-token holdings and
+      a full transaction history; withdrawals go only to whitelisted addresses with
+      confirmation and platform approval.</span></li>
+      <li><span class="m">→</span><span>The custody layer never surfaces — investors see
+      tokens and values, never keys.</span></li>
+    </ul>
+  </section>
+
+  <!-- ================= CHAPTER 3 ================= -->
+  <section class="chapter" id="ch3">
+    <span class="ch-kicker">Chapter 3 · ~4½ min</span>
+    <h2>A campaign page that speaks fund</h2>
+    <div class="video-slot">
+      <span class="vs-num">03</span>
+      <span class="play"><svg class="ic"><use href="assets/icons.svg#play"/></svg></span>
+      <span class="vs-label">Chapter 3 — A campaign page that speaks fund</span>
+      <span class="vs-dur">~4½ min</span>
+    </div>
+    <p>The platform treats a fund as a different kind of issuer, not a company with odd
+    labels. On the opportunity list the fund card shows raised, minimum target and
+    investors — and no valuation — beside a company card that has one. The campaign page
+    speaks in units and lots, its sidebar drops the equity and valuation rows, its story
+    sections are the fund set from Chapter 1, and its document pack opens as real PDFs.
+    Investors ask questions in public and the manager answers under a Creator badge. A
+    subscription is shown as a fact: ten lots, $10,000, declarations ticked, and the row
+    it produced on the investor's dashboard.</p>
+    <ul class="specifics">
+      <li><span class="m">→</span><span>Same rails, different vocabulary: 1 unit $1.00 ·
+      1,000 units per lot · minimum 5 lots — and no valuation anywhere.</span></li>
+      <li><span class="m">→</span><span>The document pack — information memorandum,
+      partnership agreement, fee schedule, risk disclosure — downloads as genuine
+      documents.</span></li>
+      <li><span class="m">→</span><span>Q&amp;A is on the record, attributed, and stays
+      with the campaign for its life.</span></li>
+    </ul>
+  </section>
+
+  <!-- ================= CHAPTER 4 ================= -->
+  <section class="chapter" id="ch4">
+    <span class="ch-kicker">Chapter 4 · ~3½ min</span>
+    <h2>Allotment: one register, tokens to match</h2>
+    <div class="video-slot">
+      <span class="vs-num">04</span>
+      <span class="play"><svg class="ic"><use href="assets/icons.svg#play"/></svg></span>
+      <span class="vs-label">Chapter 4 — Allotment: one register, tokens to match</span>
+      <span class="vs-dur">~3½ min</span>
+    </div>
+    <p>The fund closes at its $500,000 minimum with 38 investors. The issuer's investor
+    book is finalised, and allotment writes it into the platform's register: one unit
+    class, NUSA, 500,000 units, every holder with a quantity, direct or nominee
+    ownership, and a digital certificate. Tokens are then minted 1:1 against the register
+    into each holder's custody wallet. The chapter ends where every change of hands in
+    this walkthrough ends — on the investor's dashboard, units and tokens side by side,
+    equal.</p>
+    <ul class="specifics">
+      <li><span class="m">→</span><span>The register is the authoritative record; the
+      token is its representation. That ordering is the design.</span></li>
+      <li><span class="m">→</span><span>Every holding carries a digital certificate the
+      back office can view and regenerate.</span></li>
+      <li><span class="m">→</span><span>10,000 units in the register ↔ 10,000 tokens in
+      the wallet, from the first minute.</span></li>
+    </ul>
+  </section>
+
+  <!-- ================= TWO FUNDS NOTE ================= -->
+  <div class="funds-note">
+    <h2 style="font-size:18px; font-weight:700; color:var(--ink-1); margin-bottom:10px">The same lifecycle, shown on two funds</h2>
+    <p class="small" style="color:var(--ink-2)">The later stages need time to have
+    passed — a track record to report, a portfolio old enough to value, a trading
+    history that makes selling plausible. So chapters 1–4 follow
+    <strong>Nusantara Micro Fund I</strong>, created from nothing on screen, and chapters
+    5–7 follow <strong>Meridian Logistics Fund I</strong> — the same kind of fund, closed
+    in December 2025 at $800,000 with 46 investors, 800,000 units at $1.00, now eight
+    months into its life. Nothing else changes: same intake, same register, same
+    custody.</p>
+  </div>
+
+  <!-- ================= CHAPTER 5 ================= -->
+  <section class="chapter" id="ch5">
+    <span class="ch-kicker">Chapter 5 · ~4 min</span>
+    <h2>Reporting, NAV and investor voting</h2>
+    <div class="video-slot">
+      <span class="vs-num">05</span>
+      <span class="play"><svg class="ic"><use href="assets/icons.svg#play"/></svg></span>
+      <span class="vs-label">Chapter 5 — Reporting, NAV and investor voting</span>
+      <span class="vs-dur">~4 min</span>
+    </div>
+    <p>Reporting continues for the life of the fund, on the same page investors
+    subscribed on. Meridian publishes quarterly reports and a net asset value — $1.42
+    per unit as at 30 June 2026 — and, after selling two assets, announces a tender
+    offer to buy back up to 40% of units at full NAV. The vote runs on the platform: the
+    register decides who votes, the platform chases every unvoted holder at each login,
+    the decision page states the holder's own position and payout in plain terms, and a
+    confirmed vote is final. Voters see their own vote and the published outcome —
+    never a running tally.</p>
+    <ul class="specifics">
+      <li><span class="m">→</span><span>The voter roster comes from the register —
+      governance and record-keeping are the same system.</span></li>
+      <li><span class="m">→</span><span>The platform reminds the investor at every login
+      until the vote is cast, and a cast vote cannot be changed.</span></li>
+      <li><span class="m">→</span><span>The decision page computes the holder's own
+      numbers: units held, cash payable, total return.</span></li>
+    </ul>
+  </section>
+
+  <!-- ================= CHAPTER 6 ================= -->
+  <section class="chapter" id="ch6">
+    <span class="ch-kicker">Chapter 6 · ~5 min</span>
+    <h2>A regulated secondary market</h2>
+    <div class="video-slot">
+      <span class="vs-num">06</span>
+      <span class="play"><svg class="ic"><use href="assets/icons.svg#play"/></svg></span>
+      <span class="vs-label">Chapter 6 — A regulated secondary market</span>
+      <span class="vs-dur">~5 min</span>
+    </div>
+    <p>Meridian's units trade under market controls: a listed instrument with a ticker,
+    a live order book, limit orders only, fees shown before confirmation, and a password
+    on the final step. One trade is followed end to end — a holder's resting sell of
+    3,000 units at $1.35 is lifted by a buyer, the back office shows order against
+    matched quantity and quoted against final price, and the print lands in recent
+    trades. Then the part that matters: the register moves 10,000 → 7,000 and 0 → 3,000,
+    the tokens move with it, and both dashboards show the new positions the same day.
+    (Why sell at $1.35 with a $1.42 tender open? Tender settlement is weeks away and
+    acceptance is capped at 40% of units — some holders prefer certain cash now at a
+    small discount.)</p>
+    <ul class="specifics">
+      <li><span class="m">→</span><span>The market trades at $1.35 against a published
+      NAV of $1.42 — a ~5% discount, which is how private fund secondaries genuinely
+      price.</span></li>
+      <li><span class="m">→</span><span>Every fill settles back to the register on trade
+      date — the record the tokens mirror is never stale.</span></li>
+      <li><span class="m">→</span><span>The buyer's wallet and register entry appear
+      automatically — a new holder needs no setup.</span></li>
+    </ul>
+  </section>
+
+  <!-- ================= CHAPTER 7 ================= -->
+  <section class="chapter" id="ch7">
+    <span class="ch-kicker">Chapter 7 · ~3½ min</span>
+    <h2>Redemption by tender</h2>
+    <div class="video-slot">
+      <span class="vs-num">07</span>
+      <span class="play"><svg class="ic"><use href="assets/icons.svg#play"/></svg></span>
+      <span class="vs-label">Chapter 7 — Redemption by tender</span>
+      <span class="vs-dur">~3½ min</span>
+    </div>
+    <p>Redemption of a closed-end fund is the fund offering to buy its own units back —
+    a tender, not an on-demand withdrawal, and not a market trade. Meridian's offer is
+    priced at $1.42, full NAV, against a market that last traded about 5% below it —
+    which is exactly why a holder tenders. The holder's decision page spells out the
+    return; acceptance is recorded; the outcome is published. Settlement closes the
+    loop: cash lands in the account, the tokens are burned, the units are extinguished,
+    and the register created at allotment is decremented — 800,000 units become
+    488,000, and the token supply follows it down.</p>
+    <ul class="specifics">
+      <li><span class="m">→</span><span>Tender at 100% of NAV vs a market ~5% below —
+      the economics answer "why would anyone tender?"</span></li>
+      <li><span class="m">→</span><span>Settlement is symmetrical with issuance: mint on
+      allotment, burn on redemption, the register authoritative at both ends.</span></li>
+      <li><span class="m">→</span><span>Holders who decline simply keep their units —
+      participation is a choice, recorded per holder.</span></li>
+    </ul>
+  </section>
+
+
+  <hr class="divider" style="margin-top:72px">
+  <p class="footnote" style="margin-top:16px">Seven chapters · about 28 minutes of video
+  · one lifecycle, shown across two funds.</p>
+</div>
+</body>
+</html>
