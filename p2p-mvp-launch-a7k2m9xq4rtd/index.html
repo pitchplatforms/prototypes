@@ -265,7 +265,7 @@
   <div class="eyebrow">
     <span class="mark">pitchIN</span><span class="dot">/</span>
     <span>Product &amp; Engineering</span><span class="dot">/</span>
-    <span>For review — not yet agreed</span>
+    <span>Agreed plan — Lane A building</span>
   </div>
   <h1>P2P MVP Launch</h1>
   <p class="standfirst">Launching peer-to-peer financing — debt notes — on the platform we already run. This is the shape of the build, what changes about the product we have today, and how the work splits into seven owned lanes.</p>
@@ -277,7 +277,7 @@
     <div class="fact"><dt>Features scoped</dt><dd>33</dd></div>
     <div class="fact"><dt>Lanes</dt><dd>7</dd></div>
     <div class="fact"><dt>New apps</dt><dd>0</dd></div>
-    <div class="fact"><dt>Decisions locked</dt><dd>12</dd></div>
+    <div class="fact"><dt>Decisions locked</dt><dd>16</dd></div>
   </dl>
 </header>
 
@@ -294,7 +294,7 @@
     <p>A business borrows money from the crowd instead of selling shares. Investors lend in small fractions of one loan. The rate is fixed, the repayment schedule is fixed and published up front, and money comes back on a clock — typically monthly — until the loan is repaid. Nobody owns any part of the business, and nobody is waiting for an exit.</p>
     <p>That is the product difference. The engineering claim is narrower and more useful:</p>
   </div>
-  <p class="pull">A note <span>is</span> a campaign. Same countdown, same 80% success rule, same close — with debt terms attached, and a repayment schedule that starts after it closes.</p>
+  <p class="pull">A note <span>is</span> a campaign. Same countdown, same close, same rails — with debt terms attached, and a repayment schedule that starts after it closes.</p>
   <div class="col body-stack">
     <p>So we are not building a second platform. We are teaching the platform we already run a second kind of raise. No parallel journey, no separate app — the same reuse philosophy the team already ratified for other products.</p>
   </div>
@@ -326,7 +326,7 @@
     <div class="lcol reuse">
       <div class="lcol-head"><div class="t">Reuse as-is</div><div class="d">Notes just use it. No change.</div></div>
       <ul class="litems">
-        <li><span class="n">Campaign lifecycle</span><span class="w">Countdown, cooling, allotment, success or fail — including the 80% threshold</span></li>
+        <li><span class="n">Campaign lifecycle</span><span class="w">Countdown, cooling, allotment, success or fail — the same state machine. A note succeeds at 100% of its minimum target</span></li>
         <li><span class="n">KYC and investor categories</span><span class="w">An investor who can already do ECF can invest in a note</span></li>
         <li><span class="n">Consent capture</span><span class="w">How we prove who agreed to what, and to which version of it</span></li>
         <li><span class="n">Document generation</span><span class="w">PDFs, monthly statements, tax certificates — new templates only</span></li>
@@ -339,9 +339,9 @@
       <ul class="litems">
         <li><span class="n">The apply journey</span><span class="w">Today it splits by date. It has to split by what you are raising.</span></li>
         <li><span class="n">Invest and pay</span><span class="w">Same pledge, pay, refund pipeline — plus three acknowledgements, and it mints the investor's note document on payment</span></li>
-        <li><span class="n">Investor limits</span><span class="w">Today it totals ECF and PSTX. Notes join the sum.</span></li>
+        <li><span class="n">Investor limits</span><span class="w">Notes get their own cap — RM50,000 retail, measured on outstanding P2P exposure. Not pooled with ECF or PSTX.</span></li>
         <li><span class="n">The wallet</span><span class="w">Pay in by wallet or by FPX and DuitNow. Every payout lands in the wallet — no exceptions.</span></li>
-        <li><span class="n">The listing page</span><span class="w">A second card type. Token already proved this works.</span></li>
+        <li><span class="n">The listing page</span><span class="w">One consolidated browse across every instrument, with the type shown as a tag rather than a separate page.</span></li>
         <li><span class="n">Admin workspace</span><span class="w">Plus a credit file with a grade, and disbursement ops</span></li>
       </ul>
     </div>
@@ -400,7 +400,7 @@
     <button class="lane" type="button" data-lane="a" aria-haspopup="dialog">
       <span class="epicref"><a href="https://app.clickup.com/t/9008241541/P2P-61" target="_blank" rel="noopener">P2P-61</a> &middot; Epic</span>
       <div class="lane-id"><span class="letter">A</span><span class="nm">Foundations &amp; config</span></div>
-      <p class="about">The plumbing everything stands on: what a note <em>is</em> in the data, which parameters we can tune and who may tune them, the legal pages, and the "notes" section of the site.</p>
+      <p class="about">The plumbing everything stands on: what a note <em>is</em> in the data, which parameters we can tune and who may tune them, the legal pages, and the scaffolding the note pages will sit on.</p>
       <div class="refs"><span class="ref">F0.1</span><span class="ref">F0.2</span><span class="ref">F0.3</span><span class="ref">F0.4</span></div>
       <div class="lane-foot">
         <div class="owner"><span class="k">Owner</span><span class="slot"></span></div>
@@ -423,7 +423,7 @@
       <span class="epicref"><a href="https://app.clickup.com/t/9008241541/P2P-63" target="_blank" rel="noopener">P2P-63</a> &middot; Epic</span>
       <div class="lane-id"><span class="letter">C</span><span class="nm">Issuer onboarding portal</span></div>
       <span class="shared">Outlives P2P — ECF inherits it</span>
-      <p class="about">Kills document collection over Drive and email. A checklist portal where the issuer sees exactly what is outstanding and we review item by item.</p>
+      <p class="about">Replaces document collection over Drive and email. Underneath it is a requirement engine: ops assembles templates from a shared item library, and each application freezes its own copy.</p>
       <div class="refs"><span class="ref">F1.2</span></div>
       <div class="lane-foot">
         <div class="owner"><span class="k">Owner</span><span class="slot"></span></div>
@@ -434,8 +434,8 @@
     <button class="lane" type="button" data-lane="d" aria-haspopup="dialog">
       <span class="epicref"><a href="https://app.clickup.com/t/9008241541/P2P-64" target="_blank" rel="noopener">P2P-64</a> &middot; Epic</span>
       <div class="lane-id"><span class="letter">D</span><span class="nm">Investor path</span></div>
-      <p class="about">Everything an investor sees: finding a note, reading it, investing in it, holding it. Seven features — the widest lane, and the one the public judges us on.</p>
-      <div class="refs"><span class="ref">F2.1</span><span class="ref">F2.2</span><span class="ref">F2.3</span><span class="ref">F2.4</span><span class="ref">F2.5</span><span class="ref">F2.6</span><span class="ref">F2.7</span></div>
+      <p class="about">Everything an investor sees: finding a note, reading it, investing in it, holding it. Eight features — the widest lane, and the one the public judges us on.</p>
+      <div class="refs"><span class="ref">F2.1</span><span class="ref">F2.2</span><span class="ref">F2.3</span><span class="ref">F2.4</span><span class="ref">F2.5</span><span class="ref">F2.6</span><span class="ref">F2.7</span><span class="ref">F2.8</span></div>
       <div class="lane-foot">
         <div class="owner"><span class="k">Owner</span><span class="slot"></span></div>
         <span class="opencue">Scope &amp; code impact <span class="arw">&#8594;</span></span>
@@ -478,7 +478,7 @@
     </button>
   </div>
 
-  <p class="restructure"><b>Already done in ClickUp.</b> Each lane is now its own Epic in the <a href="https://app.clickup.com/9008241541/v/li/901609659188" target="_blank" rel="noopener">P2P Launch list</a> &mdash; <b>P2P-61 to P2P-67</b> &mdash; with its features moved underneath. <b>P2P-25</b> is no longer the container; it is the go-live milestone. All 35 tickets kept their status, their dependencies and their feature branches. <b>The Feature stays the unit that gets a branch and gets promoted</b> (ADR-0017) &mdash; lane Epics are an organising layer and never a PR title. <b>Two of the seven build capability the rest of the business inherits:</b> the onboarding portal, which ECF migrates onto, and the payout engine, which ECF dividends will run on.</p>
+  <p class="restructure"><b>Already done in ClickUp.</b> Each lane is now its own Epic in the <a href="https://app.clickup.com/9008241541/v/li/901609659188" target="_blank" rel="noopener">P2P Launch list</a> &mdash; <b>P2P-61 to P2P-67</b> &mdash; with its features moved underneath. <b>P2P-25</b> is no longer the container; it is the go-live milestone. Every ticket kept its status, their dependencies and their feature branches. <b>The Feature stays the unit that gets a branch and gets promoted</b> (ADR-0017) &mdash; lane Epics are an organising layer and never a PR title. <b>Two of the seven build capability the rest of the business inherits:</b> the onboarding portal, which ECF migrates onto, and the payout engine, which ECF dividends will run on.</p>
 </section>
 
 <!-- 5 -->
@@ -495,12 +495,11 @@
       <thead><tr><th>Dependency</th><th>What stalls without it</th></tr></thead>
       <tbody>
         <tr><td>Wallet work merged, plus custody compliance sign-off</td><td class="hard">Every payout. Refunds and repayments have nowhere to land.</td></tr>
-        <tr><td>Investor limit values</td><td class="hard">Launch. The config ships with placeholders; real numbers must land before day one.</td></tr>
         <tr><td>P2P terms amendment and nominee authority</td><td class="hard">Launch.</td></tr>
-        <tr><td>E-mandate provider selection</td><td>Automated collection. Manual recording is the designed fallback.</td></tr>
-        <tr><td>WhatsApp channel vendor</td><td>The WhatsApp half of reminders. Email ships first regardless.</td></tr>
-        <tr><td>Trustee setup — accounts and instruction formats</td><td>Paying the issuer after a raise closes.</td></tr>
-        <tr><td>Legal document templates</td><td>Notices and recovery paperwork.</td></tr>
+        <tr><td>E-mandate provider selection <b>· P2P-69</b></td><td>Automated collection. Manual recording is the designed fallback.</td></tr>
+        <tr><td>WhatsApp channel vendor <b>· P2P-70</b></td><td>The WhatsApp half of reminders. Email ships first regardless.</td></tr>
+        <tr><td>Trustee setup — accounts and instruction formats <b>· P2P-72</b></td><td>Paying the issuer after a raise closes.</td></tr>
+        <tr><td>Legal document templates <b>· P2P-71</b></td><td>Notices and recovery paperwork.</td></tr>
       </tbody>
     </table>
   </div>
@@ -530,16 +529,15 @@
   <div class="sec-head">
     <div class="sec-num">07</div>
     <div>
-      <h2>What I need from you today</h2>
-      <p class="sec-sub">Five things. If we get through them, implementation starts against a plan the room actually agreed to.</p>
+      <h2>What is still open</h2>
+      <p class="sec-sub">The shape and the lane boundaries are agreed. These are the things still without a name against them.</p>
     </div>
   </div>
   <ol class="asks">
-    <li><span class="n">1</span><span class="t">Agree the shape — or break it now.<span>A note is a campaign; we extend the platform rather than fork it. This is the assumption everything else inherits, so it is the cheapest thing to argue about today and the most expensive to argue about in month three.</span></span></li>
-    <li><span class="n">2</span><span class="t">Agree the seven lanes are the right boundaries.<span>The money work is deliberately split in two: collecting from the issuer (E) and paying investors (F). F is built as a generic payout engine because ECF dividends will run on it. Say so if you would cut it differently.</span></span></li>
-    <li><span class="n">3</span><span class="t">Put a name in every owner slot.<span>Seven lanes, seven names, filled in this session.</span></span></li>
-    <li><span class="n">4</span><span class="t">Owners: assess your own lane.<span>Read the plan for what you have just taken, and come back with what needs writing — a PRD, a spec with worked examples, or nothing at all — before anyone builds. I am not pre-judging that for you.</span></span></li>
-    <li><span class="n">5</span><span class="t">Name who chases each external blocker.<span>Seven dependencies, none of them engineering. They are the most likely reason a launch date slips.</span></span></li>
+    <li><span class="n">1</span><span class="t">Lane E and Lane G have no owner.<span>Every other lane does. Lane E is the issuer side of the money; Lane G is default, transparency and the two dry runs that gate go-live.</span></span></li>
+    <li><span class="n">2</span><span class="t">Four external dependencies are ticketed and unassigned.<span>P2P-69 e-mandate provider, P2P-70 WhatsApp vendor, P2P-71 legal templates, P2P-72 trustee setup. None are engineering problems and none get solved by starting to code. P2P-72 gates Dry Run A.</span></span></li>
+    <li><span class="n">3</span><span class="t">The amended T&amp;C is the one open launch gate.<span>Irrevocable Nominee authority and the withdrawal-limits clause. It sits with Legal and has no ticket in this list.</span></span></li>
+    <li><span class="n">4</span><span class="t">Owners: assess your own lane.<span>Read the plan for what you hold, and come back with what needs writing — a PRD, a spec with worked examples, or nothing at all — before anyone builds.</span></span></li>
   </ol>
 </section>
 
@@ -571,7 +569,7 @@
       <div class="frow"><span class="fid">F0.1 · <a href="https://app.clickup.com/t/9008241541/P2P-26" target="_blank" rel="noopener">P2P-26</a></span><span class="fnm">Note domain model &amp; register<span>What a note is in the data: principal, rate, tenure, frequency, product class, risk grade — plus a per-investor record of who holds which slice</span></span><span class="fsz">L</span></div>
       <div class="frow"><span class="fid">F0.2 · <a href="https://app.clickup.com/t/9008241541/P2P-27" target="_blank" rel="noopener">P2P-27</a></span><span class="fnm">Config &amp; parameters engine<span>Fees, arrears thresholds, the grade matrix, product caps, investor limits — admin-editable, with an audit trail</span></span><span class="fsz">M</span></div>
       <div class="frow"><span class="fid">F0.3 · <a href="https://app.clickup.com/t/9008241541/P2P-28" target="_blank" rel="noopener">P2P-28</a></span><span class="fnm">Legal pages &amp; consent scaffolding<span>P2P terms, risk warnings, the new consent types the invest flow will record</span></span><span class="fsz">S–M</span></div>
-      <div class="frow"><span class="fid">F0.4 · <a href="https://app.clickup.com/t/9008241541/P2P-29" target="_blank" rel="noopener">P2P-29</a></span><span class="fnm">Product-line scaffolding<span>"Notes" routes, navigation, copy, and the feature flag that hides all of it until we are ready</span></span><span class="fsz">S</span></div>
+      <div class="frow"><span class="fid">F0.4 · <a href="https://app.clickup.com/t/9008241541/P2P-29" target="_blank" rel="noopener">P2P-29</a></span><span class="fnm">Product-line scaffolding<span>Note routes, copy in three languages, and the feature flag that hides all of it until we are ready. <b>Adds no navigation</b> — consolidating Invest is a separate Design workstream.</span></span><span class="fsz">S</span></div>
     </div>
   </div>
   <div class="dblock">
@@ -636,7 +634,7 @@
   <div class="dblock">
     <h3>What it covers</h3>
     <div class="fgrid">
-      <div class="frow"><span class="fid">F1.2 · <a href="https://app.clickup.com/t/9008241541/P2P-31" target="_blank" rel="noopener">P2P-31</a></span><span class="fnm">Issuer onboarding portal<span>Per-document states — requested, uploaded, in review, approved and locked, or rejected with a reason. Only rejected items reopen. Reject notices deep-link to the exact item. Progress tracking, automatic reminders, a "what happens next" timeline with a named analyst. E-mandate setup and admission documents run as a second checklist on the same engine.</span></span><span class="fsz">L–XL</span></div>
+      <div class="frow"><span class="fid">F1.2 · <a href="https://app.clickup.com/t/9008241541/P2P-31" target="_blank" rel="noopener">P2P-31</a></span><span class="fnm">Issuer onboarding portal<span>An <b>item library</b> defined once, <b>named templates</b> assembled from it, and an <b>application snapshot</b> frozen when an issuer starts — so a live application never shifts underneath them. Eight item types cover every way a requirement can be satisfied: file, form, acknowledgement, signature, payment, ops attestation, a read-only mirror of something we already know, and a task on another screen. Ops can return an item with the content preserved, waive it with a reason, or upload on the issuer's behalf. Reminders and OCR are out of launch scope.</span></span><span class="fsz">L–XL</span></div>
     </div>
   </div>
   <div class="dblock">
@@ -644,10 +642,10 @@
     <div class="codelink">
       <div class="crow"><span class="ctag r">Reuses</span><p>Built <b>on the existing step engine and dynamic forms</b> — the same machinery the application journey runs on. This is the single decision that makes ECF migration cheap later.</p></div>
       <div class="crow"><span class="ctag r">Reuses</span><p>File upload, storage and attachment plumbing all exist. The portal orchestrates them; it does not reinvent them.</p></div>
-      <div class="crow"><span class="ctag n">New</span><p>Per-document review states, the reject-and-reopen loop, two-way comment threads, and the reminder scheduler. <b>Today this whole stretch is Drive and email — one-way, with no visibility for the issuer.</b></p></div>
+      <div class="crow"><span class="ctag n">New</span><p><b>Templates and the snapshot</b> — today a step row is global and live, so editing one changes every application in flight. Plus the return-with-content-preserved loop and per-item comment threads. <b>Today this whole stretch is Drive and email — one-way, with no visibility for the issuer.</b></p></div>
     </div>
   </div>
-  <p class="dnote warm"><b>The must-have slice for launch:</b> checklist templates, per-item states, the reject loop, and the review console. That alone kills Drive-and-email on day one. Magic-link delegation, comment threads and the reminder scheduler are the next tier. Bank-statement connect and e-signature are explicitly later.</p>
+  <p class="dnote warm"><b>The discipline that keeps this from running away:</b> a closed set of eight item types, an open catalogue of items. Ops can add, reorder and re-section items freely and pick a type; ops cannot invent a type — that is an engineering ticket. <b>There is a clickable prototype</b> covering all three sides of it: <a href="https://pitchplatforms.github.io/prototypes/lane-c-onboarding/" target="_blank" rel="noopener">the issuer checklist, the ops review console, and the admin item library and template builder</a>.</p>
 </div>
 
 <div id="d-d">
@@ -680,8 +678,8 @@
     <div class="codelink">
       <div class="crow"><span class="ctag r">Reuses</span><p>The invest flow <b>already has the click-through mechanism we need</b> — inline terms with checkboxes. It is currently ad hoc, and in one case hardcoded to a specific campaign; P2P makes it a first-class, versioned thing.</p></div>
       <div class="crow"><span class="ctag e">Extends</span><p>Pledge, pay and refund all exist, including how we record which rail the money came in on. Notes add acknowledgements and document generation to the same pipeline.</p></div>
-      <div class="crow"><span class="ctag e">Extends</span><p>The listing page <b>already supports a second card type</b> — the Token product proved it. Note cards are a third.</p></div>
-      <div class="crow"><span class="ctag e">Extends</span><p>The limit checker already aggregates across two products. Notes become the third input to a sum that already works.</p></div>
+      <div class="crow"><span class="ctag e">Extends</span><p>The listing page already carries more than one card type — the Token product proved it. F2.1 turns it into <b>one consolidated browse across every instrument</b>, with the type shown as a tag.</p></div>
+      <div class="crow"><span class="ctag e">Extends</span><p>The limit checker exists and is config-driven. Notes get their <b>own</b> cap rather than joining the existing sum — RM50,000 retail on outstanding P2P exposure. It becomes a sum that already works.</p></div>
       <div class="crow"><span class="ctag n">New</span><p>The customer app has <b>zero product branching today</b>, and despite admin-side groundwork, no one-pager redesign exists in it. Sizing assumes we are building that from scratch.</p></div>
     </div>
   </div>
