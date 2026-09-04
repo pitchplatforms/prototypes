@@ -1,0 +1,762 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1"><title>F0.4 · Note product-line scaffolding — build spec</title><style>:root{color-scheme:light}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#faf9f5;color:#141413}img{max-width:100%}</style></head><body>
+
+<style>
+  :root {
+    --accent:      #2D898B;
+    --accent-deep: #1B5E60;
+    --accent-soft: rgba(45,137,139,.12);
+    --warn:        #9A6212;
+    --warn-soft:   rgba(154,98,18,.12);
+    --ground:      #F4F7F6;
+    --surface:     #FFFFFF;
+    --surface-2:   #EBF0EF;
+    --ink:         #0D1A1C;
+    --ink-2:       #33474A;
+    --muted:       #6B7B7C;
+    --rule:        #D3DEDC;
+    --off:         #8E9C9C;
+    --shadow:      0 1px 2px rgba(13,26,28,.05), 0 8px 24px -12px rgba(13,26,28,.18);
+
+    --mono: ui-monospace, "SF Mono", SFMono-Regular, Menlo, Consolas, monospace;
+    --sans: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+    --serif: "Iowan Old Style", "Palatino Linotype", Palatino, Georgia, serif;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --accent:      #4FB3B5;
+      --accent-deep: #7FD0D1;
+      --accent-soft: rgba(79,179,181,.14);
+      --warn:        #DCA13F;
+      --warn-soft:   rgba(220,161,63,.13);
+      --ground:      #0B1517;
+      --surface:     #111F21;
+      --surface-2:   #17282B;
+      --ink:         #E8F0EF;
+      --ink-2:       #B4C6C5;
+      --muted:       #829899;
+      --rule:        #22383B;
+      --off:         #5E7273;
+      --shadow:      0 1px 2px rgba(0,0,0,.3), 0 8px 24px -12px rgba(0,0,0,.6);
+    }
+  }
+
+  :root[data-theme="dark"] {
+    --accent:      #4FB3B5;
+    --accent-deep: #7FD0D1;
+    --accent-soft: rgba(79,179,181,.14);
+    --warn:        #DCA13F;
+    --warn-soft:   rgba(220,161,63,.13);
+    --ground:      #0B1517;
+    --surface:     #111F21;
+    --surface-2:   #17282B;
+    --ink:         #E8F0EF;
+    --ink-2:       #B4C6C5;
+    --muted:       #829899;
+    --rule:        #22383B;
+    --off:         #5E7273;
+    --shadow:      0 1px 2px rgba(0,0,0,.3), 0 8px 24px -12px rgba(0,0,0,.6);
+  }
+
+  :root[data-theme="light"] {
+    --accent:      #2D898B;
+    --accent-deep: #1B5E60;
+    --accent-soft: rgba(45,137,139,.12);
+    --warn:        #9A6212;
+    --warn-soft:   rgba(154,98,18,.12);
+    --ground:      #F4F7F6;
+    --surface:     #FFFFFF;
+    --surface-2:   #EBF0EF;
+    --ink:         #0D1A1C;
+    --ink-2:       #33474A;
+    --muted:       #6B7B7C;
+    --rule:        #D3DEDC;
+    --off:         #8E9C9C;
+    --shadow:      0 1px 2px rgba(13,26,28,.05), 0 8px 24px -12px rgba(13,26,28,.18);
+  }
+
+  * { box-sizing: border-box; }
+
+  body {
+    margin: 0;
+    background: var(--ground);
+    color: var(--ink);
+    font-family: var(--serif);
+    font-size: 17px;
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  .wrap {
+    max-width: 62rem;
+    margin: 0 auto;
+    padding: 3rem 1.5rem 6rem;
+    display: flex;
+    flex-direction: column;
+    gap: 3.5rem;
+  }
+
+  .backlink {
+    font-family: var(--mono);
+    font-size: .72rem;
+    letter-spacing: .12em;
+    text-transform: uppercase;
+    color: var(--accent);
+    text-decoration: none;
+  }
+  .backlink:hover { text-decoration: underline; }
+
+  /* ---------- masthead ---------- */
+  .masthead { display: flex; flex-direction: column; gap: .9rem; }
+
+  .eyebrow {
+    font-family: var(--mono);
+    font-size: .72rem;
+    letter-spacing: .16em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin: 0;
+  }
+
+  h1 {
+    font-family: var(--sans);
+    font-weight: 800;
+    letter-spacing: -.028em;
+    font-size: clamp(1.9rem, 4.4vw, 2.9rem);
+    line-height: 1.08;
+    text-wrap: balance;
+    margin: 0;
+  }
+
+  .standfirst {
+    margin: 0;
+    max-width: 62ch;
+    color: var(--ink-2);
+    font-size: 1.08rem;
+  }
+
+  .meta {
+    font-family: var(--mono);
+    font-size: .74rem;
+    color: var(--muted);
+    letter-spacing: .02em;
+    display: flex;
+    flex-wrap: wrap;
+    gap: .4rem 1.1rem;
+    padding-top: .5rem;
+    border-top: 1px solid var(--rule);
+  }
+
+  /* ---------- console ---------- */
+  .console {
+    background: var(--surface);
+    border: 1px solid var(--rule);
+    border-radius: 4px;
+    box-shadow: var(--shadow);
+    overflow: hidden;
+  }
+
+  .console-bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 1rem;
+    padding: 1.15rem 1.4rem;
+    background: var(--surface-2);
+    border-bottom: 1px solid var(--rule);
+  }
+
+  .console-id { display: flex; flex-direction: column; gap: .25rem; }
+
+  .console-id code {
+    font-family: var(--mono);
+    font-size: .95rem;
+    font-weight: 600;
+    color: var(--ink);
+  }
+
+  .console-id span {
+    font-family: var(--mono);
+    font-size: .68rem;
+    letter-spacing: .13em;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+
+  .switch {
+    display: inline-flex;
+    align-items: center;
+    gap: .8rem;
+    border: 0;
+    background: none;
+    padding: 0;
+    cursor: pointer;
+    font-family: var(--mono);
+    font-size: .78rem;
+    letter-spacing: .12em;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+
+  .switch:focus-visible { outline: 2px solid var(--accent); outline-offset: 4px; border-radius: 2px; }
+
+  .switch-track {
+    width: 3.4rem;
+    height: 1.7rem;
+    border-radius: 1rem;
+    background: var(--off);
+    position: relative;
+    transition: background .22s ease;
+    flex: none;
+  }
+
+  .switch-thumb {
+    position: absolute;
+    top: .2rem; left: .2rem;
+    width: 1.3rem; height: 1.3rem;
+    border-radius: 50%;
+    background: var(--surface);
+    transition: transform .22s cubic-bezier(.4,0,.2,1);
+  }
+
+  [data-flag="on"] .switch-track { background: var(--accent); }
+  [data-flag="on"] .switch-thumb { transform: translateX(1.7rem); }
+  [data-flag="on"] .switch-state { color: var(--accent); }
+  .switch-state { font-weight: 600; }
+
+  .console-body {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0;
+  }
+
+  @media (max-width: 40rem) { .console-body { grid-template-columns: 1fr; } }
+
+  .panel { padding: 1.4rem; display: flex; flex-direction: column; gap: .9rem; }
+  .panel + .panel { border-left: 1px solid var(--rule); }
+
+  @media (max-width: 40rem) {
+    .panel + .panel { border-left: 0; border-top: 1px solid var(--rule); }
+  }
+
+  .panel-label {
+    font-family: var(--mono);
+    font-size: .68rem;
+    letter-spacing: .14em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin: 0;
+  }
+
+  /* nav preview */
+  .navsim {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: .45rem;
+    padding: .8rem;
+    background: var(--ground);
+    border: 1px solid var(--rule);
+    border-radius: 3px;
+    min-height: 3.6rem;
+  }
+
+  .navitem {
+    font-family: var(--sans);
+    font-size: .82rem;
+    font-weight: 600;
+    padding: .3rem .6rem;
+    border-radius: 3px;
+    color: var(--ink-2);
+    background: var(--surface);
+    border: 1px solid var(--rule);
+  }
+
+  .navitem.is-note {
+    color: var(--accent-deep);
+    background: var(--accent-soft);
+    border-color: var(--accent);
+  }
+
+  .navnote {
+    font-family: var(--mono);
+    font-size: .7rem;
+    color: var(--muted);
+    margin: 0;
+    line-height: 1.5;
+  }
+
+  [data-flag="off"] .when-on { display: none; }
+  [data-flag="on"] .when-off { display: none; }
+
+  /* route verdicts */
+  .verdicts { display: flex; flex-direction: column; gap: .5rem; }
+
+  .verdict {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: .8rem;
+    font-family: var(--mono);
+    font-size: .78rem;
+    padding: .45rem .6rem;
+    background: var(--ground);
+    border: 1px solid var(--rule);
+    border-radius: 3px;
+  }
+
+  .verdict code { color: var(--ink); font-weight: 600; }
+
+  .verdict b {
+    font-weight: 600;
+    font-size: .68rem;
+    letter-spacing: .09em;
+    text-transform: uppercase;
+    white-space: nowrap;
+  }
+
+  .v-live    { color: var(--accent); }
+  .v-preview { color: var(--warn); }
+  .v-same    { color: var(--muted); }
+
+  /* ---------- sections ---------- */
+  section { display: flex; flex-direction: column; gap: 1.1rem; }
+
+  h2 {
+    font-family: var(--sans);
+    font-weight: 800;
+    letter-spacing: -.02em;
+    font-size: 1.4rem;
+    line-height: 1.2;
+    margin: 0;
+    text-wrap: balance;
+    display: flex;
+    align-items: baseline;
+    gap: .7rem;
+  }
+
+  h2::before {
+    content: attr(data-idx);
+    font-family: var(--mono);
+    font-size: .74rem;
+    font-weight: 500;
+    letter-spacing: .1em;
+    color: var(--accent);
+    flex: none;
+  }
+
+  section > p { margin: 0; max-width: 66ch; color: var(--ink-2); }
+
+  .scroller {
+    overflow-x: auto;
+    border: 1px solid var(--rule);
+    border-radius: 4px;
+    background: var(--surface);
+  }
+
+  table { border-collapse: collapse; width: 100%; font-size: .84rem; }
+
+  th, td {
+    text-align: left;
+    padding: .62rem .85rem;
+    border-bottom: 1px solid var(--rule);
+    vertical-align: top;
+  }
+
+  th {
+    font-family: var(--mono);
+    font-size: .68rem;
+    letter-spacing: .11em;
+    text-transform: uppercase;
+    color: var(--muted);
+    font-weight: 500;
+    background: var(--surface-2);
+    white-space: nowrap;
+  }
+
+  td { font-family: var(--sans); color: var(--ink-2); }
+  tbody tr:last-child td { border-bottom: 0; }
+  td code, td b { font-family: var(--mono); font-size: .8rem; color: var(--ink); }
+  td b { font-weight: 600; }
+  .num { font-variant-numeric: tabular-nums; }
+
+  .flag-warn { color: var(--warn); font-weight: 600; }
+
+  ul.plain { margin: 0; padding-left: 1.1rem; display: flex; flex-direction: column; gap: .5rem; max-width: 66ch; color: var(--ink-2); }
+  ul.plain li::marker { color: var(--accent); }
+
+  .callout {
+    border-left: 3px solid var(--warn);
+    background: var(--warn-soft);
+    padding: .9rem 1.1rem;
+    border-radius: 0 3px 3px 0;
+    display: flex;
+    flex-direction: column;
+    gap: .5rem;
+  }
+
+  .callout p { margin: 0; max-width: 64ch; font-size: .95rem; }
+
+  .callout .tag {
+    font-family: var(--mono);
+    font-size: .66rem;
+    letter-spacing: .14em;
+    text-transform: uppercase;
+    color: var(--warn);
+    font-weight: 600;
+  }
+
+  .chain { display: flex; flex-direction: column; gap: 0; }
+
+  .hop {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap: .9rem;
+    padding: .75rem 0;
+    border-bottom: 1px solid var(--rule);
+  }
+  .hop:last-child { border-bottom: 0; }
+
+  .hop-n {
+    font-family: var(--mono);
+    font-size: .7rem;
+    color: var(--muted);
+    padding-top: .2rem;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .hop-main { display: flex; flex-direction: column; gap: .2rem; }
+  .hop-main code { font-family: var(--mono); font-size: .8rem; color: var(--ink); font-weight: 600; word-break: break-all; }
+  .hop-main span { font-size: .88rem; color: var(--ink-2); font-family: var(--sans); }
+  .hop-repo {
+    font-family: var(--mono);
+    font-size: .65rem;
+    letter-spacing: .1em;
+    text-transform: uppercase;
+    color: var(--accent);
+  }
+
+  footer {
+    border-top: 1px solid var(--rule);
+    padding-top: 1.2rem;
+    font-family: var(--mono);
+    font-size: .72rem;
+    color: var(--muted);
+    line-height: 1.7;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    * { transition: none !important; }
+  }
+</style>
+
+<div class="wrap" id="root" data-flag="off">
+
+  <a class="backlink" href="./">&larr; Lane A specs</a>
+
+  <header class="masthead">
+    <p class="eyebrow">P2P-29 · Lane A · Feature F0.4</p>
+    <h1>Note product-line scaffolding in CustomerWeb</h1>
+    <p class="standfirst">
+      The empty shelf the note product sits on: one feature flag, one enum member, one route skeleton,
+      and the words for it in three languages. Every lane-D screen lands onto this rather than inventing
+      its own wiring. Nothing here is visible to the public until the switch is thrown.
+    </p>
+    <p class="meta">
+      <span>Build spec · 2026-08-08</span>
+      <span>Epic P2P-61</span>
+      <span>Depends on: nothing</span>
+      <span>Blocks: P2P-28 · all lane D</span>
+    </p>
+  </header>
+
+  <!-- ============ THE CONSOLE ============ -->
+  <div class="console">
+    <div class="console-bar">
+      <div class="console-id">
+        <span>Platform feature flag</span>
+        <code>notesEnabled</code>
+      </div>
+      <button class="switch" id="toggle" type="button" aria-pressed="false">
+        <span class="switch-track"><span class="switch-thumb"></span></span>
+        <span class="switch-state" id="stateLabel">Off — today's site</span>
+      </button>
+    </div>
+
+    <div class="console-body">
+      <div class="panel">
+        <p class="panel-label">Primary navigation</p>
+        <div class="navsim">
+          <span class="navitem is-note">Invest</span>
+          <span class="navitem">Trade</span>
+          <span class="navitem">Raise</span>
+          <span class="navitem">Learn</span>
+        </div>
+        <p class="navnote">
+          <b>The switch does not touch the nav.</b> There is no Notes entry and never will be — Invest is
+          one entry leading to a single browse page carrying every campaign, notes among them, with the
+          instrument shown as a tag. That consolidation is Design → Landing Page Redesign; this ticket
+          changes nothing in <code>menu.service.ts</code>.
+        </p>
+      </div>
+
+      <div class="panel">
+        <p class="panel-label">Route resolution</p>
+        <div class="verdicts">
+          <div class="verdict">
+            <code>/note</code>
+            <b class="v-preview when-off">Resolves · unlinked · noindex</b>
+            <b class="v-live when-on">Live · indexable</b>
+          </div>
+          <div class="verdict">
+            <code>/note/:slug</code>
+            <b class="v-preview when-off">Resolves · unlinked · noindex</b>
+            <b class="v-live when-on">Live · indexable</b>
+          </div>
+          <div class="verdict">
+            <code>/equity · 11 routes</code>
+            <b class="v-same">Unchanged either way</b>
+          </div>
+        </div>
+        <p class="navnote when-off">
+          Reachable but never advertised — the pattern <code>/learn/hub</code> and
+          <code>/dashboard/portfolio-ui-preview</code> already use. This is what lets Dry Run A execute
+          a real cycle on production without exposing notes.
+        </p>
+        <p class="navnote when-on">
+          Launch-day state, and a CMS edit rather than a deploy. Campaigns reach these routes from the
+          consolidated browse once F2.1 lands.
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============ 1 · FLAG CHAIN ============ -->
+  <section>
+    <h2 data-idx="01">What "add a flag" actually costs</h2>
+    <p>
+      It is six files across three repositories, and the flag's source of truth is a CMS checkbox — which
+      is what makes it flippable on launch day with no release.
+    </p>
+
+    <div class="chain">
+      <div class="hop">
+        <span class="hop-n">01</span>
+        <span class="hop-main">
+          <span class="hop-repo">pitchin-knowledge</span>
+          <code>apps/cms/src/globals.ts</code>
+          <span>New checkbox on the <b>feature-flags</b> global. Source of truth; staff-editable; public read.</span>
+        </span>
+      </div>
+      <div class="hop">
+        <span class="hop-n">02</span>
+        <span class="hop-main">
+          <span class="hop-repo">pitchinAPI</span>
+          <code>Services/FeatureFlagsCmsClient.cs</code>
+          <span class="flag-warn">Hardcoded to one flag today — <code>GetKnowledgeCentreEnabledAsync</code> probes a single key. Generalise it to read the whole global once.</span>
+        </span>
+      </div>
+      <div class="hop">
+        <span class="hop-n">03</span>
+        <span class="hop-main">
+          <span class="hop-repo">pitchinAPI</span>
+          <code>Models/FeatureFlags/FeatureFlagsDto.cs</code>
+          <span>Response shape returned to the SPA.</span>
+        </span>
+      </div>
+      <div class="hop">
+        <span class="hop-n">04</span>
+        <span class="hop-main">
+          <span class="hop-repo">pitchinAPI</span>
+          <code>Models/FeatureFlags/FeatureFlagSettings.cs</code>
+          <span>Appsettings fallback, used when the CMS read degrades. Default <b>false</b>.</span>
+        </span>
+      </div>
+      <div class="hop">
+        <span class="hop-n">05</span>
+        <span class="hop-main">
+          <span class="hop-repo">pitchinAPI</span>
+          <code>Services/FeatureFlagsService.cs</code>
+          <span>Precedence: CMS wins, appsettings is the safe fallback, never throws.</span>
+        </span>
+      </div>
+      <div class="hop">
+        <span class="hop-n">06</span>
+        <span class="hop-main">
+          <span class="hop-repo">PitchinCustomerWeb</span>
+          <code>core/services/feature-flag.service.ts</code>
+          <span>Read once at boot by <code>APP_INITIALIZER</code>. Defaults false on any error.</span>
+        </span>
+      </div>
+    </div>
+
+    <div class="callout">
+      <span class="tag">Before you start</span>
+      <p>
+        <b>pitchin-knowledge is not in <code>repos.manifest</code>.</b> It will not be on your machine after
+        a standard bootstrap, and nothing in the P2P docs mentions it. Clone it before you begin, or you
+        will hit a wall with no obvious cause.
+      </p>
+    </div>
+  </section>
+
+  <!-- ============ 2 · REUSE FIRST ============ -->
+  <section>
+    <h2 data-idx="02">Reuse first — this shape already exists</h2>
+    <p>
+      The Learn cutover gates a route on a boot-loaded platform flag. Extend these two; do not invent a
+      second mechanism.
+    </p>
+    <div class="scroller">
+      <table>
+        <thead>
+          <tr><th>What you need</th><th>What already does it</th><th>How</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><b>Flag-gated route</b></td>
+            <td><code>core/services/feature-flag.guard.ts</code></td>
+            <td>A <code>canMatch</code> guard letting a route match only when the flag is on — wired at <code>app.routing.ts:449–455</code>.</td>
+          </tr>
+          <tr>
+            <td><b>Boot-time load</b></td>
+            <td><code>app.module.ts:572</code></td>
+            <td><code>APP_INITIALIZER</code> awaits the flag fetch so the guard reads it synchronously.</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- ============ 3 · THE SHAPE ============ -->
+  <section>
+    <h2 data-idx="03">The shape</h2>
+    <p>
+      Three concrete artefacts. Nothing here is left to the builder's judgement — where a value was open,
+      it was closed on 8 August.
+    </p>
+
+    <div class="scroller">
+      <table>
+        <thead>
+          <tr><th>Instrument</th><th>Enum value</th><th>Where</th></tr>
+        </thead>
+        <tbody>
+          <tr><td><b>Equity</b> (ECF)</td><td class="num"><b>1</b></td><td>exists today</td></tr>
+          <tr><td><b>Note</b></td><td class="num"><b>2</b></td><td>added here — reclaims the slot commented out for MYsec</td></tr>
+          <tr><td><b>Token</b></td><td class="num"><b>3</b></td><td>added here, ahead of the separate token consolidation</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p style="font-size:.88rem;">
+      <code>src/app/core/enum/investment-type.enum.ts</code> — CustomerWeb only. There is no server-side
+      <code>InvestmentType</code>, so there is no API contract to coordinate.
+    </p>
+
+    <div class="scroller">
+      <table>
+        <thead>
+          <tr><th>i18n key</th><th>English</th><th>Bahasa Melayu</th><th>中文</th></tr>
+        </thead>
+        <tbody>
+          <tr><td><code>common.note</code></td><td>Note</td><td>Nota Hutang</td><td>债权</td></tr>
+          <tr><td><code>menu.note</code></td><td>Investment Notes (P2P)</td><td>Nota Hutang (P2P)</td><td>债权票据 (P2P)</td></tr>
+          <tr><td><code>menu.noteTitle</code></td><td>Investment Notes</td><td>Nota Hutang</td><td>债权票据</td></tr>
+          <tr><td><code>menu.noteDescription</code></td><td>Fund vetted businesses with fixed repayment terms</td><td>Biayai perniagaan yang disaring dengan terma bayaran balik tetap</td><td>为经过审核的企业提供融资，还款条款固定</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p style="font-size:.88rem;">
+      Mirrors the existing <code>menu.ecf</code> / <code>menu.ieo</code> triplet shape. English keeps
+      "Notes" as the public product name; Bahasa Melayu and Chinese lead with debt deliberately —
+      <b>股权 / 债权 / 代币</b> is the standard equity-versus-debt pairing. Seed all three locales;
+      no placeholder or codename strings anywhere.
+    </p>
+
+    <div class="callout">
+      <span class="tag">Needs a compliance eye</span>
+      <p>
+        <code>menu.noteDescription</code> is marketing copy for a debt product. It states the mechanism —
+        fixed repayment terms — and deliberately implies no guaranteed return. Any rewording should keep
+        that property.
+      </p>
+    </div>
+  </section>
+
+  <!-- ============ 4 · BUILD ============ -->
+  <section>
+    <h2 data-idx="04">What needs to be built</h2>
+    <ul class="plain">
+      <li><b>Flag chain</b> — the six hops above, off by default in every environment including production.</li>
+      <li><b>Enum</b> — <code>InvestmentType.Note = 2</code>, <code>Token = 3</code>.</li>
+      <li><b>Routes</b> — <code>/note</code> and <code>/note/:slug</code> with a placeholder page component, behind the <code>canMatch</code> guard. Unlinked and <code>noindex</code> while the flag is off.</li>
+      <li><b>i18n</b> — the key family above across <code>en-US</code>, <code>ms-MY</code>, <code>zh-CN</code>. Bahasa Melayu and Chinese ship best-effort and are finished by the copy editors through the in-context translation editor (ENB-71) rather than blocking this build.</li>
+      <li><b>Placeholder page</b> — built on <code>@pitchin/ui</code>. The library is now merged to <code>origin/staging</code> (128 files) and signed off 2026-08-08; this is the first new P2P screen and sets the precedent for lanes B–G.</li>
+      <li><b>Playwright smoke</b> (protected path, ADR-0009) — flag off: <code>/note</code> resolves, carries <code>noindex</code>, and nothing links to it; flag on: the route is live and indexable. Nav is identical in both states.</li>
+    </ul>
+  </section>
+
+  <!-- ============ 5 · QA ============ -->
+  <section>
+    <h2 data-idx="05">What "done" means</h2>
+
+    <div class="scroller">
+      <table>
+        <thead>
+          <tr><th>Condition</th><th>Expected</th></tr>
+        </thead>
+        <tbody>
+          <tr><td><b>Flag OFF</b> on staging</td><td>Site is indistinguishable from production. Regression pass on Invest navigation.</td></tr>
+          <tr><td><b>Flag OFF</b>, deep-link <code>/note</code></td><td>Resolves and renders the placeholder. <span class="flag-warn">Not a 404.</span> Carries <code>noindex</code>; nothing links to it.</td></tr>
+          <tr><td><b>Flag ON</b></td><td><code>/note</code> and <code>/note/:slug</code> live and indexable; i18n resolves in all three locales with no raw keys.</td></tr>
+          <tr><td><b>Navigation</b>, either state</td><td><span class="flag-warn">Byte-for-byte identical.</span> This ticket adds no nav entry and touches no menu code.</td></tr>
+          <tr><td><b>Production build</b></td><td>Flag OFF, verified in both the CMS global and the appsettings fallback.</td></tr>
+          <tr><td><b>Degraded API</b></td><td>Flags fail closed. CMS unreachable → appsettings; API unreachable → false. Never a broken screen.</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="callout">
+      <span class="tag">Why it resolves instead of 404ing</span>
+      <p>
+        Dry Run A (P2P-56) is the public-launch gate and is a full raise cycle. Feature flags are global
+        with no per-user or cohort targeting, so a 404 behind the flag would force a choice between
+        skipping the dry run on production and exposing notes to everyone to perform it. An unlinked,
+        <code>noindex</code> route makes the gate passable with neither compromise.
+      </p>
+    </div>
+
+    <p style="font-size:.9rem;">
+      <b>Out of scope.</b> Real listing behaviour (F2.1), the one-pager (F2.2), landing and disclosure
+      pages (F2.7) — all lane D. The consolidated Invest navigation, the navbar redesign and the
+      <code>/invest/:slug</code> URL space belong to Design → Landing Page Redesign. Token consolidation
+      is planned separately and is not P2P work.
+    </p>
+  </section>
+
+  <footer>
+    P2P-29 · F0.4 · Lane A Foundations · epic P2P-61 · milestone P2P-25<br>
+    Decisions closed 2026-08-08 · nav and URL consolidation live in Design → Landing Page Redesign<br>
+    Verified against working trees at HEAD, 2026-08-08 — <code>PitchinCustomerWeb</code>, <code>pitchinAPI</code>, <code>pitchin-knowledge</code>
+  </footer>
+
+</div>
+
+<script>
+  (function () {
+    var root = document.getElementById('root');
+    var btn = document.getElementById('toggle');
+    var label = document.getElementById('stateLabel');
+
+    btn.addEventListener('click', function () {
+      var on = root.getAttribute('data-flag') === 'on';
+      var next = on ? 'off' : 'on';
+      root.setAttribute('data-flag', next);
+      btn.setAttribute('aria-pressed', String(next === 'on'));
+      label.textContent = next === 'on' ? 'On — launch day' : "Off — today's site";
+    });
+  })();
+</script>
+
+</body></html>
