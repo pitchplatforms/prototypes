@@ -1,0 +1,363 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1"><title>The Fine Print — consents &amp; legal pages spec (P2P-28)</title><style>:root{color-scheme:light}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#faf9f5;color:#141413}img{max-width:100%}</style></head><body>
+<style>
+  :root{
+    --paper:#FBFAF6; --ink:#20302F; --muted:#5F6E6C; --rule:rgba(32,48,47,.16);
+    --accent:#2D7F81; --accent-strong:#256A6C; --on-accent:#FFFFFF;
+    --tint:rgba(45,137,139,.07);
+    --card:#FFFFFF; --card-edge:rgba(32,48,47,.12);
+    --issuer:#8A5A2B; --issuer-tint:rgba(138,90,43,.11);
+    --investor:#1F6F8B; --investor-tint:rgba(31,111,139,.11);
+    --exec:#7B4EA8; --exec-tint:rgba(123,78,168,.10);
+    --wait:#B4453F; --wait-tint:rgba(180,69,63,.10);
+    --specimen:rgba(32,48,47,.06);
+    --serif:"Charter","Iowan Old Style",Georgia,"Times New Roman",serif;
+    --sans:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+    --mono:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+  }
+  @media (prefers-color-scheme: dark){
+    :root{
+      --paper:#0E1918; --ink:#E7E5DB; --muted:#9DABA8; --rule:rgba(231,229,219,.16);
+      --accent:#5CB6B8; --accent-strong:#7BC8CA; --on-accent:#0E1918;
+      --tint:rgba(92,182,184,.09);
+      --card:#132120; --card-edge:rgba(231,229,219,.14);
+      --issuer:#D6A06A; --issuer-tint:rgba(214,160,106,.13);
+      --investor:#7EC4DE; --investor-tint:rgba(126,196,222,.13);
+      --exec:#C4A3E0; --exec-tint:rgba(196,163,224,.13);
+      --wait:#E8837C; --wait-tint:rgba(232,131,124,.13);
+      --specimen:rgba(231,229,219,.05);
+    }
+  }
+  :root[data-theme="dark"]{
+    --paper:#0E1918; --ink:#E7E5DB; --muted:#9DABA8; --rule:rgba(231,229,219,.16);
+    --accent:#5CB6B8; --accent-strong:#7BC8CA; --on-accent:#0E1918;
+    --tint:rgba(92,182,184,.09);
+    --card:#132120; --card-edge:rgba(231,229,219,.14);
+    --issuer:#D6A06A; --issuer-tint:rgba(214,160,106,.13);
+    --investor:#7EC4DE; --investor-tint:rgba(126,196,222,.13);
+    --exec:#C4A3E0; --exec-tint:rgba(196,163,224,.13);
+    --wait:#E8837C; --wait-tint:rgba(232,131,124,.13);
+    --specimen:rgba(231,229,219,.05);
+  }
+  :root[data-theme="light"]{
+    --paper:#FBFAF6; --ink:#20302F; --muted:#5F6E6C; --rule:rgba(32,48,47,.16);
+    --accent:#2D7F81; --accent-strong:#256A6C; --on-accent:#FFFFFF;
+    --tint:rgba(45,137,139,.07);
+    --card:#FFFFFF; --card-edge:rgba(32,48,47,.12);
+    --issuer:#8A5A2B; --issuer-tint:rgba(138,90,43,.11);
+    --investor:#1F6F8B; --investor-tint:rgba(31,111,139,.11);
+    --exec:#7B4EA8; --exec-tint:rgba(123,78,168,.10);
+    --wait:#B4453F; --wait-tint:rgba(180,69,63,.10);
+    --specimen:rgba(32,48,47,.06);
+  }
+  *{box-sizing:border-box}
+  @media (prefers-reduced-motion: reduce){ *{transition:none !important} }
+  body{margin:0; background:var(--paper); color:var(--ink); font-family:var(--serif); font-size:16.5px; line-height:1.55; -webkit-font-smoothing:antialiased}
+  .wrap{max-width:900px; margin:0 auto; padding:0 20px}
+
+  .backlink{display:block;max-width:900px;margin:12px auto 0;padding:0 20px;font-family:var(--mono);font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--accent);text-decoration:none}
+  .backlink:hover{text-decoration:underline}
+
+  header.hero{padding:44px 0 22px; text-align:center}
+  .eyebrow{font-family:var(--sans); font-size:11.5px; font-weight:700; letter-spacing:.14em; text-transform:uppercase; color:var(--accent)}
+  h1{font-size:clamp(27px,4.6vw,40px); line-height:1.14; margin:12px auto 10px; max-width:20ch; font-weight:700; text-wrap:balance}
+  .stand{max-width:58ch; margin:0 auto; color:var(--muted); font-size:17px}
+  .stand b{color:var(--ink); font-weight:600}
+  .try{margin-top:16px; font-family:var(--sans); font-size:13px; color:var(--muted); border:1px dashed var(--rule); border-radius:9px; padding:9px 15px; display:inline-block}
+  .try b{color:var(--ink)}
+
+  section{margin-top:42px}
+  .s-head{display:flex; align-items:baseline; gap:12px; flex-wrap:wrap; border-bottom:2px solid var(--ink); padding-bottom:9px; margin-bottom:16px}
+  .s-head h2{margin:0; font-size:clamp(21px,3.2vw,27px); line-height:1.15}
+  .s-head .s-eyebrow{font-family:var(--sans); font-size:11.5px; font-weight:700; letter-spacing:.12em; text-transform:uppercase; color:var(--accent)}
+  .s-head .s-note{color:var(--muted); font-family:var(--sans); font-size:12.5px; margin-left:auto}
+  .lede{color:var(--muted); max-width:68ch; margin:0 0 14px}
+
+  /* moments */
+  .moments{display:grid; grid-template-columns:repeat(auto-fit,minmax(240px,1fr)); gap:12px}
+  .moment{border:1px solid var(--card-edge); background:var(--card); border-radius:12px; padding:15px 17px; border-top:3px solid}
+  .moment.issuer{border-top-color:var(--issuer)}
+  .moment.investor{border-top-color:var(--investor)}
+  .moment.exec{border-top-color:var(--exec)}
+  .moment .m-w{font-family:var(--sans); font-size:10.5px; font-weight:800; letter-spacing:.09em; text-transform:uppercase; margin-bottom:4px}
+  .moment.issuer .m-w{color:var(--issuer)}
+  .moment.investor .m-w{color:var(--investor)}
+  .moment.exec .m-w{color:var(--exec)}
+  .moment h3{margin:0 0 3px; font-size:16.5px}
+  .moment .m-b{font-family:var(--sans); font-size:12px; color:var(--muted); margin-bottom:9px}
+  .moment ul{margin:0; padding:0; list-style:none; font-family:var(--sans); font-size:13px}
+  .moment li{padding:5px 0 5px 22px; position:relative; border-top:1px dotted var(--rule); line-height:1.4}
+  .moment li:first-child{border-top:none}
+  .moment li::before{content:"☑"; position:absolute; left:0; color:var(--accent)}
+  .moment li small{display:block; color:var(--muted); font-size:11px}
+  .moment .m-f{margin-top:9px; padding-top:8px; border-top:1px dotted var(--rule); font-family:var(--sans); font-size:11.5px; color:var(--muted)}
+  .moment .m-f b{color:var(--ink)}
+
+  /* ledger sim */
+  .simbar{display:flex; gap:8px; flex-wrap:wrap; margin-bottom:12px; align-items:center}
+  .sbtn{font-family:var(--sans); font-size:12.5px; font-weight:700; border:1.5px solid var(--rule); background:var(--card); color:var(--ink); border-radius:9px; padding:8px 13px; cursor:pointer; text-align:left}
+  .sbtn:hover{border-color:var(--accent); color:var(--accent-strong)}
+  .sbtn:focus-visible{outline:2px solid var(--accent); outline-offset:2px}
+  .sbtn small{display:block; font-weight:400; color:var(--muted); font-size:11px; margin-top:1px}
+  .sbtn.reset{margin-left:auto; font-weight:600; color:var(--muted); border-style:dashed}
+  .ledger{border:1px solid var(--card-edge); background:var(--card); border-radius:12px; overflow:hidden}
+  .lg-head{padding:11px 15px; border-bottom:1px solid var(--rule); font-family:var(--sans); font-size:12.5px; color:var(--muted)}
+  .lg-head b{color:var(--ink); font-size:14px; display:block; margin-bottom:2px}
+  .scroller{overflow-x:auto}
+  table.lg{width:100%; border-collapse:collapse; font-family:var(--sans); font-size:12px}
+  table.lg th{text-align:left; font-size:9.5px; letter-spacing:.07em; text-transform:uppercase; color:var(--muted); border-bottom:1.5px solid var(--rule); padding:8px 11px; white-space:nowrap}
+  table.lg td{padding:7px 11px; border-bottom:1px dotted var(--rule); white-space:nowrap; vertical-align:top}
+  table.lg td.ctx{color:var(--muted)}
+  table.lg td.none{color:var(--muted); font-style:italic}
+  table.lg tr.issuer td:first-child{border-left:3px solid var(--issuer)}
+  table.lg tr.investor td:first-child{border-left:3px solid var(--investor)}
+  table.lg tr.exec td:first-child{border-left:3px solid var(--exec)}
+  table.lg tr.reacc td:first-child{border-left:3px solid var(--wait)}
+  .lg-empty{padding:22px 15px; font-family:var(--sans); font-size:13px; color:var(--muted); font-style:italic; text-align:center}
+  .vtag{font-family:var(--mono); font-size:11px; background:var(--specimen); border-radius:4px; padding:1px 6px}
+
+  /* pages */
+  .pages{display:grid; grid-template-columns:repeat(auto-fit,minmax(270px,1fr)); gap:12px}
+  .page{border:1px solid var(--card-edge); background:var(--card); border-radius:12px; padding:15px 17px}
+  .page h3{margin:0 0 2px; font-size:16.5px}
+  .page .p-u{font-family:var(--mono); font-size:11.5px; color:var(--muted); margin-bottom:9px}
+  .page .sects{display:flex; flex-direction:column; gap:5px}
+  .page .sect{border:1px solid var(--rule); border-radius:7px; padding:7px 11px; font-family:var(--sans); font-size:12.5px}
+  .page .sect.hl{border-color:var(--accent); background:var(--tint); font-weight:600}
+  .page .sect small{display:block; color:var(--muted); font-weight:400; font-size:11px; margin-top:1px}
+  .page .p-n{margin-top:10px; font-family:var(--sans); font-size:11.5px; color:var(--muted); line-height:1.45}
+  .draftband{display:inline-block; font-family:var(--sans); font-size:9.5px; font-weight:800; letter-spacing:.08em; text-transform:uppercase; color:var(--wait); background:var(--wait-tint); border:1px solid var(--wait); border-radius:5px; padding:2px 7px; margin-bottom:8px}
+
+  .decisions{border:1px solid var(--card-edge); background:var(--card); border-radius:12px; padding:16px 18px}
+  .decisions ul{margin:0; padding:0; list-style:none; font-family:var(--sans); font-size:14px; display:flex; flex-direction:column; gap:9px}
+  .decisions li{padding-left:26px; position:relative; line-height:1.5}
+  .decisions li::before{content:"✓"; position:absolute; left:2px; color:var(--accent); font-weight:800}
+  .decisions li b{font-weight:700}
+  .flag{border-left:3px solid var(--wait); background:var(--wait-tint); border-radius:0 8px 8px 0; padding:11px 15px; font-family:var(--sans); font-size:13.5px; margin-top:12px; line-height:1.5}
+  .flag b.t{display:block; font-size:10.5px; letter-spacing:.09em; text-transform:uppercase; color:var(--wait); margin-bottom:3px}
+  code.k{font-family:var(--mono); font-size:12px; background:var(--specimen); border-radius:4px; padding:1px 5px}
+
+  footer{margin:48px 0 40px; padding-top:15px; border-top:1px solid var(--rule); font-family:var(--sans); font-size:12.5px; color:var(--muted); line-height:1.7}
+</style>
+
+<a class="backlink" href="./">&larr; Lane A specs</a>
+
+<header class="hero">
+  <div class="wrap">
+    <div class="eyebrow">P2P-28 · Lane A · Foundations</div>
+    <h1>Proving what was agreed, and when</h1>
+    <p class="stand">P2P has no wet signatures. A tick-box <b>is</b> the execution — so the record of it has to be exact: who agreed, to which wording, on whose behalf, at what moment.</p>
+    <div class="try"><b>Run a scenario below</b> and watch the exact ledger rows it writes.</div>
+  </div>
+</header>
+
+<main class="wrap">
+
+  <section>
+    <div class="s-head"><span class="s-eyebrow">Three moments</span><h2>Where consent is captured</h2><span class="s-note">screens belong to other lanes</span></div>
+    <p class="lede">This ticket builds none of these screens — it builds the <b>consent types they record against</b>, so that when the issuer and investor lanes arrive there is something official to write to. If a consent is missing from this list, it is missing at launch.</p>
+    <div class="flag" style="border-left-color:var(--accent); background:var(--tint); margin:0 0 14px">
+      <b class="t" style="color:var(--accent-strong)">Reuse first — every moment already has a screen</b>
+      None of these are new screens. Each moment is an <b>existing journey getting a tweak</b>, named on each card below. The invest screen in particular already carries inline T&amp;C checkboxes — that is precisely the mechanism the note acknowledgments and the click-through execution extend. Building anything parallel here would contradict the launch strategy (ADR-0024, maximum reuse, no parallel journey).
+    </div>
+    <div class="moments">
+      <div class="moment issuer">
+        <div class="m-w">Moment 1 · §1.1</div>
+        <h3>Issuer applies</h3>
+        <div class="m-b">Four consents, at application submission</div>
+        <ul>
+          <li>Consent to credit checks</li>
+          <li>Platform Terms &amp; Conditions</li>
+          <li>PDPA &amp; privacy notice</li>
+          <li>Data sharing with partners <small>where relevant</small></li>
+        </ul>
+        <div class="m-f">Recorded against <b>user + company + application</b> — a credit-check consent is about a specific company at a specific time.<br><b>Reuse:</b> the RaiseFund application step engine + DynamicForm (<code style="font-family:var(--mono);font-size:11px">pages/raise/application-form</code>) — add consent steps, don't build a journey.</div>
+      </div>
+      <div class="moment investor">
+        <div class="m-w">Moment 2 · §2.3</div>
+        <h3>Investor invests</h3>
+        <div class="m-b">Three acknowledgments, on <em>every</em> investment</div>
+        <ul>
+          <li>Risk disclaimer <small>total capital loss · illiquid until maturity · not covered by the Capital Market Compensation Fund</small></li>
+          <li>Investor category still accurate</li>
+          <li>Disclosure &amp; risk rating reviewed</li>
+        </ul>
+        <div class="m-f">Recorded against <b>user + note</b>. Repeated per investment — not once per account.<br><b>Reuse:</b> tweak the existing invest screen (<code style="font-family:var(--mono);font-size:11px">campaign-details/invest-now/</code>) — it already has inline T&amp;C checkboxes; make them per-product and first-class consents.</div>
+      </div>
+      <div class="moment exec">
+        <div class="m-w">Moment 3 · §2.3 / §1.6 / §1.3</div>
+        <h3>The instrument executes</h3>
+        <div class="m-b">One shared consent type, three uses</div>
+        <ul>
+          <li>Investor executes the digital note <small>at payment completion</small></li>
+          <li>Issuer executes the final Note Supplement <small>at close</small></li>
+          <li>Issuer executes the Master Issuer Agreement <small>at admission</small></li>
+        </ul>
+        <div class="m-f">Built once here as a type; the shared click-through component is F1.4 / F2.3. The note register's <code style="font-family:var(--mono);font-size:11px">ConsentId</code> points at this row.<br><b>Reuse:</b> generalise the same invest-now checkbox pattern into the shared component — no e-sign vendor, no new ceremony.</div>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <div class="s-head"><span class="s-eyebrow">The ledger</span><h2>What actually gets written</h2><span class="s-note">append-only, never updated</span></div>
+    <div class="simbar">
+      <button class="sbtn" type="button" data-s="issuer">Issuer submits an application<small>Contoh Kitchen Sdn Bhd · APP-2026-0311</small></button>
+      <button class="sbtn" type="button" data-s="investor">Investor invests in a note<small>RM 5,000 into N-2026-00042</small></button>
+      <button class="sbtn" type="button" data-s="amend">Legal publishes a material T&amp;C change<small>v3.0 — adds nominee authority + withdrawal limits</small></button>
+      <button class="sbtn" type="button" data-s="login">A user logs in after the change<small>an ECF-only investor</small></button>
+      <button class="sbtn reset" type="button" data-s="reset">Clear</button>
+    </div>
+    <div class="ledger">
+      <div class="lg-head"><b>UserConsent</b>the existing versioned ledger, extended with P2P types and context columns</div>
+      <div id="lgbody"><div class="lg-empty">Run a scenario above to see the rows it writes.</div></div>
+    </div>
+    <div class="flag" id="lgnote" hidden></div>
+  </section>
+
+  <section>
+    <div class="s-head"><span class="s-eyebrow">Consolidation</span><h2>Two pages, not six</h2></div>
+    <p class="lede">The direction is one document per purpose, with per-instrument sections inside — <b>not</b> a separate T&amp;C and risk page for every product. P2P adds sections; it does not add pages.</p>
+    <div class="pages">
+      <div class="page">
+        <span class="draftband">Draft until Legal delivers</span>
+        <h3>Platform Terms &amp; Conditions</h3>
+        <div class="p-u">/terms-conditions · one document, all instruments</div>
+        <div class="sects">
+          <div class="sect">General platform terms<small>unchanged</small></div>
+          <div class="sect">Equity (ECF) terms</div>
+          <div class="sect hl">Notes (P2P) terms<small>NEW — incl. Irrevocable Nominee authority (§4.4, open item F-07)</small></div>
+          <div class="sect">Token terms</div>
+          <div class="sect hl">Wallet &amp; withdrawal limits<small>NEW — PM-03. Applies to ECF users too — which is why everyone re-accepts</small></div>
+        </div>
+        <div class="p-n">No standalone "P2P terms" page is created. Legal's amended text is a <b>launch gate</b>.</div>
+      </div>
+      <div class="page">
+        <span class="draftband">Draft until Legal delivers</span>
+        <h3>Risk Warning</h3>
+        <div class="p-u">/risk-warning · one page, per-instrument sections</div>
+        <div class="sects">
+          <div class="sect">General investment risk<small>shared preamble</small></div>
+          <div class="sect">Equity risk</div>
+          <div class="sect hl">Note (P2P) risk<small>NEW — capital loss · illiquidity until maturity · CMCF non-coverage (§2.3)</small></div>
+          <div class="sect">Token risk</div>
+        </div>
+        <div class="p-n">An investor comparing instruments sees the risks side by side. The note invest flow deep-links to the note section.</div>
+      </div>
+    </div>
+    <div class="flag">
+      <b class="t">Both pages ship dark</b>
+      Built now with clearly-marked draft copy, behind the <code class="k">notesEnabled</code> flag from P2P-29 — invisible to the public. Engineering never waits on legal drafting, and legal drafting never blocks engineering; the gate sits at launch.
+    </div>
+  </section>
+
+  <section>
+    <div class="s-head"><span class="s-eyebrow">Versioning</span><h2>When everyone has to re-accept</h2></div>
+    <p class="lede">A version exists only for a <b>material</b> change — editorial fixes don't create one. And when a version is published, <b>every user re-accepts at their next login</b>, not just P2P users, because part of the amendment (withdrawal limits) reaches anyone with a wallet.</p>
+    <div class="scroller">
+      <table class="lg">
+        <thead><tr><th>Change type</th><th>New version?</th><th>Who re-accepts</th><th>Example</th></tr></thead>
+        <tbody>
+          <tr><td><b>Material</b></td><td>Yes</td><td><b>Everyone, at next login</b></td><td class="ctx">Adding nominee authority; changing withdrawal limits</td></tr>
+          <tr><td>Editorial</td><td class="none">No</td><td class="none">Nobody</td><td class="ctx">Typo, formatting, citation update</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="flag">
+      <b class="t">Consequence to handle in the build</b>
+      Because editorial edits don't bump the version, the <b>published page can drift from the exact text a user accepted</b>. Mitigation: keep a lightweight content changelog on the page itself (date + what changed), so the audit story is complete even where no consent version was created. Worth confirming the approach with Legal.
+    </div>
+  </section>
+
+  <section>
+    <div class="s-head"><span class="s-eyebrow">Settled</span><h2>Decisions this build follows</h2></div>
+    <div class="decisions">
+      <ul>
+        <li><b>The consent inventory above is complete</b> — four issuer, three investor, one execution, plus platform T&amp;C and PDPA. Anything missing here is missing at launch.</li>
+        <li><b>Issuer consents record user + company + application</b>, so "who consented to the credit check on this deal?" is answerable years later.</li>
+        <li><b>Consolidation-first pages:</b> one platform T&amp;C and one risk-warning page, each with per-instrument sections. No standalone P2P pages.</li>
+        <li><b>Only material changes create a version.</b> Editorial edits are published without one.</li>
+        <li><b>A new version means everyone re-accepts at next login</b> — including ECF-only users, because the withdrawal-limits clause applies to their wallet.</li>
+        <li><b>Pages ship dark with draft copy</b> behind <code class="k">notesEnabled</code>; Legal's real text (F-07, PM-03) is a launch gate.</li>
+        <li><b>The ledger is append-only</b> — a consent row is never updated or deleted, only superseded by a later one.</li>
+      </ul>
+    </div>
+  </section>
+
+  <footer>
+    Interactive spec for <b>P2P-28 · F0.3 P2P legal pages &amp; consent scaffolding</b>, Lane A of the P2P MVP Launch. Prepared 2026-08-05 from the alignment decisions (record on epic P2P-61) and the P2P Rulebook internal master 2026-06-28 (§1.1, §1.3, §1.6, §2.3, §4.4). Company names and references are illustrative. Legal copy shown is placeholder, not drafted text.
+  </footer>
+</main>
+
+<script>
+(function(){
+  var SCEN={
+    issuer:{cls:"issuer", note:"<b class='t'>Note the context columns</b>Four rows, all carrying <b>company</b> and <b>application</b> alongside the user. Without them you could tell that Aisyah consented to a credit check — but not for which company, or which application round.", rows:[
+      ["IssuerCreditCheck","Aisyah (director)","Contoh Kitchen Sdn Bhd","APP-2026-0311","—"],
+      ["PlatformTerms","Aisyah (director)","Contoh Kitchen Sdn Bhd","APP-2026-0311","v3.0"],
+      ["Pdpa","Aisyah (director)","Contoh Kitchen Sdn Bhd","APP-2026-0311","v2.1"],
+      ["IssuerDataSharing","Aisyah (director)","Contoh Kitchen Sdn Bhd","APP-2026-0311","—"]
+    ]},
+    investor:{cls:"investor", note:"<b class='t'>Three acknowledgments, then execution</b>The first three are captured on <b>every</b> investment, not once per account — §2.3 requires the investor to reconfirm each time. The fourth row is the click that executes the note; the register's <code>ConsentId</code> points at it.", rows:[
+      ["P2PRiskAcknowledgment","Wei Ming (investor)","—","—","v1.0"],
+      ["InvestorCategoryConfirmation","Wei Ming (investor)","—","—","—"],
+      ["DisclosureReviewConfirmation","Wei Ming (investor)","—","N-2026-00042","—"],
+      ["NoteExecution","Wei Ming (investor)","—","N-2026-00042-0001","—"]
+    ], extra:"exec"},
+    amend:{cls:"reacc", note:"<b class='t'>No consent rows yet — a version row</b>Publishing a <b>material</b> change creates a version in <code>LegalDocumentVersion</code> and flags the whole user base for re-acceptance. Nobody has accepted it yet; consent rows appear only as users log in.", version:true, rows:[]},
+    login:{cls:"reacc", note:"<b class='t'>An ECF-only user, interrupted once</b>She has never touched P2P — but the amendment changed her wallet's withdrawal terms, so she re-accepts too. One row, then she is current and is never asked again until the next material change.", rows:[
+      ["PlatformTerms","Siti (ECF investor)","—","—","v3.0"]
+    ]}
+  };
+  var rows=[], notes=[], versionShown=false;
+  var esc=function(s){ return String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;"); };
+  var seq=1;
+
+  function stamp(){
+    var d=new Date(), mon=["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"][d.getMonth()];
+    return d.getDate()+" "+mon+" "+d.getFullYear()+" · "+("0"+d.getHours()).slice(-2)+":"+("0"+(d.getMinutes())).slice(-2)+":"+("0"+((d.getSeconds()+seq)%60)).slice(-2);
+  }
+
+  function render(){
+    var body=document.getElementById("lgbody"), flag=document.getElementById("lgnote");
+    if(!rows.length && !versionShown){
+      body.innerHTML='<div class="lg-empty">Run a scenario above to see the rows it writes.</div>';
+      flag.hidden=true; return;
+    }
+    var vhtml = versionShown
+      ? '<div style="padding:11px 15px;border-bottom:1px solid var(--rule);font-family:var(--sans);font-size:12.5px;background:var(--tint)">'+
+        '<b style="display:block;font-size:13px;margin-bottom:3px">LegalDocumentVersion</b>'+
+        '<span class="vtag">PlatformTerms</span> · <span class="vtag">v3.0</span> · material · effective today · <b>all users flagged for re-acceptance</b></div>'
+      : "";
+    var tbl = rows.length
+      ? '<div class="scroller"><table class="lg"><thead><tr><th>Consent type</th><th>User</th><th>Company</th><th>Context</th><th>Version</th><th>Recorded at</th></tr></thead><tbody>'+
+        rows.map(function(r){
+          return '<tr class="'+r.cls+'"><td><b>'+esc(r.c[0])+'</b></td><td>'+esc(r.c[1])+'</td>'+
+            '<td class="'+(r.c[2]==="—"?"none":"ctx")+'">'+esc(r.c[2])+'</td>'+
+            '<td class="'+(r.c[3]==="—"?"none":"ctx")+'">'+esc(r.c[3])+'</td>'+
+            '<td>'+(r.c[4]==="—"?'<span class="none">—</span>':'<span class="vtag">'+esc(r.c[4])+'</span>')+'</td>'+
+            '<td class="ctx">'+esc(r.t)+'</td></tr>';
+        }).join("")+'</tbody></table></div>'
+      : "";
+    body.innerHTML=vhtml+tbl;
+    if(notes.length){ flag.innerHTML=notes[notes.length-1]; flag.hidden=false; } else flag.hidden=true;
+  }
+
+  document.addEventListener("click",function(e){
+    var b=e.target.closest(".sbtn"); if(!b) return;
+    var k=b.getAttribute("data-s");
+    if(k==="reset"){ rows=[]; notes=[]; versionShown=false; render(); return; }
+    var s=SCEN[k]; if(!s) return;
+    if(s.version) versionShown=true;
+    s.rows.forEach(function(c,i){
+      seq++;
+      rows.push({c:c, t:stamp(), cls:(s.extra&&i===s.rows.length-1)?s.extra:s.cls});
+    });
+    notes.push(s.note);
+    render();
+    document.getElementById("lgbody").scrollIntoView({behavior:"smooth",block:"nearest"});
+  });
+
+  render();
+})();
+</script>
+
+</body></html>

@@ -1,0 +1,413 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1"><title>The Dials — config screens spec (P2P-27)</title><style>:root{color-scheme:light}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#faf9f5;color:#141413}img{max-width:100%}</style></head><body>
+<style>
+  :root{
+    --paper:#FBFAF6; --ink:#20302F; --muted:#5F6E6C; --rule:rgba(32,48,47,.16);
+    --accent:#2D7F81; --accent-strong:#256A6C; --on-accent:#FFFFFF;
+    --tint:rgba(45,137,139,.07);
+    --card:#FFFFFF; --card-edge:rgba(32,48,47,.12);
+    --sc:#A8731F; --sc-tint:rgba(168,115,31,.12);
+    --live:#7B4EA8; --live-tint:rgba(123,78,168,.10);
+    --snap:#1F6F8B; --snap-tint:rgba(31,111,139,.11);
+    --wait:#B4453F; --wait-tint:rgba(180,69,63,.10);
+    --specimen:rgba(32,48,47,.06);
+    --serif:"Charter","Iowan Old Style",Georgia,"Times New Roman",serif;
+    --sans:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+    --mono:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+  }
+  @media (prefers-color-scheme: dark){
+    :root{
+      --paper:#0E1918; --ink:#E7E5DB; --muted:#9DABA8; --rule:rgba(231,229,219,.16);
+      --accent:#5CB6B8; --accent-strong:#7BC8CA; --on-accent:#0E1918;
+      --tint:rgba(92,182,184,.09);
+      --card:#132120; --card-edge:rgba(231,229,219,.14);
+      --sc:#D9A85C; --sc-tint:rgba(217,168,92,.13);
+      --live:#C4A3E0; --live-tint:rgba(196,163,224,.13);
+      --snap:#7EC4DE; --snap-tint:rgba(126,196,222,.13);
+      --wait:#E8837C; --wait-tint:rgba(232,131,124,.13);
+      --specimen:rgba(231,229,219,.05);
+    }
+  }
+  :root[data-theme="dark"]{
+    --paper:#0E1918; --ink:#E7E5DB; --muted:#9DABA8; --rule:rgba(231,229,219,.16);
+    --accent:#5CB6B8; --accent-strong:#7BC8CA; --on-accent:#0E1918;
+    --tint:rgba(92,182,184,.09);
+    --card:#132120; --card-edge:rgba(231,229,219,.14);
+    --sc:#D9A85C; --sc-tint:rgba(217,168,92,.13);
+    --live:#C4A3E0; --live-tint:rgba(196,163,224,.13);
+    --snap:#7EC4DE; --snap-tint:rgba(126,196,222,.13);
+    --wait:#E8837C; --wait-tint:rgba(232,131,124,.13);
+    --specimen:rgba(231,229,219,.05);
+  }
+  :root[data-theme="light"]{
+    --paper:#FBFAF6; --ink:#20302F; --muted:#5F6E6C; --rule:rgba(32,48,47,.16);
+    --accent:#2D7F81; --accent-strong:#256A6C; --on-accent:#FFFFFF;
+    --tint:rgba(45,137,139,.07);
+    --card:#FFFFFF; --card-edge:rgba(32,48,47,.12);
+    --sc:#A8731F; --sc-tint:rgba(168,115,31,.12);
+    --live:#7B4EA8; --live-tint:rgba(123,78,168,.10);
+    --snap:#1F6F8B; --snap-tint:rgba(31,111,139,.11);
+    --wait:#B4453F; --wait-tint:rgba(180,69,63,.10);
+    --specimen:rgba(32,48,47,.06);
+  }
+  *{box-sizing:border-box}
+  @media (prefers-reduced-motion: reduce){ *{transition:none !important} }
+  body{margin:0; background:var(--paper); color:var(--ink); font-family:var(--serif); font-size:16.5px; line-height:1.55; -webkit-font-smoothing:antialiased}
+  .wrap{max-width:920px; margin:0 auto; padding:0 20px}
+
+  .backlink{display:block;max-width:920px;margin:12px auto 0;padding:0 20px;font-family:var(--mono);font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--accent);text-decoration:none}
+  .backlink:hover{text-decoration:underline}
+
+  header.hero{padding:44px 0 22px; text-align:center}
+  .eyebrow{font-family:var(--sans); font-size:11.5px; font-weight:700; letter-spacing:.14em; text-transform:uppercase; color:var(--accent)}
+  h1{font-size:clamp(27px,4.6vw,40px); line-height:1.14; margin:12px auto 10px; max-width:21ch; font-weight:700; text-wrap:balance}
+  .stand{max-width:60ch; margin:0 auto; color:var(--muted); font-size:17px}
+  .stand b{color:var(--ink); font-weight:600}
+  .try{margin-top:16px; font-family:var(--sans); font-size:13px; color:var(--muted); border:1px dashed var(--rule); border-radius:9px; padding:9px 15px; display:inline-block}
+  .try b{color:var(--ink)}
+
+  section{margin-top:40px}
+  .s-head{display:flex; align-items:baseline; gap:12px; flex-wrap:wrap; border-bottom:2px solid var(--ink); padding-bottom:9px; margin-bottom:16px}
+  .s-head h2{margin:0; font-size:clamp(21px,3.2vw,27px); line-height:1.15}
+  .s-head .s-eyebrow{font-family:var(--sans); font-size:11.5px; font-weight:700; letter-spacing:.12em; text-transform:uppercase; color:var(--accent)}
+  .s-head .s-note{color:var(--muted); font-family:var(--sans); font-size:12.5px; margin-left:auto}
+  .lede{color:var(--muted); max-width:68ch; margin:0 0 14px}
+
+  /* the two rules */
+  .rules{display:grid; grid-template-columns:repeat(auto-fit,minmax(290px,1fr)); gap:12px}
+  .rule{border-radius:12px; padding:15px 17px; border:1px solid}
+  .rule.live{border-color:var(--live); background:var(--live-tint)}
+  .rule.snap{border-color:var(--snap); background:var(--snap-tint)}
+  .rule .r-t{font-family:var(--sans); font-size:10.5px; font-weight:800; letter-spacing:.09em; text-transform:uppercase; margin-bottom:5px}
+  .rule.live .r-t{color:var(--live)} .rule.snap .r-t{color:var(--snap)}
+  .rule h3{margin:0 0 6px; font-size:17px}
+  .rule p{margin:0; font-family:var(--sans); font-size:13.5px; line-height:1.55}
+  .rule p b{font-weight:700}
+  .rule small{display:block; margin-top:7px; font-family:var(--sans); font-size:12px; color:var(--muted)}
+
+  /* screens */
+  .screen{border:1px solid var(--card-edge); background:var(--card); border-radius:12px; margin-bottom:13px; overflow:hidden}
+  .sc-head{padding:13px 16px; border-bottom:1px solid var(--rule)}
+  .sc-top{display:flex; gap:10px; align-items:baseline; flex-wrap:wrap}
+  .sc-num{font-family:var(--mono); font-size:11.5px; font-weight:700; color:var(--on-accent); background:var(--accent); border-radius:6px; padding:2px 8px}
+  .sc-top h3{margin:0; font-size:17.5px}
+  .sc-tags{margin-left:auto; display:flex; gap:6px; flex-wrap:wrap}
+  .sc-meta{display:flex; gap:14px; flex-wrap:wrap; margin-top:6px; font-family:var(--sans); font-size:12px; color:var(--muted)}
+  .sc-meta b{color:var(--ink); font-weight:600}
+  .sc-meta code{font-family:var(--mono); font-size:11.5px; background:var(--specimen); border-radius:4px; padding:1px 6px}
+  .tag{font-family:var(--sans); font-size:9.5px; font-weight:800; letter-spacing:.05em; text-transform:uppercase; border-radius:5px; padding:2px 7px; white-space:nowrap}
+  .tag.sc{color:var(--on-accent); background:var(--sc)}
+  .tag.live{color:var(--live); border:1px solid var(--live); background:var(--live-tint)}
+  .tag.snap{color:var(--snap); border:1px solid var(--snap); background:var(--snap-tint)}
+  .tag.ic{color:var(--accent-strong); border:1px solid var(--accent)}
+
+  .prow{display:flex; gap:12px; align-items:center; padding:9px 16px; border-bottom:1px dotted var(--rule); flex-wrap:wrap}
+  .prow:last-child{border-bottom:none}
+  .p-name{flex:1 1 230px; min-width:180px}
+  .p-name .n{font-size:15px; font-weight:600}
+  .p-name .c{font-family:var(--sans); font-size:11px; color:var(--muted); margin-top:2px; display:flex; gap:5px; flex-wrap:wrap; align-items:center}
+  .chip{font-family:var(--sans); font-size:10px; border:1px solid var(--rule); border-radius:4px; padding:1px 6px; color:var(--muted)}
+  .p-val{font-family:var(--sans); font-size:15px; font-weight:700; font-variant-numeric:tabular-nums; text-align:right; flex:0 0 auto; min-width:120px}
+  .p-val.changed{color:var(--live)}
+  .p-edit{font-family:var(--sans); font-size:11.5px; font-weight:700; color:var(--muted); background:none; border:1px solid var(--rule); border-radius:7px; padding:4px 11px; cursor:pointer; flex:none}
+  .p-edit:hover{color:var(--accent-strong); border-color:var(--accent)}
+  .p-edit:focus-visible{outline:2px solid var(--accent); outline-offset:2px}
+
+  .editor{padding:13px 16px; background:var(--tint); border-bottom:1px dotted var(--rule); display:flex; flex-direction:column; gap:9px}
+  .editor .er{display:flex; gap:10px; flex-wrap:wrap; align-items:flex-end}
+  .editor label{font-family:var(--sans); font-size:10.5px; letter-spacing:.08em; text-transform:uppercase; color:var(--muted); font-weight:600; display:block; margin-bottom:3px}
+  .editor input, .editor textarea{font-family:var(--sans); font-size:13.5px; color:var(--ink); background:var(--card); border:1px solid var(--rule); border-radius:8px; padding:7px 10px; width:100%}
+  .editor input:focus-visible, .editor textarea:focus-visible{outline:2px solid var(--accent); outline-offset:1px}
+  .editor .f-val{flex:0 0 160px} .editor .f-reason{flex:1 1 260px}
+  .editor textarea{resize:vertical; min-height:38px}
+  .btn{font-family:var(--sans); font-size:12.5px; font-weight:700; border-radius:8px; padding:8px 15px; cursor:pointer; border:1.5px solid var(--accent); background:var(--accent); color:var(--on-accent)}
+  .btn.ghost{background:none; color:var(--muted); border-color:var(--rule)}
+  .btn:focus-visible{outline:2px solid var(--ink); outline-offset:2px}
+  .err{font-family:var(--sans); font-size:12.5px; color:var(--wait); font-weight:600}
+
+  .scroller{overflow-x:auto}
+  table.grid{width:100%; border-collapse:collapse; font-family:var(--sans); font-size:12.5px}
+  table.grid th{text-align:right; font-size:10px; letter-spacing:.07em; text-transform:uppercase; color:var(--muted); border-bottom:1.5px solid var(--rule); padding:8px 10px; white-space:nowrap}
+  table.grid th:first-child, table.grid td:first-child{text-align:left}
+  table.grid td{text-align:right; padding:7px 10px; border-bottom:1px dotted var(--rule); font-variant-numeric:tabular-nums; white-space:nowrap}
+  table.grid tr:last-child td{border-bottom:none}
+  table.grid td.free{white-space:normal; text-align:left; color:var(--muted)}
+
+  /* audit */
+  .audit{border:1px solid var(--card-edge); background:var(--card); border-radius:12px; padding:15px 17px}
+  .audit h3{margin:0 0 3px; font-size:17px}
+  .audit .sub{font-family:var(--sans); font-size:12.5px; color:var(--muted); margin-bottom:11px}
+  .aentry{border-left:3px solid var(--accent); background:var(--tint); border-radius:0 8px 8px 0; padding:10px 13px; margin-bottom:8px; font-family:var(--sans); font-size:13px}
+  .aentry:last-child{margin-bottom:0}
+  .aentry .a1{display:flex; gap:9px; flex-wrap:wrap; align-items:baseline; font-variant-numeric:tabular-nums}
+  .aentry .a1 .p{font-weight:700}
+  .aentry .was{text-decoration:line-through; color:var(--muted)}
+  .aentry .now{font-weight:700; color:var(--live)}
+  .aentry .a2{color:var(--muted); font-size:12px; margin-top:4px}
+  .aentry .a3{margin-top:5px; padding-top:5px; border-top:1px dotted var(--rule); font-style:italic}
+  .aempty{font-family:var(--sans); font-size:13px; color:var(--muted); font-style:italic; padding:6px 0}
+
+  .ladder{display:flex; flex-direction:column}
+  .lrow{display:flex; gap:14px; padding:12px 0; border-bottom:1px dotted var(--rule); align-items:flex-start; flex-wrap:wrap}
+  .lrow:last-child{border-bottom:none}
+  .l-t{flex:0 0 130px; font-weight:700; font-size:15.5px}
+  .l-d{flex:1 1 250px; font-family:var(--sans); font-size:13px; color:var(--muted); line-height:1.5}
+  .l-a{font-family:var(--sans); font-size:11.5px; font-weight:700; color:var(--accent-strong); border:1.5px solid var(--accent); border-radius:99px; padding:3px 11px; white-space:nowrap; align-self:center}
+
+  .decisions{border:1px solid var(--card-edge); background:var(--card); border-radius:12px; padding:16px 18px}
+  .decisions ul{margin:0; padding:0; list-style:none; font-family:var(--sans); font-size:14px; display:flex; flex-direction:column; gap:9px}
+  .decisions li{padding-left:26px; position:relative; line-height:1.5}
+  .decisions li::before{content:"✓"; position:absolute; left:2px; color:var(--accent); font-weight:800}
+  .decisions li b{font-weight:700}
+  code.k{font-family:var(--mono); font-size:12px; background:var(--specimen); border-radius:4px; padding:1px 5px}
+  .flag{border-left:3px solid var(--wait); background:var(--wait-tint); border-radius:0 8px 8px 0; padding:11px 15px; font-family:var(--sans); font-size:13.5px; margin-top:12px}
+  .flag b{display:block; font-size:10.5px; letter-spacing:.09em; text-transform:uppercase; color:var(--wait); margin-bottom:3px}
+
+  footer{margin:48px 0 40px; padding-top:15px; border-top:1px solid var(--rule); font-family:var(--sans); font-size:12.5px; color:var(--muted); line-height:1.7}
+</style>
+
+<a class="backlink" href="./">&larr; Lane A specs</a>
+
+<header class="hero">
+  <div class="wrap">
+    <div class="eyebrow">P2P-27 · Lane A · Foundations</div>
+    <h1>Six screens, and when each number takes effect</h1>
+    <p class="stand">Roughly fifty rulebook figures, organised the way they will actually be <b>built and used</b> — by the admin screen they live on, who owns them, and whether a change reaches deals that already exist.</p>
+    <div class="try"><b>Working mock.</b> Edit any value — it will insist on a reason, then write the audit entry.</div>
+  </div>
+</header>
+
+<main class="wrap">
+
+  <section>
+    <div class="s-head"><span class="s-eyebrow">The rule</span><h2>Live or snapshot</h2></div>
+    <p class="lede">The single most important thing to get right, because it decides whether editing a number quietly rewrites deals that were already struck. Every parameter is one or the other, and the screen it lives on tells you which.</p>
+    <div class="rules">
+      <div class="rule live">
+        <div class="r-t">Reads live</div>
+        <h3>Platform fees &amp; statutory rates</h3>
+        <p>What <b>pitchIN charges for a service</b>, at the moment it performs it — plus tax rates and investor limits. A change applies everywhere immediately, including on live notes.</p>
+        <small>Justified because the management fee is charged when a repayment is received, so the rate in force at that moment is the correct one. Same for wallet fees, SST and limits.</small>
+      </div>
+      <div class="rule snap">
+        <div class="r-t">Snapshot onto the note</div>
+        <h3>Deal terms</h3>
+        <p>What the <b>issuer and investors agreed for this specific note</b> — rate, grade, tenure, and the fee and default terms disclosed with it. Copied onto the note when it is created and fixed for its life.</p>
+        <small>A later config change starts applying to <em>new</em> notes only. Nothing can retroactively alter a deal that was already disclosed and executed.</small>
+      </div>
+    </div>
+    <div class="flag">
+      <b>What this means for the note model</b>
+      Interest rate, risk grade and tenure are already stored on the note itself (P2P-26). The snapshot rule adds a further set of values that must be <b>copied onto the note at campaign setup</b>: success fee · early-settlement fee · renewal fee · late flat fee · late interest rate · grace period · delinquency DPD · default DPD threshold. The credit matrix and product caps need no snapshot — their effect is already captured in the rate, tenure and grade the note stores.
+    </div>
+  </section>
+
+  <section>
+    <div class="s-head"><span class="s-eyebrow">The board</span><h2>Six admin screens</h2><span class="s-note">values seeded from the obligations register §4</span></div>
+    <div id="board"></div>
+  </section>
+
+  <section>
+    <div class="s-head"><span class="s-eyebrow">Evidence</span><h2>The audit trail</h2><span class="s-note">fills as you edit above</span></div>
+    <div class="audit">
+      <h3>Change history</h3>
+      <div class="sub">Every edit records actor, timestamp, before → after, and a <b>mandatory written reason</b>. This is the platform's evidence that §4.6 governance was followed — and for live parameters it is the only historical record, since nothing is versioned onto notes.</div>
+      <div id="auditlist"><div class="aempty">No changes yet — edit a value above to see what gets recorded.</div></div>
+    </div>
+  </section>
+
+  <section>
+    <div class="s-head"><span class="s-eyebrow">§4.6</span><h2>Who may approve a change</h2></div>
+    <p class="lede">A <b>committee process, not a software feature</b> — the platform does not enforce this in-app at launch. Editing is restricted to a senior-admin role and the audit trail proves what happened; the approval itself lives in IC and Board minutes.</p>
+    <div class="ladder">
+      <div class="lrow"><div class="l-t">Material change</div><div class="l-d">Changes to the policy's original intent, to default thresholds, to escalation triggers or authority bands, or anything affecting the Recovery Distribution Waterfall.</div><span class="l-a">Board approval</span></div>
+      <div class="lrow"><div class="l-t">Parameter change</div><div class="l-d">Updates to numerical thresholds and operational parameters — the everyday case for these screens.</div><span class="l-a">IC approval · Board notified</span></div>
+      <div class="lrow"><div class="l-t">Editorial change</div><div class="l-d">Clarifications, citation updates, formatting.</div><span class="l-a">CSO/CEO · logged</span></div>
+    </div>
+  </section>
+
+  <section>
+    <div class="s-head"><span class="s-eyebrow">Settled</span><h2>Decisions this build follows</h2></div>
+    <div class="decisions">
+      <ul>
+        <li><b>Platform fees and statutory rates read live; deal terms snapshot onto the note</b> at campaign setup. A config change never rewrites a deal already disclosed.</li>
+        <li><b>Investor limits are now known</b> — retail RM50,000, angel and sophisticated unrestricted (SC RM 14.32–14.33). No longer a blocked launch gate; Compliance confirms rather than supplies.</li>
+        <li><b>Retail RM50,000 is a hard block</b>, measured on <b>outstanding exposure at any point in time</b> — headroom returns as notes repay. Consistent with our submitted rulebook §2.3 ("imposed programmatically").</li>
+        <li><b>Changes take effect immediately — no future-dating.</b> ⚠️ Ops consequence: the stamp-duty exemption ends <b>31 December 2026</b> and must be updated by hand on the day.</li>
+        <li><b>A written reason is mandatory on every change</b>, one rule for all parameters, alongside actor, timestamp and before → after.</li>
+        <li><b>Editing is restricted to a senior-admin role.</b> No in-app maker-checker at launch — §4.6 approval stays a committee process.</li>
+        <li><b>Sets can grow.</b> New products and grades can be added through config (App C: its product list "is not exhaustive"); existing entries can be <b>disabled but never deleted</b>, because live notes reference them forever.</li>
+      </ul>
+    </div>
+    <div class="flag">
+      <b>Two things for Compliance to confirm, not blockers</b>
+      <b style="display:inline;font-size:inherit;letter-spacing:0;text-transform:none;color:var(--ink)">1.</b> Para 14.33 says operators must "<em>encourage</em>" retail to stay under RM50,000, while our submitted §2.3 says limits are "imposed programmatically". We are building the stricter reading (hard block) — confirm that is the intended posture.
+      <b style="display:inline;font-size:inherit;letter-spacing:0;text-transform:none;color:var(--ink)">2.</b> 14.33 caps investment "on any P2P platform", so the RM50,000 counts <b>P2P exposure only</b> and is <em>not</em> aggregated with ECF or PSTX limits, which are a separate regime. We can only see exposure on pitchIN.
+    </div>
+  </section>
+
+  <footer>
+    Interactive spec for <b>P2P-27 · F0.2 P2P config &amp; parameters engine (audited)</b>, Lane A of the P2P MVP Launch. Prepared 2026-08-05 from the alignment decisions (record on epic P2P-61), the obligations register §4, the P2P Rulebook internal master 2026-06-28, and SC Guidelines on Recognized Markets paras 14.32–14.33. Money columns follow the house <code class="k">HasPrecision(15, 2)</code> convention. Edits here are a mock and change nothing real.
+  </footer>
+</main>
+
+<script>
+(function(){
+  var SCREENS=[
+    {id:"fees", n:"Platform Fees &amp; Charges", path:"Super Admin → Setting → Fees", owner:"Finance", mode:"live",
+     tags:[["sc","SC-visible"],["live","Reads live"]], why:"What pitchIN charges for a service, at the moment it performs it. Not product-specific — ECF and PSTX read the same wallet and tax rows.", kind:"kv", items:[
+      {n:"Application fee", v:"RM 50.00", c:["F1.1"]},
+      {n:"KYB / credit vetting", v:"RM 100.00", c:["F1.1"], note:"per director or guarantor · refunded on success"},
+      {n:"Financial correspondence", v:"RM 20.00", c:["ops"], note:"per document"},
+      {n:"Portfolio audit statement", v:"RM 20.00", c:["ops"], note:"per request"},
+      {n:"Investor management fee — Term / Micro / AR", v:"15.00 %", c:["F4.3"], note:"of returns"},
+      {n:"Investor management fee — AP", v:"20.00 %", c:["F4.3"], note:"of returns"},
+      {n:"Investor management fee — Platinum", v:"10.00 %", c:["F4.3"], note:"RM0 if the note defaults"},
+      {n:"Platinum tier threshold", v:"RM 100,000", c:["F4.3"]},
+      {n:"Wallet deposit — FPX", v:"RM 1.00", c:["wallet"], note:"pass-through"},
+      {n:"Wallet deposit — IBG", v:"RM 0.10", c:["wallet"], note:"pass-through"},
+      {n:"Wallet withdrawal", v:"RM 0.00", c:["wallet"]},
+      {n:"SST", v:"8.00 %", c:["F3.4","F4.3"], note:"excludes late fees and Gharamah"}
+     ]},
+    {id:"limits", n:"Investor Limits", path:"Super Admin → Setting → Investor Limits", owner:"Compliance", mode:"live",
+     tags:[["sc","SC-visible"],["live","Reads live"]], why:"Statutory caps per self-declared category. Enforced programmatically at invest time (§2.3). P2P exposure only — not aggregated with ECF or PSTX.", kind:"limits"},
+    {id:"products", n:"P2P Products", path:"Setting → P2P → Products", owner:"COO / IC", mode:"snap",
+     tags:[["sc","SC-visible"],["snap","Snapshot onto note"]], why:"The baseline per product class. Read at campaign setup to validate and to stamp the note's own fee and cap terms.", kind:"products"},
+    {id:"credit", n:"Credit Grade Matrix", path:"Setting → P2P → Credit", owner:"Investment Committee", mode:"snap",
+     tags:[["sc","SC-visible"],["snap","Effect snapshot"]], why:"App D + E. Feeds the credit worksheet (F1.3); the resulting grade, rate and tenure are stored on the note, so the matrix itself needs no per-note copy.", kind:"credit"},
+    {id:"servicing", n:"Servicing &amp; Default Thresholds", path:"Setting → P2P → Servicing", owner:"CSO / IC", mode:"snap",
+     tags:[["ic","IC-adjustable"],["snap","Snapshot onto note"]], why:"How lateness and default behave. Disclosed in each note's default provisions (Annex A §5), so a note keeps the thresholds it was issued under.", kind:"kv", items:[
+      {n:"Class I default (amortising)", v:"90 DPD", c:["F5.1"]},
+      {n:"Class II default (bullet)", v:"60 DPD", c:["F5.1"]},
+      {n:"Delinquency threshold", v:"1 DPD", c:["F4.4"]},
+      {n:"Grace period before late charge", v:"7 days", c:["F4.4"]},
+      {n:"Late interest rate", v:"0.100 % / day", c:["F4.4"], note:"daily-rest, non-compounding"},
+      {n:"Pre-due reminders", v:"T-7 / T-3 / T-1", c:["F4.4"]},
+      {n:"Restructuring window — Class I", v:"30–89 DPD", c:["F5.3"]},
+      {n:"Restructuring window — Class II", v:"30–59 DPD", c:["F5.3"]},
+      {n:"Restructuring fee", v:"1.00 %", c:["F5.3"], note:"of outstanding · min RM1,000 · charged at the time — reads live"}
+     ]},
+    {id:"campaign", n:"Campaign Rules", path:"Setting → P2P → Campaign", owner:"Product", mode:"live",
+     tags:[["ic","IC-adjustable"],["live","Reads live"]], why:"Guardrails applied when a campaign is set up or closed. They govern creation, not the life of an existing note.", kind:"kv", items:[
+      {n:"Maximum interest rate", v:"18.00 % p.a.", c:["P2P-26","F1.4"], note:"hard ceiling, any grade"},
+      {n:"Minimum-to-maximum target ratio", v:"80 %", c:["F1.4"], note:"setup validation — min ≥ 80% of max"},
+      {n:"Default minimum investment", v:"RM 100.00", c:["P2P-68"], note:"fallback when a campaign sets none"},
+      {n:"Stamp duty", v:"RM 0.00", c:["F3.3"], note:"100% exempt until 31 Dec 2026 — diarise"}
+     ]}
+  ];
+  var LIMITS=[
+    ["Retail","RM 50,000","Hard block","Outstanding exposure at any point in time","RM 14.33"],
+    ["Angel","No limit","—","—","RM 14.32"],
+    ["Sophisticated","No limit","—","—","RM 14.32"]
+  ];
+  var PRODUCTS=[
+    ["AR Financing","120 days","80% of invoice value","≤ 2.0% per drawdown","RM 0","RM 150 p.a.","RM 500"],
+    ["AP Financing","120 days","100% of verified payable","≤ 2.0% per drawdown","RM 0","RM 150 p.a.","RM 500"],
+    ["Business Term","36 months","2.5× avg monthly revenue","4.0% of principal","2.0%","—","RM 500"],
+    ["Microfinancing","12 months","RM 50,000 hard cap","5.0% + 5.0% guarantee","2.0%","—","RM 200"]
+  ];
+  var GRADES=[
+    ["A1","850–1000","0.50%","0.30%","100%","100%","6.0 – 7.5%"],
+    ["A2","750–849","1.50%","0.90%","100%","100%","7.5 – 9.5%"],
+    ["B1","650–749","3.50%","2.10%","100%","85%","9.5 – 11.5%"],
+    ["B2","550–649","6.00%","3.60%","100%","80%","11.5 – 13.5%"],
+    ["C1","450–549","9.00%","5.40%","75%","70%","13.5 – 15.5%"],
+    ["C2","350–449","13.0%","7.80%","50%","60%","15.5 – 17.0%"],
+    ["D1","250–349","18.0%","10.8%","12-mo cap","50%","17.0 – 18.0%"]
+  ];
+
+  var audit=[], editing=null, errMsg="";
+  var esc=function(s){ return String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;"); };
+
+  function rowHtml(si,ii,it){
+    var chips=(it.c||[]).map(function(x){ return '<span class="chip">'+esc(x)+'</span>'; }).join("");
+    var note=it.note?'<span style="color:var(--muted)">'+esc(it.note)+'</span>':"";
+    return '<div class="prow"><div class="p-name"><div class="n">'+esc(it.n)+'</div><div class="c">'+chips+note+'</div></div>'+
+      '<div class="p-val'+(it.dirty?' changed':'')+'">'+esc(it.v)+'</div>'+
+      '<button class="p-edit" data-s="'+si+'" data-i="'+ii+'" type="button">Edit</button></div>';
+  }
+  function editorHtml(si,ii,it,mode){
+    var eff = mode==="live"
+      ? "Takes effect immediately, everywhere — including notes already live."
+      : "Applies to notes created from now on. Existing notes keep the terms they were issued under.";
+    return '<div class="editor"><div class="er">'+
+      '<div class="f-val"><label for="ev">New value</label><input id="ev" type="text" value="'+esc(it.v)+'"></div>'+
+      '<div class="f-reason"><label for="er">Reason — required</label><textarea id="er" rows="1" placeholder="e.g. IC calibration, 12 Aug meeting"></textarea></div></div>'+
+      (errMsg?'<div class="err">'+esc(errMsg)+'</div>':"")+
+      '<div class="er"><button class="btn" id="esave" data-s="'+si+'" data-i="'+ii+'" type="button">Save change</button>'+
+      '<button class="btn ghost" id="ecancel" type="button">Cancel</button>'+
+      '<span style="font-family:var(--sans);font-size:12px;color:var(--muted)">'+eff+'</span></div></div>';
+  }
+  function table(head,rows,freeCols){
+    return '<div class="scroller"><table class="grid"><thead><tr>'+head.map(function(h){ return "<th>"+esc(h)+"</th>"; }).join("")+
+      '</tr></thead><tbody>'+rows.map(function(r){
+        return "<tr>"+r.map(function(c,i){ return '<td'+((freeCols||[]).indexOf(i)>=0?' class="free"':'')+'>'+esc(c)+"</td>"; }).join("")+"</tr>";
+      }).join("")+'</tbody></table></div>';
+  }
+
+  function render(){
+    document.getElementById("board").innerHTML=SCREENS.map(function(s,si){
+      var tags=s.tags.map(function(t){ return '<span class="tag '+t[0]+'">'+t[1]+'</span>'; }).join("");
+      var body="";
+      if(s.kind==="kv"){
+        body=s.items.map(function(it,ii){
+          var r=rowHtml(si,ii,it);
+          if(editing&&editing.s===si&&editing.i===ii) r+=editorHtml(si,ii,it,s.mode);
+          return r;
+        }).join("");
+      } else if(s.kind==="limits"){
+        body=table(["Investor category","Cap","Enforcement","Measured on","Source"],LIMITS,[3]);
+      } else if(s.kind==="products"){
+        body=table(["Product","Max tenure","Max entitlement","Success fee","Early settlement","Renewal","Late flat fee"],PRODUCTS,[2]);
+      } else {
+        body=table(["Grade","Score","PD","EL @60% LGD","Tenure ×","Entitlement ×","Rate band p.a."],GRADES);
+      }
+      return '<div class="screen"><div class="sc-head"><div class="sc-top"><span class="sc-num">'+(si+1)+'</span><h3>'+s.n+'</h3>'+
+        '<span class="sc-tags">'+tags+'</span></div>'+
+        '<div class="sc-meta"><span><code>'+esc(s.path)+'</code></span><span>Owner: <b>'+esc(s.owner)+'</b></span></div>'+
+        '<div class="sc-meta" style="margin-top:5px">'+esc(s.why)+'</div></div>'+body+'</div>';
+    }).join("");
+
+    var al=document.getElementById("auditlist");
+    if(!audit.length){ al.innerHTML='<div class="aempty">No changes yet — edit a value above to see what gets recorded.</div>'; }
+    else{
+      al.innerHTML=audit.map(function(a){
+        return '<div class="aentry"><div class="a1"><span>'+esc(a.when)+'</span><span class="p">'+esc(a.name)+'</span>'+
+          '<span class="was">'+esc(a.from)+'</span><span>→</span><span class="now">'+esc(a.to)+'</span>'+
+          '<span class="tag '+a.mode+'">'+(a.mode==="live"?"live":"new notes only")+'</span></div>'+
+          '<div class="a2">by '+esc(a.actor)+' · '+esc(a.screen)+'</div>'+
+          '<div class="a3">“'+esc(a.reason)+'”</div></div>';
+      }).join("");
+    }
+    if(editing){ var f=document.getElementById("ev"); if(f) f.focus(); }
+  }
+
+  function stamp(){
+    var d=new Date(), mon=["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"][d.getMonth()];
+    return d.getDate()+" "+mon+" "+d.getFullYear()+" · "+("0"+d.getHours()).slice(-2)+":"+("0"+d.getMinutes()).slice(-2);
+  }
+
+  document.addEventListener("click",function(e){
+    var t=e.target;
+    if(t.classList&&t.classList.contains("p-edit")){
+      errMsg=""; editing={s:+t.getAttribute("data-s"), i:+t.getAttribute("data-i")}; render(); return;
+    }
+    if(t.id==="ecancel"){ errMsg=""; editing=null; render(); return; }
+    if(t.id==="esave"){
+      var si=+t.getAttribute("data-s"), ii=+t.getAttribute("data-i");
+      var s=SCREENS[si], it=s.items[ii];
+      var nv=(document.getElementById("ev").value||"").trim();
+      var rs=(document.getElementById("er").value||"").trim();
+      if(!nv){ errMsg="A value is required."; render(); return; }
+      if(!rs){ errMsg="A written reason is required on every change — this is the audit evidence for §4.6."; render(); return; }
+      if(nv===it.v){ errMsg="That is the same value — nothing to record."; render(); return; }
+      audit.unshift({when:stamp(), name:it.n, from:it.v, to:nv, reason:rs, actor:"you (senior admin)", mode:s.mode, screen:s.n.replace(/&amp;/g,"&")});
+      it.v=nv; it.dirty=true; errMsg=""; editing=null; render();
+      document.getElementById("auditlist").scrollIntoView({behavior:"smooth",block:"center"});
+    }
+  });
+
+  render();
+})();
+</script>
+
+</body></html>
