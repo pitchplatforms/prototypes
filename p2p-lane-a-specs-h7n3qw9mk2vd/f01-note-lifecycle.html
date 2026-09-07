@@ -1,0 +1,498 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1"><style>:root{color-scheme:light}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#faf9f5;color:#141413}img{max-width:100%}</style></head><body>
+<a href="./" style="display:block;max-width:900px;margin:12px auto 0;padding:0 20px;font:11px ui-monospace,monospace;letter-spacing:.12em;text-transform:uppercase;color:#2D7F81;text-decoration:none">&larr; Lane A specs</a>
+<title>Note Lifecycle Walkthrough</title>
+<style>
+  :root{
+    --paper:#FBFAF6; --ink:#20302F; --muted:#5F6E6C; --rule:rgba(32,48,47,.16);
+    --card:#FFFFFF; --card-edge:rgba(32,48,47,.12); --code-bg:rgba(32,48,47,.06);
+    --admin:#2D7F81; --admin-tint:rgba(45,137,139,.10);
+    --investor:#A8731F; --investor-tint:rgba(168,115,31,.12);
+    --issuer:#7B4EA8; --issuer-tint:rgba(123,78,168,.10);
+    --new:#2D7F81; --new-tint:rgba(45,137,139,.12);
+    --chg:#A8731F; --chg-tint:rgba(168,115,31,.14);
+    --else:#4A5A73; --else-tint:rgba(74,90,115,.08);
+    --ok:#2F7A4F; --ok-tint:rgba(47,122,79,.10);
+    --serif:"Charter","Iowan Old Style",Georgia,"Times New Roman",serif;
+    --sans:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+    --mono:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+  }
+  @media (prefers-color-scheme: dark){
+    :root:not([data-theme="light"]){
+      --paper:#0E1918; --ink:#E7E5DB; --muted:#9DABA8; --rule:rgba(231,229,219,.16);
+      --card:#132120; --card-edge:rgba(231,229,219,.14); --code-bg:rgba(231,229,219,.08);
+      --admin:#5CB6B8; --admin-tint:rgba(92,182,184,.12);
+      --investor:#D9A85C; --investor-tint:rgba(217,168,92,.14);
+      --issuer:#C4A3E0; --issuer-tint:rgba(196,163,224,.13);
+      --new:#5CB6B8; --new-tint:rgba(92,182,184,.14);
+      --chg:#D9A85C; --chg-tint:rgba(217,168,92,.16);
+      --else:#9DB0C8; --else-tint:rgba(157,176,200,.12);
+      --ok:#7CC59A; --ok-tint:rgba(124,197,154,.12);
+    }
+  }
+  :root[data-theme="dark"]{
+    --paper:#0E1918; --ink:#E7E5DB; --muted:#9DABA8; --rule:rgba(231,229,219,.16);
+    --card:#132120; --card-edge:rgba(231,229,219,.14); --code-bg:rgba(231,229,219,.08);
+    --admin:#5CB6B8; --admin-tint:rgba(92,182,184,.12);
+    --investor:#D9A85C; --investor-tint:rgba(217,168,92,.14);
+    --issuer:#C4A3E0; --issuer-tint:rgba(196,163,224,.13);
+    --new:#5CB6B8; --new-tint:rgba(92,182,184,.14);
+    --chg:#D9A85C; --chg-tint:rgba(217,168,92,.16);
+    --else:#9DB0C8; --else-tint:rgba(157,176,200,.12);
+    --ok:#7CC59A; --ok-tint:rgba(124,197,154,.12);
+  }
+  *{box-sizing:border-box}
+  @media (prefers-reduced-motion: reduce){ *{transition:none !important} }
+  body{margin:0; background:var(--paper); color:var(--ink); font-family:var(--serif); font-size:17px; line-height:1.6; -webkit-font-smoothing:antialiased}
+  a{color:var(--admin)}
+  :focus-visible{outline:2px solid var(--admin); outline-offset:2px}
+  .wrap{max-width:880px; margin:0 auto; padding:0 20px}
+  code{font-family:var(--mono); font-size:.84em; background:var(--code-bg); border-radius:4px; padding:1px 5px}
+
+  header.hero{padding:44px 0 24px; border-bottom:2px solid var(--ink)}
+  .eyebrow{font-family:var(--sans); font-size:11.5px; font-weight:700; letter-spacing:.14em; text-transform:uppercase; color:var(--admin)}
+  h1{font-size:clamp(28px,4.6vw,40px); line-height:1.12; margin:10px 0 12px; font-weight:700; text-wrap:balance; max-width:22ch}
+  .stand{max-width:62ch; font-size:18px; margin:0}
+  .legend{display:flex; gap:8px; flex-wrap:wrap; margin-top:18px; font-family:var(--sans); font-size:12.5px}
+  .legend span{border:1px solid var(--rule); border-radius:99px; padding:5px 12px; display:inline-flex; align-items:center; gap:7px; background:var(--card)}
+  .dot{width:11px; height:11px; border-radius:99px; flex:none}
+  .dot.admin{background:var(--admin)} .dot.investor{background:var(--investor)} .dot.issuer{background:var(--issuer)}
+  .sw{width:11px; height:11px; border-radius:3px; flex:none; border:1.5px solid}
+  .sw.new{background:var(--new-tint); border-color:var(--new)} .sw.chg{background:var(--chg-tint); border-color:var(--chg)} .sw.else{background:var(--else-tint); border-color:var(--else); border-style:dashed} .sw.exist{background:var(--card); border-color:var(--muted)}
+
+  section{margin-top:44px}
+  .s-head{display:flex; align-items:baseline; gap:12px; flex-wrap:wrap; border-bottom:2px solid var(--ink); padding-bottom:8px; margin-bottom:16px}
+  .s-head h2{margin:0; font-size:clamp(21px,3.2vw,27px); line-height:1.15}
+  .s-head .s-eyebrow{font-family:var(--sans); font-size:11.5px; font-weight:700; letter-spacing:.12em; text-transform:uppercase; color:var(--admin)}
+  p.lead{max-width:64ch; margin:0 0 14px}
+
+  .cast{display:grid; grid-template-columns:repeat(auto-fit,minmax(240px,1fr)); gap:12px}
+  .cast .c{border:1px solid var(--card-edge); background:var(--card); border-radius:10px; padding:12px 14px; font-family:var(--sans); font-size:13.5px; line-height:1.5; border-top:4px solid var(--rule)}
+  .cast .c.admin{border-top-color:var(--admin)} .cast .c.investor{border-top-color:var(--investor)} .cast .c.issuer{border-top-color:var(--issuer)}
+  .cast .c b{display:block; font-family:var(--serif); font-size:17px; margin-bottom:3px}
+  .tables{display:grid; grid-template-columns:repeat(auto-fit,minmax(240px,1fr)); gap:10px; margin-top:14px}
+  .t{border:1px solid var(--card-edge); background:var(--card); border-radius:10px; padding:10px 14px; font-family:var(--sans); font-size:13px; line-height:1.5}
+  .t b{font-family:var(--mono); font-size:12.5px; display:block; margin-bottom:2px}
+  .t.later{border-style:dashed}
+  .t.later b::after{content:" · built later"; font-family:var(--sans); font-weight:400; color:var(--muted); font-size:11px}
+
+  figure{margin:14px 0 0; border:1px solid var(--card-edge); background:var(--card); border-radius:12px; padding:14px 14px 10px; overflow-x:auto}
+  figure svg{display:block; min-width:760px; max-width:100%; height:auto; color:var(--ink); font-family:var(--sans)}
+  figcaption{font-family:var(--sans); font-size:12.5px; color:var(--muted); margin-top:8px; line-height:1.5}
+
+  .steps{display:flex; flex-direction:column; gap:14px}
+  .stage{font-family:var(--sans); font-size:11.5px; letter-spacing:.12em; text-transform:uppercase; color:var(--muted); font-weight:700; margin:10px 0 -4px}
+  .step{border:1px solid var(--card-edge); background:var(--card); border-radius:12px; padding:16px 18px 14px; border-left:5px solid var(--rule)}
+  .step.admin{border-left-color:var(--admin)} .step.investor{border-left-color:var(--investor)} .step.issuer{border-left-color:var(--issuer)}
+  .step-h{display:flex; gap:12px; align-items:baseline; flex-wrap:wrap}
+  .step-h .n{font-family:var(--sans); font-size:12px; font-weight:800; color:var(--paper); background:var(--ink); border-radius:99px; width:26px; height:26px; display:inline-flex; align-items:center; justify-content:center; flex:none; align-self:center}
+  .step-h h3{margin:0; font-size:19px; line-height:1.3}
+  .who{font-family:var(--sans); font-size:11px; font-weight:800; letter-spacing:.08em; text-transform:uppercase; border-radius:5px; padding:3px 8px; color:var(--paper)}
+  .who.admin{background:var(--admin)} .who.investor{background:var(--investor)} .who.issuer{background:var(--issuer)}
+  .step p{margin:8px 0 0; max-width:66ch}
+  .rec{margin-top:10px; display:grid; grid-template-columns:max-content 1fr; gap:6px 14px; font-family:var(--sans); font-size:13.5px; line-height:1.5}
+  .rec dt{font-size:10.5px; letter-spacing:.09em; text-transform:uppercase; color:var(--muted); font-weight:700; padding-top:3px}
+  .rec dd{margin:0}
+  .rec dd ul{margin:0; padding-left:16px}
+  .rec dd li{margin:2px 0}
+  .rec dd li b{font-family:var(--mono); font-weight:700; font-size:12.5px}
+  .rec dd .none{color:var(--muted); font-style:italic}
+  .rec dd.eq{border-left:3px solid var(--rule); padding-left:10px}
+  .rec dd.eq .same{color:var(--ok); font-weight:700} .rec dd.eq .diff{color:var(--investor); font-weight:700}
+  .dev{font-family:var(--mono); font-size:11.5px; color:var(--muted); margin-top:8px; line-height:1.5}
+  .dev i{font-style:normal; color:var(--ink)}
+  @media (max-width:560px){ .rec{grid-template-columns:1fr; gap:2px 0} .rec dt{padding-top:6px} }
+
+  .box{border-left:3px solid var(--admin); background:var(--admin-tint); border-radius:0 8px 8px 0; padding:12px 16px; font-family:var(--sans); font-size:13.5px; margin-top:14px; line-height:1.5}
+  .box b{display:block; font-size:10.5px; letter-spacing:.09em; text-transform:uppercase; color:var(--admin); margin-bottom:3px}
+  .sum{display:grid; grid-template-columns:repeat(auto-fit,minmax(150px,1fr)); gap:10px; margin-top:14px}
+  .sum .s{border:1px solid var(--card-edge); background:var(--card); border-radius:8px; padding:10px 12px; border-top:3px solid var(--rule); font-family:var(--sans); font-size:12.5px}
+  .sum .s.new{border-top-color:var(--new)} .sum .s.chg{border-top-color:var(--chg)} .sum .s.else{border-top-color:var(--else); border-top-style:dashed} .sum .s.exist{border-top-color:var(--muted)}
+  .sum .s .n{font-size:24px; font-weight:800; line-height:1; font-variant-numeric:tabular-nums}
+  .sum .s .l{font-size:10.5px; letter-spacing:.09em; text-transform:uppercase; color:var(--muted); margin-top:5px}
+  footer{margin:50px 0 40px; padding-top:15px; border-top:1px solid var(--rule); font-family:var(--sans); font-size:12.5px; color:var(--muted); line-height:1.7}
+</style>
+
+<header class="hero">
+  <div class="wrap">
+    <div class="eyebrow">P2P-26 · the life of one note</div>
+    <h1>One loan, three people, seven tables: what happens, and what we write down</h1>
+    <p class="stand">A note is a loan from many investors to one company, repaid on a schedule. Follow one note from setup to the last repayment. Every step names who acts, what happens, which rows we record, and how the equity product does the same thing today.</p>
+    <div class="legend">
+      <span><i class="dot admin"></i> Admin · pitchIN staff, and the steps the platform runs for them</span>
+      <span><i class="dot investor"></i> Investor · a person lending money</span>
+      <span><i class="dot issuer"></i> Issuer · the company borrowing</span>
+    </div>
+  </div>
+</header>
+
+<main class="wrap">
+
+  <section>
+    <div class="s-head"><span class="s-eyebrow">The cast</span><h2>Three people and seven tables</h2></div>
+    <div class="cast">
+      <div class="c admin"><b>Admin</b>pitchIN staff working in the admin portal, plus the automatic steps the platform runs on their behalf, such as starting the cooling-off period at the end date.</div>
+      <div class="c investor"><b>Investor</b>A person lending money through the pitchIN site. We follow three: Aisha, retail, RM 5,000. Ben, angel, RM 20,000, who changes his mind. Chong, sophisticated, RM 50,000.</div>
+      <div class="c issuer"><b>Issuer</b>Contoh Kitchen Sdn Bhd, a food manufacturer borrowing RM 400,000 to 500,000 for 36 months at 10.5% a year, repaid monthly, in units of RM 100.</div>
+    </div>
+    <div class="tables">
+      <div class="t"><b>Campaign</b>The listing and the fundraise. Shared by every product. Gains three fields for notes.</div>
+      <div class="t"><b>CampaignNoteTerm</b>The loan's terms as offered. One row per note campaign, frozen after setup.</div>
+      <div class="t"><b>Investment</b>Each investor's payment and how many units it buys. Already exists; every product uses it.</div>
+      <div class="t"><b>Note</b>The issued loan itself, created at close. Carries the terms in force, the note's status and the running totals of what the issuer has repaid. Equity's equivalent is the share counter set up after allotment.</div>
+      <div class="t"><b>NoteRegister</b>Who holds what. One row per paid investment, created at close, with a holding status of its own and that holder's running share of every repayment. Equity's equivalent is the holder record on the counter.</div>
+      <div class="t"><b>RepaymentSchedule</b>When money is due. Kept in versions so an old promise is never overwritten.</div>
+      <div class="t later"><b>Payouts</b>Money received and shared out to holders. Designed now, built with the repayment features.</div>
+    </div>
+    <p class="lead" style="margin-top:14px; font-family:var(--sans); font-size:13.5px; color:var(--muted)">"Every product" in this database means equity, in conventional and Islamic share classes, and now notes. Token campaigns run in a separate application today; they appear in the map at the end as future work.</p>
+  </section>
+
+  <section>
+    <div class="s-head"><span class="s-eyebrow">The overview</span><h2>What each stage writes</h2></div>
+    <figure>
+      <svg viewBox="0 0 960 545" role="img" aria-label="Six stages left to right with who acts under each: Set up by Admin, Raise by Investor, Close by Admin and Issuer, Disburse by Admin, Repay by Issuer, Service by Admin. Below, one band per table shows what that stage writes: Campaign gets a row at set up and its status changes at close; CampaignNoteTerm gets a row at set up and is then frozen; RepaymentSchedule gains version 1 at set up, version 2 at close, version 3 during service; Investment gains 190 rows during the raise and 189 move to Completed at close; Note gets its one row at close as Issued, becomes Performing at disbursement, and Late, Default or Closed during service; NoteRegister gains 189 Active rows at close and one may become Bought back during service; Payouts gain an event and 189 allocations at repay.">
+        <defs><marker id="ah" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="currentColor"/></marker></defs>
+        <g font-size="12.5" fill="currentColor">
+          <rect x="150" y="16" width="120" height="40" rx="8" fill="none" stroke="currentColor" stroke-width="1.3"/><text x="210" y="35" text-anchor="middle" font-weight="700">1 · Set up</text><text x="210" y="49" text-anchor="middle" font-size="10" opacity=".75">terms and plan</text>
+          <rect x="282" y="16" width="120" height="40" rx="8" fill="none" stroke="currentColor" stroke-width="1.3"/><text x="342" y="35" text-anchor="middle" font-weight="700">2 · Raise</text><text x="342" y="49" text-anchor="middle" font-size="10" opacity=".75">investors pay in</text>
+          <rect x="414" y="16" width="120" height="40" rx="8" fill="none" stroke="currentColor" stroke-width="1.3"/><text x="474" y="35" text-anchor="middle" font-weight="700">3 · Close</text><text x="474" y="49" text-anchor="middle" font-size="10" opacity=".75">cooling-off, decision, minting</text>
+          <rect x="546" y="16" width="120" height="40" rx="8" fill="none" stroke="currentColor" stroke-width="1.3"/><text x="606" y="35" text-anchor="middle" font-weight="700">4 · Disburse</text><text x="606" y="49" text-anchor="middle" font-size="10" opacity=".75">money to the issuer</text>
+          <rect x="678" y="16" width="120" height="40" rx="8" fill="none" stroke="currentColor" stroke-width="1.3"/><text x="738" y="35" text-anchor="middle" font-weight="700">5 · Repay</text><text x="738" y="49" text-anchor="middle" font-size="10" opacity=".75">monthly, to investors</text>
+          <rect x="810" y="16" width="130" height="40" rx="8" fill="none" stroke="currentColor" stroke-width="1.3"/><text x="875" y="35" text-anchor="middle" font-weight="700">6 · Service</text><text x="875" y="49" text-anchor="middle" font-size="10" opacity=".75">if things change</text>
+          <line x1="270" y1="36" x2="282" y2="36" stroke="currentColor" stroke-width="1.3" marker-end="url(#ah)"/><line x1="402" y1="36" x2="414" y2="36" stroke="currentColor" stroke-width="1.3" marker-end="url(#ah)"/><line x1="534" y1="36" x2="546" y2="36" stroke="currentColor" stroke-width="1.3" marker-end="url(#ah)"/><line x1="666" y1="36" x2="678" y2="36" stroke="currentColor" stroke-width="1.3" marker-end="url(#ah)"/><line x1="798" y1="36" x2="810" y2="36" stroke="currentColor" stroke-width="1.3" marker-end="url(#ah)"/>
+          <g font-size="10.5" font-weight="700">
+            <rect x="180" y="64" width="60" height="18" rx="4" style="fill:var(--admin)"/><text x="210" y="77" text-anchor="middle" style="fill:var(--paper)">ADMIN</text>
+            <rect x="305" y="64" width="74" height="18" rx="4" style="fill:var(--investor)"/><text x="342" y="77" text-anchor="middle" style="fill:var(--paper)">INVESTOR</text>
+            <rect x="416" y="64" width="56" height="18" rx="4" style="fill:var(--admin)"/><text x="444" y="77" text-anchor="middle" style="fill:var(--paper)">ADMIN</text>
+            <rect x="476" y="64" width="56" height="18" rx="4" style="fill:var(--issuer)"/><text x="504" y="77" text-anchor="middle" style="fill:var(--paper)">ISSUER</text>
+            <rect x="576" y="64" width="60" height="18" rx="4" style="fill:var(--admin)"/><text x="606" y="77" text-anchor="middle" style="fill:var(--paper)">ADMIN</text>
+            <rect x="710" y="64" width="56" height="18" rx="4" style="fill:var(--issuer)"/><text x="738" y="77" text-anchor="middle" style="fill:var(--paper)">ISSUER</text>
+            <rect x="845" y="64" width="60" height="18" rx="4" style="fill:var(--admin)"/><text x="875" y="77" text-anchor="middle" style="fill:var(--paper)">ADMIN</text>
+          </g>
+          <g stroke="currentColor" stroke-opacity=".16" stroke-width="1">
+            <line x1="10" y1="96" x2="950" y2="96"/><line x1="10" y1="160" x2="950" y2="160"/><line x1="10" y1="224" x2="950" y2="224"/><line x1="10" y1="288" x2="950" y2="288"/><line x1="10" y1="352" x2="950" y2="352"/><line x1="10" y1="416" x2="950" y2="416"/><line x1="10" y1="480" x2="950" y2="480"/><line x1="10" y1="540" x2="950" y2="540"/>
+          </g>
+          <g font-weight="700" font-size="12">
+            <text x="12" y="123">Campaign</text><text x="12" y="138" font-weight="400" font-size="10" opacity=".7">the fundraise · shared</text>
+            <text x="12" y="187">CampaignNoteTerm</text><text x="12" y="202" font-weight="400" font-size="10" opacity=".7">the terms · frozen</text>
+            <text x="12" y="251">Investment</text><text x="12" y="266" font-weight="400" font-size="10" opacity=".7">each payment · shared</text>
+            <text x="12" y="315">Note</text><text x="12" y="330" font-weight="400" font-size="10" opacity=".7">the issued loan · status · totals</text>
+            <text x="12" y="379">NoteRegister</text><text x="12" y="394" font-weight="400" font-size="10" opacity=".7">who holds what · status · totals</text>
+            <text x="12" y="443">RepaymentSchedule</text><text x="12" y="458" font-weight="400" font-size="10" opacity=".7">the plan, in versions</text>
+            <text x="12" y="505">Payouts</text><text x="12" y="520" font-weight="400" font-size="10" opacity=".7">money shared out · later</text>
+          </g>
+          <!-- Campaign row y=104 -->
+          <rect x="150" y="104" width="120" height="48" rx="6" style="fill:var(--new-tint);stroke:var(--new)" stroke-width="1.2"/><text x="210" y="123" text-anchor="middle" font-weight="700" font-size="11">+ 1 row</text><text x="210" y="137" text-anchor="middle" font-size="10">product Note · targets · unit RM 100</text>
+          <rect x="282" y="104" width="120" height="48" rx="6" style="fill:var(--chg-tint);stroke:var(--chg)" stroke-width="1.2"/><text x="342" y="123" text-anchor="middle" font-weight="700" font-size="11">Live</text><text x="342" y="137" text-anchor="middle" font-size="10">amount raised climbs</text>
+          <rect x="414" y="104" width="120" height="48" rx="6" style="fill:var(--chg-tint);stroke:var(--chg)" stroke-width="1.2"/><text x="474" y="123" text-anchor="middle" font-weight="700" font-size="11">Cooling → Success</text><text x="474" y="137" text-anchor="middle" font-size="10">or Fail, with refunds</text>
+          <text x="606" y="132" text-anchor="middle" font-size="10" opacity=".45">—</text><text x="738" y="132" text-anchor="middle" font-size="10" opacity=".45">—</text><text x="875" y="132" text-anchor="middle" font-size="10" opacity=".45">—</text>
+          <!-- Terms row y=168 -->
+          <rect x="150" y="168" width="120" height="48" rx="6" style="fill:var(--new-tint);stroke:var(--new)" stroke-width="1.2"/><text x="210" y="187" text-anchor="middle" font-weight="700" font-size="11">+ 1 row · N-2026-00001</text><text x="210" y="201" text-anchor="middle" font-size="10">debt terms · frozen fee terms</text>
+          <text x="342" y="196" text-anchor="middle" font-size="10" opacity=".7">frozen</text><text x="474" y="196" text-anchor="middle" font-size="10" opacity=".7">frozen</text><text x="606" y="196" text-anchor="middle" font-size="10" opacity=".7">frozen</text><text x="738" y="196" text-anchor="middle" font-size="10" opacity=".7">frozen</text><text x="875" y="196" text-anchor="middle" font-size="10" opacity=".7">frozen</text>
+          <!-- Investment row y=232 -->
+          <text x="210" y="260" text-anchor="middle" font-size="10" opacity=".45">—</text>
+          <rect x="282" y="232" width="120" height="48" rx="6" style="fill:var(--new-tint);stroke:var(--new)" stroke-width="1.2"/><text x="342" y="251" text-anchor="middle" font-weight="700" font-size="11">+ 190 rows · units stored</text><text x="342" y="265" text-anchor="middle" font-size="10">Pending → Paid · 1 Refunded</text>
+          <rect x="414" y="232" width="120" height="48" rx="6" style="fill:var(--chg-tint);stroke:var(--chg)" stroke-width="1.2"/><text x="474" y="251" text-anchor="middle" font-weight="700" font-size="11">189 → Completed</text><text x="474" y="265" text-anchor="middle" font-size="10">at minting</text>
+          <text x="606" y="260" text-anchor="middle" font-size="10" opacity=".45">—</text><text x="738" y="260" text-anchor="middle" font-size="10" opacity=".45">—</text><text x="875" y="260" text-anchor="middle" font-size="10" opacity=".45">—</text>
+          <!-- Note row y=296 -->
+          <text x="210" y="324" text-anchor="middle" font-size="10" opacity=".7">does not exist yet</text><text x="342" y="324" text-anchor="middle" font-size="10" opacity=".7">does not exist yet</text>
+          <rect x="414" y="296" width="120" height="48" rx="6" style="fill:var(--new-tint);stroke:var(--new)" stroke-width="1.6"/><text x="474" y="315" text-anchor="middle" font-weight="700" font-size="11">+ 1 row · Issued</text><text x="474" y="329" text-anchor="middle" font-size="10">RM 450,000 · 4,500 units</text>
+          <rect x="546" y="296" width="120" height="48" rx="6" style="fill:var(--chg-tint);stroke:var(--chg)" stroke-width="1.2"/><text x="606" y="315" text-anchor="middle" font-weight="700" font-size="11">→ Performing</text><text x="606" y="329" text-anchor="middle" font-size="10">the loan is live</text>
+          <rect x="678" y="296" width="120" height="48" rx="6" style="fill:var(--chg-tint);stroke:var(--chg)" stroke-width="1.2"/><text x="738" y="315" text-anchor="middle" font-weight="700" font-size="11">totals updated</text><text x="738" y="329" text-anchor="middle" font-size="10">repaid · outstanding</text>
+          <rect x="810" y="296" width="130" height="48" rx="6" style="fill:var(--chg-tint);stroke:var(--chg)" stroke-width="1.2"/><text x="875" y="315" text-anchor="middle" font-weight="700" font-size="11">→ Late · Default · Closed</text><text x="875" y="329" text-anchor="middle" font-size="10">one row, not 189</text>
+          <!-- Register row y=360 -->
+          <text x="210" y="388" text-anchor="middle" font-size="10" opacity=".7">no rows yet</text><text x="342" y="388" text-anchor="middle" font-size="10" opacity=".7">still no rows</text>
+          <rect x="414" y="360" width="120" height="48" rx="6" style="fill:var(--new-tint);stroke:var(--new)" stroke-width="1.6"/><text x="474" y="379" text-anchor="middle" font-weight="700" font-size="11">+ 189 rows · Active</text><text x="474" y="393" text-anchor="middle" font-size="10">one per paid investment</text>
+          <text x="606" y="388" text-anchor="middle" font-size="10" opacity=".7">unchanged</text>
+          <rect x="678" y="360" width="120" height="48" rx="6" style="fill:var(--chg-tint);stroke:var(--chg)" stroke-width="1.2"/><text x="738" y="379" text-anchor="middle" font-weight="700" font-size="11">189 rows · totals updated</text><text x="738" y="393" text-anchor="middle" font-size="10">each holder's share</text>
+          <rect x="810" y="360" width="130" height="48" rx="6" style="fill:var(--chg-tint);stroke:var(--chg)" stroke-width="1.2"/><text x="875" y="379" text-anchor="middle" font-weight="700" font-size="11">1 → Bought back</text><text x="875" y="393" text-anchor="middle" font-size="10">only if one holder exits</text>
+          <!-- Schedule row y=424 -->
+          <rect x="150" y="424" width="120" height="48" rx="6" style="fill:var(--new-tint);stroke:var(--new)" stroke-width="1.2"/><text x="210" y="443" text-anchor="middle" font-weight="700" font-size="11">+ v1 Indicative</text><text x="210" y="457" text-anchor="middle" font-size="10">36 rows on RM 500,000</text>
+          <text x="342" y="452" text-anchor="middle" font-size="10" opacity=".45">—</text>
+          <rect x="414" y="424" width="120" height="48" rx="6" style="fill:var(--new-tint);stroke:var(--new)" stroke-width="1.2"/><text x="474" y="443" text-anchor="middle" font-weight="700" font-size="11">+ v2 Final</text><text x="474" y="457" text-anchor="middle" font-size="10">on RM 450,000 · v1 kept</text>
+          <text x="606" y="452" text-anchor="middle" font-size="10" opacity=".45">—</text>
+          <text x="738" y="448" text-anchor="middle" font-size="10" opacity=".7">unchanged</text><text x="738" y="461" text-anchor="middle" font-size="10" opacity=".7">the plan is never edited</text>
+          <rect x="810" y="424" width="130" height="48" rx="6" style="fill:var(--else-tint);stroke:var(--else)" stroke-width="1.2" stroke-dasharray="4 3"/><text x="875" y="443" text-anchor="middle" font-weight="700" font-size="11">+ v3 Restructured</text><text x="875" y="457" text-anchor="middle" font-size="10">only after a deed</text>
+          <!-- Payouts row y=488 -->
+          <text x="210" y="512" text-anchor="middle" font-size="10" opacity=".45">—</text><text x="342" y="512" text-anchor="middle" font-size="10" opacity=".45">—</text><text x="474" y="512" text-anchor="middle" font-size="10" opacity=".45">—</text><text x="606" y="512" text-anchor="middle" font-size="10" opacity=".45">—</text>
+          <rect x="678" y="486" width="120" height="48" rx="6" style="fill:var(--else-tint);stroke:var(--else)" stroke-width="1.2" stroke-dasharray="4 3"/><text x="738" y="505" text-anchor="middle" font-weight="700" font-size="11">+ 1 event · 189 allocations</text><text x="738" y="519" text-anchor="middle" font-size="10">to Active holders</text>
+          <rect x="810" y="486" width="130" height="48" rx="6" style="fill:var(--else-tint);stroke:var(--else)" stroke-width="1.2" stroke-dasharray="4 3"/><text x="875" y="505" text-anchor="middle" font-weight="700" font-size="11">recovery events</text><text x="875" y="519" text-anchor="middle" font-size="10">same tables</text>
+        </g>
+      </svg>
+      <figcaption>Teal cells add rows; amber cells change an existing row; dashed cells belong to later tickets. The note and its register both come into existence at close. From then on the note's row carries the loan's status and running totals, and each register row carries that holder's status and running share of repayments. A missed payment changes one row; an individual exit changes one row; a repayment updates the totals on all of them, written only by the payout that caused it.</figcaption>
+    </figure>
+  </section>
+
+  <section>
+    <div class="s-head"><span class="s-eyebrow">Step by step</span><h2>The story of N-2026-00001</h2></div>
+    <div class="steps">
+
+      <div class="stage">Stage 1 · Set up</div>
+      <div class="step admin">
+        <div class="step-h"><span class="n">1</span><h3>Admin approves the loan and sets up the note</h3><span class="who admin">Admin</span></div>
+        <p>Contoh Kitchen applied to borrow. Admin's credit team scored it B1, which fixes the rate band and the maximum tenure. Admin then creates the note in the admin portal: the platform works out the tenure unit and the default class from "monthly", checks the rate and tenure against the platform's limits, gives the note its number, sets the unit at RM 100, and copies the fee terms in force today onto the note so a later fee change cannot touch this deal.</p>
+        <dl class="rec">
+          <dt>We record</dt>
+          <dd><ul>
+            <li><b>Campaign</b> one new listing: product type Note, Conventional, target RM 400,000 to 500,000, minimum investment RM 100, price per asset RM 100 (the unit). Minimum investment and price per asset are decided when the note is set up, but they live on Campaign because every product has them: equity's price per share is this same column, renamed. How investments step up from the minimum is a separate ticket for every product. The equity-only columns on the same row (shares per lot, lots, shares issued, equity offered, share types, oversubscription) stay at their defaults. Nothing reads them for a note, and they move to their own equity table later.</li>
+            <li><b>CampaignNoteTerm</b> one row: N-2026-00001, Business Term, 36 months, 10.50%, grade B1, purpose working capital, the reason for the grade, and the frozen fee terms (success fee 4%, late fee RM 500, 7 days grace, default at 90 days). Only debt-shaped facts live here. Frozen from here on.</li>
+            <li><b>RepaymentSchedule</b> version 1, "Indicative", marked current: 36 monthly rows worked out on the RM 500,000 maximum, so investors can see the shape of repayments.</li>
+          </ul></dd>
+          <dt>Equity today</dt>
+          <dd class="eq"><span class="same">Same for the shared part.</span> Price per asset and minimum investment sit on the Campaign row for both products. <span class="diff">Different for the rest:</span> equity keeps its lot and share fields on Campaign today and moves them to their own table later; a note keeps its debt terms on their own table from day one.</dd>
+        </dl>
+        <div class="dev">ticket: <i>F1.4 setup screen</i> calls this ticket's note-terms service · limits and fee values from <i>P2P-27</i> · schedule maths from <i>F4.1</i></div>
+      </div>
+
+      <div class="stage">Stage 2 · Raise · the campaign is live</div>
+      <div class="step investor">
+        <div class="step-h"><span class="n">2</span><h3>Aisha invests RM 5,000 and gets 50 units</h3><span class="who investor">Investor</span></div>
+        <p>Aisha reads the listing: rate, tenure, grade, the reason for the grade, and the indicative schedule. She confirms the three acknowledgements, that she understands the risks, that her investor category is still retail, and that she has read the disclosure. She agrees to the note's terms and, through the platform terms, authorises pitchIN to execute her note on her behalf at close, when the final amount and schedule are known. That is her binding act; the note document itself is produced at close. She pays RM 5,000 from her wallet. The platform checks the RM 50,000 retail cap, works out that RM 5,000 at RM 100 a unit is 50 units, and records it. Her money moves into the trust account and stays there until the campaign closes.</p>
+        <dl class="rec">
+          <dt>We record</dt>
+          <dd><ul>
+            <li><b>Investment</b> one row: Aisha, RM 5,000, retail, status Pending Payment, then Paid once the money lands. The same row says what the money buys, in instrument-agnostic columns: asset type Note, price per asset RM 100 copied from the campaign, asset quantity 50, held through the nominee (always true for notes), her account number. Lots are not used for notes.</li>
+            <li><b>UserConsent</b> rows for the acknowledgements and the agreement to the terms, each with the version of the wording she accepted.</li>
+            <li><b>Note and NoteRegister</b> <span class="none">nothing. Neither exists yet; she has a paid investment in an open campaign.</span></li>
+          </ul></dd>
+          <dt>Equity today</dt>
+          <dd class="eq"><span class="same">Identical table, same statuses.</span> For equity the same columns hold the share type, price per share and share quantity; the columns are renamed to say asset rather than share so both products read them the same way. <span class="diff">One difference:</span> equity also counts lots; notes never do.</dd>
+        </dl>
+        <div class="dev">ticket: <i>lane D invest flow</i> · consents <i>P2P-28</i> · units = amount ÷ the campaign's price per asset · increments for every product are <i>P2P-68</i>, out of scope here · retail cap counts paid pledges in open note campaigns plus principal on live notes <i>(P2P-27 screen 2, F2.4)</i> · the authority to execute at close is worded in the platform terms, <i>F-07</i>, Legal to confirm</div>
+      </div>
+
+      <div class="step investor">
+        <div class="step-h"><span class="n">3</span><h3>Ben invests RM 20,000, then changes his mind</h3><span class="who investor">Investor</span></div>
+        <p>While the campaign is still open, Ben asks for his money back. The rulebook allows this at any time before close. His RM 20,000 returns to his wallet.</p>
+        <dl class="rec">
+          <dt>We record</dt>
+          <dd><ul>
+            <li><b>Investment</b> Ben's row moves from Paid to Refunded, with the refunded amount. His 200 units are never issued.</li>
+            <li><b>NoteRegister</b> <span class="none">nothing, now or ever. Ben never held a note, so the register never hears of him.</span></li>
+          </ul></dd>
+          <dt>Equity today</dt>
+          <dd class="eq"><span class="same">Identical.</span> A refund before close is the same Investment status change.</dd>
+        </dl>
+      </div>
+
+      <div class="step investor">
+        <div class="step-h"><span class="n">4</span><h3>Chong and 187 others invest</h3><span class="who investor">Investor</span></div>
+        <p>Chong, a sophisticated investor with no cap, puts in RM 50,000 for 500 units. By the end date, 189 paid investments total RM 450,000, or 4,500 units. The platform stops accepting money at the RM 500,000 maximum, so a note is never oversubscribed. That rule belongs to the invest flow and still needs confirming there.</p>
+        <dl class="rec">
+          <dt>We record</dt>
+          <dd><ul><li><b>Investment</b> 189 rows with status Paid. The Campaign row shows the amount raised climbing.</li></ul></dd>
+          <dt>Equity today</dt>
+          <dd class="eq"><span class="diff">One difference.</span> Equity can allow oversubscription and scales investors back at allotment. A note stops at its maximum, so there is nothing to scale back at close.</dd>
+        </dl>
+      </div>
+
+      <div class="stage">Stage 3 · Close</div>
+      <div class="step admin">
+        <div class="step-h"><span class="n">5</span><h3>The campaign ends, cools off, and Admin decides</h3><span class="who admin">Admin</span></div>
+        <p>At the end date the platform moves the campaign into its cooling-off period, exactly as it does for equity; investors may still withdraw during it. When cooling-off ends, Admin reviews the raise and decides: RM 450,000 is above the RM 400,000 minimum and the conditions are met, so Admin confirms success. Had Admin failed it, every paid investment would be refunded and neither the note nor its register would ever exist.</p>
+        <dl class="rec">
+          <dt>We record</dt>
+          <dd><ul><li><b>Campaign</b> status Live → Cooling at the end date, then Success on Admin's decision, with the completion time. (Or Fail, and 189 Investment rows move to Refunded.)</li></ul></dd>
+          <dt>Equity today</dt>
+          <dd class="eq"><span class="same">Identical.</span> The same scheduler starts cooling-off, and a person completes or fails the campaign.</dd>
+        </dl>
+        <div class="dev">ticket: <i>F3.1 close</i> · success = 100% of the minimum target · the cooling-off length for notes is a <i>P2P-27</i> parameter if it differs from equity</div>
+      </div>
+
+      <div class="step issuer">
+        <div class="step-h"><span class="n">6</span><h3>Contoh Kitchen signs the final terms</h3><span class="who issuer">Issuer</span></div>
+        <p>The raise came in at RM 450,000, not the RM 500,000 the indicative plan assumed, so the platform produces the final schedule on the real amount, and the issuer digitally signs the Note Supplement that binds it. The indicative version is kept: investors were shown it.</p>
+        <dl class="rec">
+          <dt>We record</dt>
+          <dd><ul><li><b>RepaymentSchedule</b> version 2, "Final", becomes the current one: 36 rows on RM 450,000, first instalment due 1 November 2026. Version 1 stays on file, no longer current.</li></ul></dd>
+          <dt>Equity today</dt>
+          <dd class="eq"><span class="diff">No equivalent.</span> Shares have no repayment plan. This table exists only for notes.</dd>
+        </dl>
+        <div class="dev">ticket: <i>F3.1 close</i> generates the version through this ticket's schedule versioning · Note Supplement document <i>lane D</i></div>
+      </div>
+
+      <div class="step admin">
+        <div class="step-h"><span class="n">7</span><h3>Admin mints the note and its register</h3><span class="who admin">Admin</span></div>
+        <p>This is the moment the loan comes into existence. The platform creates the note itself, RM 450,000 in 4,500 units, status Issued. Then, for each of the 189 paid investments in the order they were made, it creates one register row, numbers it, generates and executes the investor's digital note under the authority she gave at payment, and marks the investment Completed. Aisha holds slice 0001, 50 units; Chong holds slice 0003, 500 units. Ben's refunded investment is skipped. From here on, the note's status on the Note row describes the issuer's repayment of the one loan, and each register row carries its own holding status for what can happen to one holder alone: a buyback, a refund after close, later a transfer. Payouts go to Active holders only.</p>
+        <dl class="rec">
+          <dt>We record</dt>
+          <dd><ul>
+            <li><b>Note</b> one row: N-2026-00001, RM 450,000 issued, 4,500 units, status Issued, issued 1 October 2026, principal outstanding RM 450,000, nothing repaid yet, and the terms in force copied from the offer: 10.50%, 36 months, maturing 1 October 2029. This row carries the loan's terms, status and running totals from now on; the offer on CampaignNoteTerm never changes.</li>
+            <li><b>NoteRegister</b> 189 rows, holding status Active. Aisha's: N-2026-00001-0001, 50 units, RM 5,000, linked to her investment (which records that she was retail), to Contoh Kitchen, to her consent from payment day, and to her executed note document; principal outstanding RM 5,000, nothing received yet.</li>
+            <li><b>Investment</b> 189 rows move from Paid to Completed.</li>
+          </ul></dd>
+          <dt>Equity today</dt>
+          <dd class="eq"><span class="same">Same moment, same pattern.</span> When Admin completes share allotment, equity marks the investments Completed, creates the Share rows, and sets up the company's share counter with its own status and one holder record per investor with its own status. The note and its register are that counter and those holder records. <span class="diff">Two differences:</span> equity merges an investor's several investments into one holder record, while each paid note investment is its own slice with its own document; and equity's allotment is drafted and reviewed by hand, while minting is one step once Admin has confirmed success.</dd>
+        </dl>
+        <div class="dev">ticket: this ticket's minting operation, called by <i>F3.1</i> · note status values: Issued · Performing · Late · Restructured · Default in recovery · Default with low or no recovery · Written off · Closed · Failed and refunded (a campaign found unsuccessful after close, §1.6) · holding status values: Active · Bought back · Refunded · Transferred (later), with exit date and amount</div>
+      </div>
+
+      <div class="stage">Stage 4 · Disburse</div>
+      <div class="step admin">
+        <div class="step-h"><span class="n">8</span><h3>Admin instructs the trustee; Contoh Kitchen receives the money</h3><span class="who admin">Admin</span></div>
+        <p>Admin instructs the independent trustee to release the proceeds: RM 450,000 less the 4% success fee plus tax, less stamp duty (nil until the end of 2026). The loan is now live and the repayment clock starts.</p>
+        <dl class="rec">
+          <dt>We record</dt>
+          <dd><ul><li><b>Note</b> status Issued → Performing, with the disbursement date and the maturity date. The 189 register rows do not change.</li></ul></dd>
+          <dt>Equity today</dt>
+          <dd class="eq"><span class="diff">No equivalent.</span> Shares do not perform or fall behind. Completing an equity allotment opens the counter for secondary trading, which notes never do: a note cannot be sold before maturity.</dd>
+        </dl>
+        <div class="dev">ticket: <i>F3.3 disbursement</i> calls this ticket's disbursed transition · fees <i>F3.4</i></div>
+      </div>
+
+      <div class="stage">Stage 5 · Repay</div>
+      <div class="step issuer">
+        <div class="step-h"><span class="n">9</span><h3>Contoh Kitchen pays the first instalment</h3><span class="who issuer">Issuer</span></div>
+        <p>On 1 November 2026, RM 16,437.50 arrives in the trust account by direct debit: RM 12,500 of principal and RM 3,937.50 of interest, as the final schedule promised. The platform matches it to schedule row 1, splits it across the Active holders in proportion to their units, takes the 15% management fee on the interest plus 8% tax on that fee, and credits each wallet. Aisha, with 50 of 4,500 units, receives RM 175.55; Chong, with 500, receives RM 1,755.51.</p>
+        <dl class="rec">
+          <dt>We record</dt>
+          <dd><ul>
+            <li><b>Payouts</b> one event for the money received, pointing at schedule row 1, and 189 allocations: gross, fee, net, and the wallet credit for each holder. This is the ledger; everything below is a running total kept in step with it.</li>
+            <li><b>Note</b> running totals: principal repaid RM 12,500, interest paid RM 3,937.50, principal outstanding RM 437,500, last paid 1 November 2026. Status still Performing.</li>
+            <li><b>NoteRegister</b> each holder's running share. Aisha's row: principal repaid RM 138.89, interest received RM 43.75, fees deducted RM 7.09, net received RM 175.55, principal outstanding RM 4,861.11. Chong's: principal repaid RM 1,388.89, interest RM 437.50, fees RM 70.88, net RM 1,755.51, outstanding RM 48,611.11.</li>
+            <li><b>RepaymentSchedule</b> <span class="none">unchanged. The plan is the promise.</span></li>
+          </ul></dd>
+          <dt>Equity today</dt>
+          <dd class="eq"><span class="same">Same shape for the holder.</span> The equity holder record keeps a running cost basis and realised gain per holder, updated by each sale or dividend event, exactly as the register row keeps its running repayments. <span class="diff">Different trigger:</span> a company pays dividends when it declares them, not on a schedule. Both products will share the same payout tables.</dd>
+        </dl>
+        <div class="dev">ticket: <i>F4.2 collection</i> and <i>F4.3 distribution</i> · figures are illustrative; <i>F4.1</i> defines the maths</div>
+      </div>
+
+      <div class="stage">Stage 6 · Service · only if things change</div>
+      <div class="step admin">
+        <div class="step-h"><span class="n">10</span><h3>Chong negotiates an early exit; later a payment is missed; finally the note is repaid</h3><span class="who admin">Admin</span></div>
+        <p>Three things can happen after the loan is live, and each touches a different row. If Chong negotiates an early buyback of his 500 units, his register row alone records it; the note carries on, with its outstanding principal reduced if the issuer was the buyer. If an instalment is not received by its due date, the platform counts the days past due from the schedule row and moves the note to Late; at 90 days for a monthly note it becomes Default in recovery, and Admin's recovery process takes over. If Admin agrees a restructure, a third schedule version is added and the earlier promise stays on file. When the last instalment is paid, the note moves to Closed. The register rows stay forever as the holders' record and the issuer's track record.</p>
+        <dl class="rec">
+          <dt>We record</dt>
+          <dd><ul>
+            <li><b>NoteRegister</b> Chong's row: holding status Active → Bought back, with the exit date and amount, and his principal outstanding set to zero. The other 188 rows are untouched.</li>
+            <li><b>Note</b> status Performing → Late → Default in recovery, or Restructured, and finally Closed, with the closing date. On a restructure the note's rate, tenure and maturity change with the new schedule version; the offer on CampaignNoteTerm stays as it was disclosed.</li>
+            <li><b>RepaymentSchedule</b> version 3, "Restructured", only if a Supplemental Deed is signed.</li>
+          </ul></dd>
+          <dt>Equity today</dt>
+          <dd class="eq"><span class="same">Same shape.</span> A holder's status on the counter changes when that holder sells; the counter's own status changes when the company's listing changes. <span class="diff">Different content:</span> shares never fall behind or close, so the note's status set is its own.</dd>
+        </dl>
+        <div class="dev">ticket: <i>lane G servicing</i> writes the note's states · buyback and refund are holding transitions on the register · days past due are computed, never stored on the plan</div>
+      </div>
+
+    </div>
+    <div class="box"><b>If you already know equity</b>Keep four things in mind. A note slice is one row per paid investment, never merged per investor. Minting is one step once Admin confirms success, with no draft to review and nothing to scale back. The note's status lives on the note's row and each holder's status on the register row; both are moved only by the events above, never from a status screen. And there is no secondary market for notes.</div>
+  </section>
+
+  <section>
+    <div class="s-head"><span class="s-eyebrow">The whole picture</span><h2>Every product's tables, and what this ticket touches</h2></div>
+    <p class="lead">One column per product, one row per phase of a raise. Grey is what exists and does not change. Amber is existing and changed here. Teal is new here. Dashed is designed now and built by a later ticket.</p>
+    <div class="legend" style="margin-top:0">
+      <span><i class="sw exist"></i> Exists, unchanged</span>
+      <span><i class="sw chg"></i> Exists, changed here</span>
+      <span><i class="sw new"></i> New in this ticket</span>
+      <span><i class="sw else"></i> Later ticket</span>
+    </div>
+    <figure>
+      <svg viewBox="0 0 1000 700" role="img" aria-label="A grid. Columns: Shared by every product, Equity, Note, Token in future. Rows: People, The offering, Money in, The instrument after close, The holders, The plan, Payouts and parameters. Shared column: User and Company; Campaign changed here; Investment changed here with UserConsent, Attachment and Wallet unchanged; P2P-27 parameter store later; DistributionEvent and DistributionAllocation later. Equity column: terms stay on Campaign today with CampaignEquityTerm later; MySecShare counter with MySecShareHolder unchanged; Share unchanged; EquityPaymentEvent later. Note column: CampaignNoteTerm new; Note new; NoteRegister new; RepaymentSchedule and rows new. Token column: CampaignTokenTerm and TokenHolding later. Arrows: paid investments become Share rows by allotment and NoteRegister rows by minting; the note is issued at close from its terms; the note has holders; schedule instalments feed payouts.">
+        <defs><marker id="ah2" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="currentColor"/></marker></defs>
+        <g font-size="11.5" fill="currentColor">
+          <!-- column headers -->
+          <g font-size="12" font-weight="700">
+            <text x="260" y="28" text-anchor="middle">Shared by every product</text>
+            <text x="480" y="28" text-anchor="middle">Equity · today</text>
+            <text x="700" y="28" text-anchor="middle">Note · this ticket</text>
+            <text x="905" y="28" text-anchor="middle" opacity=".75">Token · future</text>
+          </g>
+          <g stroke="currentColor" stroke-opacity=".14" stroke-width="1">
+            <line x1="150" y1="36" x2="150" y2="690"/><line x1="370" y1="36" x2="370" y2="690"/><line x1="590" y1="36" x2="590" y2="690"/><line x1="810" y1="36" x2="810" y2="690"/>
+            <line x1="10" y1="36" x2="1000" y2="36"/><line x1="10" y1="110" x2="1000" y2="110"/><line x1="10" y1="200" x2="1000" y2="200"/><line x1="10" y1="290" x2="1000" y2="290"/><line x1="10" y1="380" x2="1000" y2="380"/><line x1="10" y1="470" x2="1000" y2="470"/><line x1="10" y1="560" x2="1000" y2="560"/><line x1="10" y1="690" x2="1000" y2="690"/>
+          </g>
+          <!-- row labels -->
+          <g font-size="10.5" font-weight="700" letter-spacing=".8" opacity=".75">
+            <text x="14" y="76">PEOPLE</text>
+            <text x="14" y="150">THE OFFERING</text><text x="14" y="165" font-weight="400" letter-spacing="0" font-size="10">set up by Admin</text>
+            <text x="14" y="240">MONEY IN</text><text x="14" y="255" font-weight="400" letter-spacing="0" font-size="10">the raise</text>
+            <text x="14" y="330">THE INSTRUMENT</text><text x="14" y="345" font-weight="400" letter-spacing="0" font-size="10">after close</text>
+            <text x="14" y="420">THE HOLDERS</text><text x="14" y="435" font-weight="400" letter-spacing="0" font-size="10">who owns what</text>
+            <text x="14" y="510">THE PLAN</text><text x="14" y="525" font-weight="400" letter-spacing="0" font-size="10">when money is due</text>
+            <text x="14" y="620">PAYOUTS AND</text><text x="14" y="635">PARAMETERS</text><text x="14" y="650" font-weight="400" letter-spacing="0" font-size="10">later tickets</text>
+          </g>
+
+          <!-- PEOPLE row (y 36-110) -->
+          <rect x="165" y="52" width="90" height="40" rx="7" fill="none" stroke="currentColor" stroke-width="1.2"/><text x="210" y="76" text-anchor="middle" font-weight="700">User</text>
+          <rect x="265" y="52" width="90" height="40" rx="7" fill="none" stroke="currentColor" stroke-width="1.2"/><text x="310" y="76" text-anchor="middle" font-weight="700">Company</text>
+
+          <!-- OFFERING row (y 110-200) -->
+          <rect x="165" y="124" width="190" height="60" rx="7" style="fill:var(--chg-tint);stroke:var(--chg)" stroke-width="1.6"/><text x="260" y="145" text-anchor="middle" font-weight="700">Campaign</text><text x="260" y="160" text-anchor="middle" font-size="10">+ ProductType · ShariahType · MinimumInvestmentAmount</text><text x="260" y="173" text-anchor="middle" font-size="10">PricePerShare → PricePerAsset · slug unique</text>
+          <rect x="385" y="124" width="190" height="60" rx="7" style="fill:var(--else-tint);stroke:var(--else)" stroke-width="1.2" stroke-dasharray="4 3"/><text x="480" y="145" text-anchor="middle" font-weight="700">CampaignEquityTerm</text><text x="480" y="160" text-anchor="middle" font-size="10">lots, shares issued, equity offered</text><text x="480" y="173" text-anchor="middle" font-size="10">sit on Campaign today · move here later</text>
+          <rect x="605" y="124" width="190" height="60" rx="7" style="fill:var(--new-tint);stroke:var(--new)" stroke-width="1.6"/><text x="700" y="145" text-anchor="middle" font-weight="700">CampaignNoteTerm</text><text x="700" y="160" text-anchor="middle" font-size="10">rate · tenure · grade · unit price</text><text x="700" y="173" text-anchor="middle" font-size="10">frozen fee terms · 1 : 1 with Campaign</text>
+          <rect x="825" y="124" width="160" height="60" rx="7" style="fill:var(--else-tint);stroke:var(--else)" stroke-width="1.2" stroke-dasharray="4 3"/><text x="905" y="145" text-anchor="middle" font-weight="700">CampaignTokenTerm</text><text x="905" y="160" text-anchor="middle" font-size="10">token campaigns run in a</text><text x="905" y="173" text-anchor="middle" font-size="10">separate app today</text>
+
+          <!-- MONEY IN row (y 200-290) -->
+          <rect x="165" y="212" width="190" height="66" rx="7" style="fill:var(--chg-tint);stroke:var(--chg)" stroke-width="1.6"/><text x="260" y="231" text-anchor="middle" font-weight="700">Investment</text><text x="260" y="246" text-anchor="middle" font-size="10">Pending → Paid → Completed</text><text x="260" y="259" text-anchor="middle" font-size="10">asset type · price per asset · quantity</text><text x="260" y="272" text-anchor="middle" font-size="10">renamed from share columns</text>
+          <text x="480" y="240" text-anchor="middle" font-size="10.5" opacity=".7">same Investment table</text><text x="480" y="254" text-anchor="middle" font-size="10.5" opacity=".7">plus lots, not used by notes</text>
+          <text x="700" y="240" text-anchor="middle" font-size="10.5" opacity=".7">same Investment table</text><text x="700" y="254" text-anchor="middle" font-size="10.5" opacity=".7">units = amount ÷ unit price</text>
+          <text x="905" y="247" text-anchor="middle" font-size="10.5" opacity=".5">—</text>
+
+          <!-- INSTRUMENT row (y 290-380) -->
+          <text x="260" y="337" text-anchor="middle" font-size="10.5" opacity=".5">—</text>
+          <rect x="385" y="304" width="190" height="60" rx="7" fill="none" stroke="currentColor" stroke-width="1.2"/><text x="480" y="325" text-anchor="middle" font-weight="700">MySecShare</text><text x="480" y="340" text-anchor="middle" font-size="10">the company's share counter</text><text x="480" y="353" text-anchor="middle" font-size="10">set up at completion · has a status</text>
+          <rect x="605" y="304" width="190" height="60" rx="7" style="fill:var(--new-tint);stroke:var(--new)" stroke-width="1.6"/><text x="700" y="325" text-anchor="middle" font-weight="700">Note</text><text x="700" y="340" text-anchor="middle" font-size="10">the issued loan · created at close</text><text x="700" y="353" text-anchor="middle" font-size="10">terms in force · status · running totals</text>
+          <text x="905" y="337" text-anchor="middle" font-size="10.5" opacity=".5">—</text>
+
+          <!-- HOLDERS row (y 380-470) -->
+          <text x="260" y="427" text-anchor="middle" font-size="10.5" opacity=".5">—</text>
+          <rect x="385" y="392" width="92" height="66" rx="7" fill="none" stroke="currentColor" stroke-width="1.2"/><text x="431" y="413" text-anchor="middle" font-weight="700">Share</text><text x="431" y="428" text-anchor="middle" font-size="9.5">allotment registry</text><text x="431" y="441" text-anchor="middle" font-size="9.5">one per investor</text>
+          <rect x="483" y="392" width="92" height="66" rx="7" fill="none" stroke="currentColor" stroke-width="1.2"/><text x="529" y="413" text-anchor="middle" font-weight="700" font-size="10.5">MySecShareHolder</text><text x="529" y="428" text-anchor="middle" font-size="9.5">holder on the counter</text><text x="529" y="441" text-anchor="middle" font-size="9.5">has a status</text>
+          <rect x="605" y="392" width="190" height="66" rx="7" style="fill:var(--new-tint);stroke:var(--new)" stroke-width="1.6"/><text x="700" y="413" text-anchor="middle" font-weight="700">NoteRegister</text><text x="700" y="428" text-anchor="middle" font-size="10">one row per paid investment</text><text x="700" y="441" text-anchor="middle" font-size="10">units · principal · status · running totals</text>
+          <rect x="825" y="392" width="160" height="66" rx="7" style="fill:var(--else-tint);stroke:var(--else)" stroke-width="1.2" stroke-dasharray="4 3"/><text x="905" y="413" text-anchor="middle" font-weight="700">TokenHolding</text><text x="905" y="428" text-anchor="middle" font-size="10">token consolidation</text>
+
+          <!-- PLAN row (y 470-560) -->
+          <text x="260" y="517" text-anchor="middle" font-size="10.5" opacity=".5">—</text>
+          <text x="480" y="512" text-anchor="middle" font-size="10.5" opacity=".7">no plan</text><text x="480" y="526" text-anchor="middle" font-size="10.5" opacity=".7">dividends are declared ad hoc</text>
+          <rect x="605" y="482" width="190" height="66" rx="7" style="fill:var(--new-tint);stroke:var(--new)" stroke-width="1.6"/><text x="700" y="503" text-anchor="middle" font-weight="700">RepaymentSchedule + rows</text><text x="700" y="518" text-anchor="middle" font-size="10">versions · exactly one current</text><text x="700" y="531" text-anchor="middle" font-size="10">rows are Annex A §4, the promise</text>
+          <text x="905" y="517" text-anchor="middle" font-size="10.5" opacity=".5">—</text>
+
+          <!-- PAYOUTS row (y 560-690) -->
+          <rect x="165" y="574" width="190" height="52" rx="7" style="fill:var(--else-tint);stroke:var(--else)" stroke-width="1.2" stroke-dasharray="4 3"/><text x="260" y="595" text-anchor="middle" font-weight="700">DistributionEvent · Allocation</text><text x="260" y="610" text-anchor="middle" font-size="10">money in, split per holder, to wallets</text>
+          <rect x="165" y="632" width="190" height="46" rx="7" style="fill:var(--else-tint);stroke:var(--else)" stroke-width="1.2" stroke-dasharray="4 3"/><text x="260" y="651" text-anchor="middle" font-weight="700">P2P-27 parameter store</text><text x="260" y="665" text-anchor="middle" font-size="10">limits and fee dials the note reads</text>
+          <rect x="385" y="574" width="190" height="52" rx="7" style="fill:var(--else-tint);stroke:var(--else)" stroke-width="1.2" stroke-dasharray="4 3"/><text x="480" y="595" text-anchor="middle" font-weight="700">EquityPaymentEvent</text><text x="480" y="610" text-anchor="middle" font-size="10">a declared dividend or redemption</text>
+          <text x="700" y="595" text-anchor="middle" font-size="10.5" opacity=".7">an instalment received</text><text x="700" y="609" text-anchor="middle" font-size="10.5" opacity=".7">is the payout's source</text>
+          <text x="905" y="602" text-anchor="middle" font-size="10.5" opacity=".5">—</text>
+          <!-- also-read, small -->
+          <text x="260" y="286" text-anchor="middle" font-size="9.5" opacity=".6">also read, unchanged: UserConsent · Attachment · Wallet</text>
+
+          <!-- arrows -->
+          <!-- Company raises Campaign -->
+          <line x1="310" y1="92" x2="310" y2="124" stroke="currentColor" stroke-width="1.2" marker-end="url(#ah2)"/><text x="318" y="112" font-size="9.5">raises</text>
+          <!-- User invests -->
+          <line x1="210" y1="92" x2="210" y2="212" stroke="currentColor" stroke-width="1.2" marker-end="url(#ah2)"/><text x="176" y="200" font-size="9.5">invests</text>
+          <!-- Campaign -> terms (note) : along the row gap y=196? use channel between rows at y=192 -->
+          <polyline points="355,178 372,178 372,192 596,192 596,178 605,178" fill="none" stroke="currentColor" stroke-width="1.2" marker-end="url(#ah2)"/><text x="484" y="197" text-anchor="middle" font-size="9.5">when it is a note, its terms</text>
+          <!-- Investment -> Share (allotment) and -> NoteRegister (minting): from Investment right edge via column gap -->
+          <polyline points="355,245 378,245 378,425 385,425" fill="none" stroke="currentColor" stroke-width="1.2" marker-end="url(#ah2)"/><text x="382" y="300" font-size="9.5" transform="rotate(90 382 300)">allotment</text>
+          <polyline points="355,262 366,262 366,464 598,464 598,425 605,425" fill="none" stroke="currentColor" stroke-width="1.2" marker-end="url(#ah2)"/><text x="484" y="468" text-anchor="middle" font-size="9.5">minting · one paid investment → one slice</text>
+          <!-- terms -> Note (issued at close) -->
+          <line x1="700" y1="184" x2="700" y2="304" stroke="currentColor" stroke-width="1.2" marker-end="url(#ah2)"/><text x="706" y="248" font-size="9.5">issued at close</text>
+          <!-- Note -> NoteRegister -->
+          <line x1="740" y1="364" x2="740" y2="392" stroke="currentColor" stroke-width="1.2" marker-end="url(#ah2)"/><text x="746" y="382" font-size="9.5">has holders</text>
+          <!-- Share -> MySecShare (completion sets up the counter) -->
+          <line x1="431" y1="392" x2="431" y2="364" stroke="currentColor" stroke-width="1.2" marker-end="url(#ah2)"/><text x="437" y="382" font-size="9.5">completion sets up the counter</text>
+          <!-- Schedule -> payouts -->
+          <polyline points="605,515 596,515 596,600 355,600" fill="none" stroke="currentColor" stroke-width="1.2" stroke-dasharray="4 3" marker-end="url(#ah2)"/>
+          <!-- Terms reads parameters -->
+          <polyline points="355,655 366,655 366,555 700,555 700,548" fill="none" stroke="currentColor" stroke-width="1.2" stroke-dasharray="4 3"/>
+          <polyline points="596,555 598,555" fill="none" stroke="currentColor" stroke-width="0"/>
+          <text x="470" y="551" text-anchor="middle" font-size="9.5" opacity=".8">limits at setup · fee terms copied onto the note</text>
+        </g>
+      </svg>
+      <figcaption>Read a column top to bottom to see one product's tables through a raise. Read a row across to see how the products share a phase. The Note and NoteRegister rows are the equity counter and holder records, built for a loan.</figcaption>
+    </figure>
+    <div class="sum">
+      <div class="s new"><div class="n">5</div><div class="l">tables created</div></div>
+      <div class="s chg"><div class="n">2</div><div class="l">tables changed</div></div>
+      <div class="s exist"><div class="n">3</div><div class="l">tables read, untouched</div></div>
+      <div class="s else"><div class="n">12</div><div class="l">designed, built later</div></div>
+    </div>
+    <div class="box"><b>So, in one paragraph, this ticket builds</b>Three shared columns, one renamed column (price per share becomes price per asset) and a slug rule on Campaign, with a migration that backfills existing campaigns as equity, Islamic where the share class or payment account says so. Instrument-agnostic names and meanings for Investment's quantity, price and asset-type columns, with lots unused for notes. Five new tables: the note's terms, the note itself with its status and running totals, the register with each holder's status and running share of repayments, and the schedule in versions with its rows. The running totals are written only by payouts and always reconcile to them. Investment increments, for equity and notes alike, are a separate ticket and out of scope here. Five operations that other tickets call: create or update terms, mint the note and its register at close, mark the note performing at disbursement, mark it failed if a closed campaign is refused, and add a schedule version. Two seeded notes to prove it, and three admin read endpoints to look at them. Nothing customer-facing, no payments, no configuration values, and no status screen.</div>
+  </section>
+
+  <footer>Prepared 8 September 2026 for P2P-26 · F0.1 Note domain model &amp; note register. Equity behaviour read from pitchinAPI staging_v8: Investment and Campaign status enums, ShareService allotment and completion, MySecShare and MySecShareHolder, the end-date scheduler, the share-class enum. Rulebook internal master 28 June 2026: §1.6–1.7, §2.3–2.4, §3.4, §4.14, Annex A. Money figures are illustrative.</footer>
+</main>
+
+</body></html>

@@ -293,7 +293,7 @@
           </table>
         </div>
         <div style="display:flex; flex-direction:column; gap:7px; align-items:flex-end">
-          <span class="statuschip">● Pending <span style="font-weight:400">· raising — Performing at issuance</span></span>
+          <span class="statuschip">● Raising <span style="font-weight:400">· the Note row and its register are created at close</span></span>
           <span class="statuschip" id="f-class">Class I · 90 days</span>
         </div>
       </div>
@@ -310,26 +310,59 @@
     <div class="split">
       <div class="col shared">
         <h3>On <code>Campaign</code></h3>
-        <div class="sub">Shared across products — ECF uses these too</div>
+        <div class="sub">Shared across products — the fundraise and the pricing</div>
         <ul>
-          <li><code>ProductType</code> <em>Generic · ECF · TCF · P2P</em></li>
-          <li><code>MinimumTargetAmount</code> <em>existing field, reused</em></li>
-          <li><code>MaximumTargetAmount</code> <em>existing field, reused</em></li>
-          <li><code>MinimumInvestmentAmount</code> <em>new, shared — replaces ECF's lot-based minimum</em></li>
+          <li><code>ProductType</code> <em>ECF · TCF · P2P — never None</em></li>
+          <li><code>MinimumTargetAmount</code> · <code>MaximumTargetAmount</code> <em>existing, reused</em></li>
+          <li><code>MinimumInvestmentAmount</code> <em>new, shared — ECF migrates onto it (P2P-68)</em></li>
+          <li><code>PricePerAsset</code> <em>renamed from PricePerShare — the note's unit price</em></li>
           <li><code>ShariahType</code> <em>new, shared — Conventional · Islamic</em></li>
+          <li><code>Slug</code> <em>unique across every product</em></li>
+        </ul>
+      </div>
+      <div class="col shared">
+        <h3>On <code>Investment</code></h3>
+        <div class="sub">Shared — each investor's payment, in instrument-agnostic columns</div>
+        <ul>
+          <li><code>AssetType</code> <em>renamed from ShareType — Note</em></li>
+          <li><code>PricePerAsset</code> <em>renamed from PricePerShare — copied from the campaign</em></li>
+          <li><code>AssetQuantity</code> <em>renamed from ShareQuantity — amount ÷ unit price</em></li>
+          <li><code>AccountNumber</code> <em>renamed from EcfAccountNo</em></li>
+          <li><code>IsNominee</code> <em>always true for a note</em> · <code>LotQuantity</code> <em>unused by notes</em></li>
         </ul>
       </div>
       <div class="col">
-        <h3>On the note-terms satellite</h3>
-        <div class="sub">Debt-specific — meaningless for equity</div>
+        <h3>On <code>CampaignNoteTerm</code></h3>
+        <div class="sub">The loan as offered — frozen after setup, no status</div>
         <ul>
           <li><code>NoteReference</code> · <code>ProductClass</code></li>
-          <li><code>InterestRate</code> · <code>TenureValue</code> + <code>TenureUnit</code></li>
-          <li><code>RepaymentFrequency</code> · <code>Purpose</code></li>
-          <li><code>RiskGrade</code> + <code>RiskRationale</code></li>
-          <li><code>DefaultClass</code> <em>derived</em></li>
-          <li><code>FaceValue</code> + <code>AdvanceRate</code> <em>AR/AP only</em></li>
-          <li><code>CounterpartyName</code> + <code>CounterpartySector</code> <em>AR/AP only</em></li>
+          <li><code>InterestRate</code> · <code>TenureValue</code> + <code>TenureUnit</code> <em>derived</em></li>
+          <li><code>RepaymentFrequency</code> · <code>Purpose</code> <em>fixed list</em></li>
+          <li><code>RiskGrade</code> + <code>RiskRationale</code> · <code>DefaultClass</code> <em>derived</em></li>
+          <li><code>FaceValue</code> + <code>AdvanceRate</code> · <code>CounterpartyName</code> + <code>CounterpartySector</code> <em>AR/AP only</em></li>
+          <li><em>fee terms copied from P2P-27 at setup:</em> <code>SuccessFeeRate</code> · <code>EarlySettlementFeeRate</code> · <code>RenewalFee</code> · <code>LateFlatFee</code> · <code>LateInterestRatePerDay</code> · <code>GracePeriodDays</code> · <code>DelinquencyDpd</code> · <code>DefaultDpdThreshold</code></li>
+        </ul>
+      </div>
+      <div class="col">
+        <h3>On <code>Note</code></h3>
+        <div class="sub">The issued loan — one row per note, created at close, like equity's share counter</div>
+        <ul>
+          <li><code>CampaignId</code> <em>1 : 1</em> · <code>NoteReference</code></li>
+          <li><code>PrincipalIssued</code> · <code>Units</code></li>
+          <li><code>Status</code> <em>Issued · Performing · Late · Restructured · DefaultInRecovery · DefaultLowNoRecovery · WrittenOff · ClosedRedeemed · FailedRefunded</em></li>
+          <li><code>IssuedAt</code> · <code>DisbursedAt</code> · <code>MaturityDate</code> · <code>ClosedAt</code></li>
+          <li><code>PrincipalRepaid</code> · <code>InterestPaid</code> · <code>PrincipalOutstanding</code> · <code>LastPaidAt</code> <em>running totals, written only by payouts</em></li>
+        </ul>
+      </div>
+      <div class="col">
+        <h3>On <code>NoteRegister</code></h3>
+        <div class="sub">Who holds what — one row per paid investment, created at close, like equity's holder record</div>
+        <ul>
+          <li><code>SliceReference</code> · <code>NoteId</code> · <code>CampaignId</code> · <code>CompanyId</code> · <code>InvestmentId</code> <em>unique</em> · <code>UserId</code></li>
+          <li><code>Units</code> · <code>PrincipalAmount</code> · <code>InvestorType</code> <em>the existing enum, copied from the investment</em></li>
+          <li><code>HoldingStatus</code> <em>Active · BoughtBack · Refunded · Transferred</em> · <code>ExitedAt</code> · <code>ExitAmount</code></li>
+          <li><code>ConsentId</code> <em>given at payment</em> · <code>DocumentAttachmentId</code> + <code>ExecutedAt</code> <em>the note executed at close</em></li>
+          <li><code>PrincipalRepaid</code> · <code>InterestReceived</code> · <code>FeesDeducted</code> · <code>NetReceived</code> · <code>PrincipalOutstanding</code> · <code>LastPaidAt</code> <em>this holder's running share, written only by payouts</em></li>
         </ul>
       </div>
     </div>
@@ -339,7 +372,7 @@
     </div>
     <div class="rulebox" style="margin-top:10px">
       <b>Where this is heading (decided 2026-08-05)</b>
-      The note satellite sets the <em>pattern</em>: eventually every product keeps its specific terms in its own satellite — <code>CampaignNoteTerm</code> (built now), <code>CampaignEquityTerm</code> (equity fields like <code>PricePerShare</code>/<code>SharePerLot</code> migrate <em>off</em> Campaign — separate future ticket), <code>CampaignTokenTerm</code> (IEO, future). Campaign itself slims down to the shared spine. Nothing in this build may assume equity fields stay on Campaign forever — and no note field may be added to Campaign "for convenience".
+      The note satellite sets the <em>pattern</em>: eventually every product keeps its specific terms in its own satellite — <code>CampaignNoteTerm</code> (built now), <code>CampaignEquityTerm</code> (equity-only fields like <code>SharePerLot</code>, the lot fields and <code>EquityOffered</code> migrate <em>off</em> Campaign, while <code>PricePerAsset</code> stays shared — separate future ticket), <code>CampaignTokenTerm</code> (IEO, future). Campaign itself slims down to the shared spine. Nothing in this build may assume equity fields stay on Campaign forever — and no note field may be added to Campaign "for convenience".
     </div>
   </section>
 
@@ -362,7 +395,9 @@ erDiagram
     CAMPAIGN ||--o| CAMPAIGN_NOTE_TERM : "P2P terms - built now"
     CAMPAIGN ||..o| CAMPAIGN_EQUITY_TERM : "ECF terms - future"
     CAMPAIGN ||..o| CAMPAIGN_TOKEN_TERM : "IEO terms - future"
-    INVESTMENT ||--o| NOTE_REGISTER : "mints note slice"
+    CAMPAIGN ||--o| NOTE : "the issued loan - created at close"
+    NOTE ||--o{ NOTE_REGISTER : "holders"
+    INVESTMENT ||--o| NOTE_REGISTER : "one slice per paid investment - at close"
     INVESTMENT ||..o| INVESTMENT_EQUITY_DETAIL : "lots and shares - future"
     INVESTMENT ||--o{ SHAREHOLDER_REGISTRY : "allots shares"
     INVESTMENT ||..o{ TOKEN_HOLDING : "allots tokens - future"
@@ -372,29 +407,31 @@ erDiagram
     SCHEDULE_ROW |o..o{ DISTRIBUTION_EVENT : "source"
     EQUITY_PAYMENT_EVENT |o..o{ DISTRIBUTION_EVENT : "source"
     DISTRIBUTION_EVENT ||--o{ DISTRIBUTION_ALLOCATION : "splits per holder"
-    NOTE_REGISTER |o..o{ DISTRIBUTION_ALLOCATION : "note payouts"
+    NOTE_REGISTER |o..o{ DISTRIBUTION_ALLOCATION : "note payouts - update the running totals"
     SHAREHOLDER_REGISTRY |o..o{ DISTRIBUTION_ALLOCATION : "equity payouts"
     TOKEN_HOLDING |o..o{ DISTRIBUTION_ALLOCATION : "token payouts"
     DISTRIBUTION_ALLOCATION }o..o| WALLET_TRANSACTION : "credits wallet"
     USER ||--o{ USER_CONSENT : "accepts"
-    NOTE_REGISTER }o..o| USER_CONSENT : "execution consent"
+    NOTE_REGISTER }o..o| USER_CONSENT : "consent given at payment"
 
     CAMPAIGN {
-        bigint Id PK
-        int ProductType "NEW - ECF TCF P2P: the switch"
+        int Id PK
+        int ProductType "NEW - ECF TCF P2P - never None"
         decimal MinimumTargetAmount "existing - reused"
         decimal MaximumTargetAmount "existing - reused"
         decimal MinimumInvestmentAmount "NEW - shared with ECF"
-        decimal IncrementAmount "NEW - shared - P2P-68"
+        decimal PricePerAsset "RENAMED from PricePerShare - the unit price"
+        decimal IncrementAmount "P2P-68 - future"
         int ShariahType "NEW - shared - Islamic off at launch"
-        int CampaignStatus "existing lifecycle"
-        string EquityFields "PricePerShare SharePerLot etc - MIGRATE OUT"
+        string Slug "UNIQUE across every product"
+        int CampaignStatus "existing - Live Cooling Success Fail"
+        string EquityOnlyFields "SharePerLot lots EquityOffered - MIGRATE OUT"
     }
     CAMPAIGN_NOTE_TERM {
-        bigint CampaignId PK, FK "AXIS 1 - built now"
+        int CampaignId PK, FK "AXIS 1 - built now - frozen after setup"
         string NoteReference UK "N-2026-00042"
         int ProductClass "AR - AP - Term - Micro"
-        decimal InterestRate "max 18 pct - within grade band"
+        decimal InterestRate "within grade band - under the P2P-27 ceiling"
         int TenureValue
         int TenureUnit "DERIVED - Days or Months"
         int RepaymentFrequency "Monthly or Lump sum"
@@ -406,66 +443,105 @@ erDiagram
         decimal AdvanceRate "AR-AP only - pct advanced"
         string CounterpartyName "AR-AP - STORED never published"
         string CounterpartySector "AR-AP - shown to investors"
+        decimal SuccessFeeRate "fee terms copied from P2P-27 at setup"
+        decimal EarlySettlementFeeRate
+        decimal RenewalFee "AR-AP only"
+        decimal LateFlatFee
+        decimal LateInterestRatePerDay "three decimals"
+        int GracePeriodDays
+        int DelinquencyDpd
+        int DefaultDpdThreshold
+    }
+    NOTE {
+        int Id PK "NEW - the issued loan - created at close"
+        int CampaignId FK, UK "1-to-1 with the campaign"
+        string NoteReference "copied from the terms"
+        decimal PrincipalIssued "the amount raised"
+        int Units "principal divided by the unit price"
+        int Status "Issued Performing Late Restructured DefaultInRecovery DefaultLowNoRecovery WrittenOff ClosedRedeemed FailedRefunded"
+        timestamp IssuedAt
+        timestamp DisbursedAt
+        date MaturityDate
+        timestamp ClosedAt
+        decimal PrincipalRepaid "running total - written only by payouts"
+        decimal InterestPaid "running total"
+        decimal PrincipalOutstanding "running total"
+        timestamp LastPaidAt
     }
     CAMPAIGN_EQUITY_TERM {
-        bigint CampaignId PK, FK "AXIS 1 - FUTURE migration"
-        decimal PricePerShare "moves off Campaign"
+        int CampaignId PK, FK "AXIS 1 - FUTURE migration"
         int SharePerLot "moves off Campaign"
         decimal EquityOffered "moves off Campaign"
         string ShareType "moves off Campaign"
         int MinimumLots "superseded by amount fields"
     }
     CAMPAIGN_TOKEN_TERM {
-        bigint CampaignId PK, FK "AXIS 1 - FUTURE - IEO"
+        int CampaignId PK, FK "AXIS 1 - FUTURE - token consolidation"
     }
     INVESTMENT {
-        bigint Id PK "ONE table - every product"
-        bigint CampaignId FK
-        bigint UserId FK
+        int Id PK "ONE table - every product"
+        int CampaignId FK
+        string UserId FK
         decimal PledgedAmount
         int PaymentType "FPX - DuitNow - wallet"
         int InvestmentStatus "Pledged to Completed plus refunds"
-        int InvestorType "snapshot"
-        int LotQuantity "equity only - MIGRATES OUT"
-        int ShareQuantity "equity only - MIGRATES OUT"
+        int InvestorType "snapshot at pledge"
+        int AssetType "RENAMED from ShareType - Note for a note"
+        decimal PricePerAsset "RENAMED from PricePerShare - copied from the campaign"
+        decimal AssetQuantity "RENAMED from ShareQuantity - the units bought"
+        string AccountNumber "RENAMED from EcfAccountNo"
+        bool IsNominee "true for notes"
+        decimal LotQuantity "equity only - unused by notes - MIGRATES OUT"
     }
     INVESTMENT_EQUITY_DETAIL {
-        bigint InvestmentId PK, FK "AXIS 2 - FUTURE"
-        int LotQuantity "moves off Investment"
-        int ShareQuantity "moves off Investment"
+        int InvestmentId PK, FK "AXIS 2 - FUTURE"
+        decimal LotQuantity "moves off Investment"
     }
     NOTE_REGISTER {
-        bigint Id PK "AXIS 3 - ownership not transaction"
+        int Id PK "AXIS 3 - one row per paid investment - created at close"
         string SliceReference UK "N-2026-00042-0001"
-        bigint CampaignId FK
-        bigint InvestmentId FK, UK "1-to-1 once paid"
+        int NoteId FK "the parent"
+        int CampaignId FK "copy"
+        int CompanyId FK "copy - the track record path"
+        int InvestmentId FK, UK "1-to-1 with a paid investment"
+        string UserId FK "copy"
+        int Units
         decimal PrincipalAmount "investor fraction"
-        int InvestorCategory "frozen at execution"
-        int Status "10 states - event driven only"
-        bigint ConsentId FK "execution consent - lane D"
-        bigint DocumentAttachmentId FK "note PDF - lane D"
-        timestamp ExecutedAt
+        int InvestorType "existing enum - copied from the investment"
+        int HoldingStatus "Active BoughtBack Refunded Transferred"
+        timestamp ExitedAt
+        decimal ExitAmount
+        int ConsentId FK "UserConsent - given at payment"
+        int DocumentAttachmentId FK "the executed note PDF - generated at close"
+        timestamp ExecutedAt "at close"
+        decimal PrincipalRepaid "this holder's running share - payouts only"
+        decimal InterestReceived
+        decimal FeesDeducted
+        decimal NetReceived
+        decimal PrincipalOutstanding
+        timestamp LastPaidAt
     }
     SHAREHOLDER_REGISTRY {
-        bigint Id PK "AXIS 3 - existing equity registry"
+        int Id PK "AXIS 3 - existing equity registry - Share"
     }
     TOKEN_HOLDING {
-        bigint Id PK "AXIS 3 - FUTURE token registry"
+        int Id PK "AXIS 3 - FUTURE token registry"
     }
     REPAYMENT_SCHEDULE {
-        bigint Id PK "notes only - equity has no schedule"
-        bigint CampaignId FK
+        int Id PK "notes only - equity has no schedule"
+        int CampaignId FK "one set of versions per note"
         int VersionNo "1 2 3 per note"
         int ScheduleType "Indicative - Final - Restructured"
-        bool IsCurrent "exactly one per note"
+        bool IsCurrent "exactly one per note - database enforced"
         date EffectiveFrom
         string SourceReference "Supplemental Deed on restructure"
         decimal TotalPrincipal
         decimal TotalInterest
+        decimal TotalPayable
     }
     SCHEDULE_ROW {
-        bigint Id PK
-        bigint ScheduleId FK "belongs to a version"
+        int Id PK "Annex A section 4 - the promise"
+        int ScheduleId FK "belongs to a version"
         int InstalmentNo
         date DueDate
         decimal PrincipalAmount
@@ -473,52 +549,53 @@ erDiagram
         decimal TotalAmount
     }
     EQUITY_PAYMENT_EVENT {
-        bigint Id PK "FUTURE - own table own ticket"
-        bigint CampaignId FK
+        int Id PK "FUTURE - own table own ticket"
+        int CampaignId FK
         int EventType "Dividend or Redemption"
         decimal DeclaredAmount
         date DeclaredAt "created when declared - no schedule"
     }
     DISTRIBUTION_EVENT {
-        bigint Id PK "SHARED - built F4.3"
-        bigint CampaignId FK
+        int Id PK "SHARED - built F4.3"
+        int CampaignId FK
         int SourceType "NoteInstalment - Dividend - Redemption - Recovery"
-        bigint SourceId "row in that source own table"
+        int SourceId "row in that source own table"
         decimal AmountReceived "partial payments make several events"
         date ReceivedAt
         int Status
     }
     DISTRIBUTION_ALLOCATION {
-        bigint Id PK "SHARED - built F4.3"
-        bigint EventId FK
-        bigint NoteRegisterId FK "note holder - null for equity"
-        bigint ShareholderId FK "equity holder - null for notes"
+        int Id PK "SHARED - built F4.3"
+        int EventId FK
+        int NoteRegisterId FK "note holder - null for equity"
+        int ShareholderId FK "equity holder - null for notes"
         decimal GrossAmount
         decimal FeeAmount "management fee plus SST"
         decimal NetAmount
-        bigint WalletTransactionId FK "all payouts land in wallet"
+        int WalletTransactionId FK "all payouts land in wallet"
     }
     WALLET_TRANSACTION {
-        bigint Id PK "existing - every payout lands here"
+        int Id PK "existing - every payout lands here"
     }
     USER_CONSENT {
-        bigint Id PK "existing versioned ledger - P2P-28"
+        int Id PK "existing versioned ledger - P2P-28"
         int TypeOfConsent "new P2P members added"
         string Version "which wording was accepted"
     }
     USER {
-        bigint Id PK
+        string Id PK
     }
     COMPANY {
-        bigint Id PK
+        int Id PK
     }
 </pre>
     </div>
     <div class="rulebox" style="margin-top:16px">
-      <b>How to read it — three design calls baked in</b>
-      <b style="display:inline; font-size:inherit; letter-spacing:0; text-transform:none; color:var(--ink)">One transaction table.</b> Every subscription — equity or note — is a row in the existing <code>INVESTMENT</code> table riding the existing pledge→pay→refund pipeline. The <code>NOTE_REGISTER</code> is not a transaction table: it is the <em>ownership record</em> (what the shareholder registry is to shares), and its status only moves when a transaction or lifecycle event happens elsewhere.
-      <br><br><b style="display:inline; font-size:inherit; letter-spacing:0; text-transform:none; color:var(--ink)">Every payout source keeps its own table; distribution consumes them.</b> A note's repayments are known at issue, so they live in the pre-defined, versioned schedule. Dividends and redemptions are declared when they happen — no schedule; they get their <em>own</em> event table when the equity-payments ticket arrives. The shared <b>distribution layer</b> ("amount X on date D, split pro-rata across holders, net of fees, credited to wallets") takes whichever source fires, referenced generically as (SourceType, SourceId) — so one instalment can spawn several distributions (partial payments, §3.4), and a brand-new source type later needs <em>zero</em> schema change here. The money maths is written once, in F4.3.
-      <br><br><b style="display:inline; font-size:inherit; letter-spacing:0; text-transform:none; color:var(--ink)">Register status covers the whole life, 10 states.</b> Pre-issuance: <b>Pending</b> (paid, campaign raising, funds escrowed) · <b>Cancelled</b> (investor withdrew in the offer period, §2.4) · <b>Failed-Refunded</b> (campaign missed its minimum, §1.6) — all written by the transaction pipeline, and rows are never deleted. From issuance, the rulebook's seven: Performing · Late · Restructured · Default—In Recovery · Default—Low/No Recovery · Written-Off · Closed/Redeemed (§4.14).
+      <b>How to read it — four design calls baked in</b>
+      <b style="display:inline; font-size:inherit; letter-spacing:0; text-transform:none; color:var(--ink)">One transaction table.</b> Every subscription — equity or note — is a row in the existing <code>INVESTMENT</code> table riding the existing pledge→pay→refund pipeline, with its quantity, price and asset-type columns named for any instrument. Until close, an investor's money is an Investment row and a balance in trust; nothing else exists yet.
+      <br><br><b style="display:inline; font-size:inherit; letter-spacing:0; text-transform:none; color:var(--ink)">The note and its register are created at close.</b> After the cooling-off period, when Admin confirms the raise succeeded, the platform creates the <code>NOTE</code> row — the issued loan, equity's share counter — and one <code>NOTE_REGISTER</code> row per paid investment, in investment order, each with its executed note document. The investments move to Completed at the same moment, exactly as equity's share allotment does.
+      <br><br><b style="display:inline; font-size:inherit; letter-spacing:0; text-transform:none; color:var(--ink)">Two statuses, on two rows.</b> The note's status — Issued · Performing · Late · Restructured · Default in recovery · Default with low or no recovery · Written off · Closed · Failed and refunded — describes the issuer's repayment of the one loan and lives on <code>NOTE</code>. Each register row carries a holding status — Active · Bought back · Refunded · Transferred — for what can happen to one holder alone. Both are written only by the events that cause them; there is no status screen.
+      <br><br><b style="display:inline; font-size:inherit; letter-spacing:0; text-transform:none; color:var(--ink)">Every payout source keeps its own table; distribution consumes them.</b> A note's repayments are known at issue, so they live in the versioned schedule. Dividends and redemptions are declared when they happen and get their own event table later. The shared distribution layer takes whichever source fires, allocates pro-rata across the register or the shareholder registry, and updates the running totals on the note and on each holder's row — the allocations stay the ledger everything reconciles to.
     </div>
   </section>
 
@@ -558,7 +635,8 @@ erDiagram
           <tr><td>Rate band</td><td>Read from the grade's band in the matrix; hard ceiling 18.00% p.a. regardless of grade.</td><td>App D · Annex A §1</td></tr>
           <tr><td>Entitlement cap</td><td>Product basis (AR 80% of invoice · AP 100% of payable · Term 2.5× monthly revenue · Micro RM50,000) × the grade's entitlement multiplier.</td><td>App C + App D</td></tr>
           <tr><td>Success at close</td><td>Raised ≥ <b>100% of MinimumTargetAmount</b> → success. Setup validation enforces minimum ≥ 80% of maximum, so disbursement can never occur below 80% of target. <em>(Enforced in F1.4 / F3.1, not here.)</em></td><td>decided 2026-08-05</td></tr>
-          <tr><td>Issuer track record</td><td>Derived by querying the register — notes raised, fully repaid (Closed/Redeemed), defaults. No stored field; needs no migration.</td><td>§2.2 · decided 2026-08-05</td></tr>
+          <tr><td>Issuer track record</td><td>Derived from the Note rows of the issuer's campaigns — notes issued, fully repaid (ClosedRedeemed), defaults — and the register behind them. No stored field.</td><td>§2.2 · decided 2026-08-05</td></tr>
+          <tr><td>Units</td><td><code>Investment.AssetQuantity</code> = amount ÷ <code>Campaign.PricePerAsset</code>, stored at investment. How investments step up from the minimum is P2P-68's.</td><td>decided 2026-09-08</td></tr>
         </tbody>
       </table>
     </div>
@@ -577,7 +655,7 @@ erDiagram
   </div>
 
   <footer>
-    Interactive spec for <b>P2P-26 · F0.1 Note domain model &amp; note register</b>, Lane A of the P2P MVP Launch. Prepared 2026-08-05 from the alignment decisions (record on epic P2P-61) and the P2P Rulebook internal master, 2026-06-28. Money columns follow the house <code>HasPrecision(15, 2)</code> convention. Specimen figures are illustrative and not a real offering.
+    Interactive spec for <b>P2P-26 · F0.1 Note domain model &amp; note register</b>, Lane A of the P2P MVP Launch. Prepared 2026-08-05 from the alignment decisions (record on epic P2P-61) and the P2P Rulebook internal master, 2026-06-28. Revised 2026-09-08 after the build review: the note and its register are created at close; the Note row carries the loan's status and running totals, each register row a holding status and running share; Investment's columns are instrument-agnostic; the unit price lives on Campaign as PricePerAsset. Money columns follow the house <code>HasPrecision(15, 2)</code> convention. Specimen figures are illustrative and not a real offering.
   </footer>
 </main>
 
@@ -654,6 +732,7 @@ erDiagram
     cells.push(cell("Purpose",pKey==="AR"?"Invoice financing":(pKey==="AP"?"Invoice financing":"Working capital"),
       {rule:"fixed list"}));
     cells.push(cell("Min. investment","RM 100",{shared:true, rule:"Campaign.MinimumInvestmentAmount"}));
+    cells.push(cell("Unit price","RM 100",{shared:true, rule:"Campaign.PricePerAsset · units = amount ÷ unit price"}));
     cells.push(cell("Shariah type",shariah,{shared:true, rule:"Campaign.ShariahType"}));
     cells.push(cell("Entitlement cap",p.ent,{derived:true, rule:"× grade multiplier "+g.entM+"%"}));
 
