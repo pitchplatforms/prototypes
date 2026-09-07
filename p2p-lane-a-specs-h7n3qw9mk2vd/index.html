@@ -47,7 +47,7 @@
 
   <header>
     <p class="eyebrow">P2P MVP Launch · Lane A · Epic P2P-61</p>
-    <h1>Foundations &amp; config — the four build specs</h1>
+    <h1>Foundations &amp; config — the build specs</h1>
     <p class="stand">Lane A teaches the platform what debt is: what a note <b>is</b> in the data, which numbers we can tune and who may tune them, the legal pages every later flow records against, and the scaffolding the note pages sit on. <b>Nothing in the other six lanes can start until this lands.</b></p>
     <p class="meta">
       <span>Interactive specs</span>
@@ -63,6 +63,20 @@
       <h2>The Note — data model &amp; register</h2>
       <p>What a note is in the database: the terms satellite, the register of who holds which slice, and the versioned repayment schedule. Change the product class or repayment frequency and watch which fields the system derives for itself. Carries the end-state ER diagram across all three instruments.</p>
       <span class="go">Open the spec &rarr;</span>
+    </a>
+
+    <a class="spec" href="./f01-note-lifecycle.html">
+      <span class="ref">P2P-26 · read with F0.1</span>
+      <h2>The life of one note</h2>
+      <p>One worked loan from setup to the last repayment: who acts at each stage, which table gains or changes a row, and how each step mirrors the equity product running today. The plain-language way into the data model.</p>
+      <span class="go">Open the walkthrough &rarr;</span>
+    </a>
+
+    <a class="spec" href="./f01-data-model-delta.html">
+      <span class="ref">P2P-26 · read with F0.1</span>
+      <h2>The data model, column by column</h2>
+      <p>What is on the build branch today against what each table needs to become: keep, add, remove, rename. Tables only, no endpoints, no logic. The checklist for the follow-up work.</p>
+      <span class="go">Open the delta &rarr;</span>
     </a>
 
     <a class="spec" href="./f02-config-dials.html">

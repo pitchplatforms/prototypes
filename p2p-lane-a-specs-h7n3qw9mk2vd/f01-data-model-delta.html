@@ -1,0 +1,268 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1"><style>:root{color-scheme:light}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#faf9f5;color:#141413}img{max-width:100%}</style></head><body>
+<a href="./" style="display:block;max-width:900px;margin:12px auto 0;padding:0 20px;font:11px ui-monospace,monospace;letter-spacing:.12em;text-transform:uppercase;color:#2D7F81;text-decoration:none">&larr; Lane A specs</a>
+<title>Note Data Model Delta</title>
+<style>
+  :root{
+    --paper:#FBFAF6; --ink:#20302F; --muted:#5F6E6C; --rule:rgba(32,48,47,.16);
+    --card:#FFFFFF; --card-edge:rgba(32,48,47,.12); --code-bg:rgba(32,48,47,.06);
+    --accent:#2D7F81; --accent-tint:rgba(45,137,139,.10);
+    --keep:#6B7A78; --keep-tint:rgba(107,122,120,.08);
+    --add:#2F7A4F; --add-tint:rgba(47,122,79,.11);
+    --remove:#9B2C2C; --remove-tint:rgba(155,44,44,.09);
+    --rename:#A8731F; --rename-tint:rgba(168,115,31,.12);
+    --replace:#7B4EA8; --replace-tint:rgba(123,78,168,.10);
+    --serif:"Charter","Iowan Old Style",Georgia,"Times New Roman",serif;
+    --sans:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+    --mono:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+  }
+  @media (prefers-color-scheme: dark){
+    :root:not([data-theme="light"]){
+      --paper:#0E1918; --ink:#E7E5DB; --muted:#9DABA8; --rule:rgba(231,229,219,.16);
+      --card:#132120; --card-edge:rgba(231,229,219,.14); --code-bg:rgba(231,229,219,.08);
+      --accent:#5CB6B8; --accent-tint:rgba(92,182,184,.12);
+      --keep:#95A5A2; --keep-tint:rgba(149,165,162,.10);
+      --add:#7CC59A; --add-tint:rgba(124,197,154,.13);
+      --remove:#E07A7A; --remove-tint:rgba(224,122,122,.12);
+      --rename:#D9A85C; --rename-tint:rgba(217,168,92,.14);
+      --replace:#C4A3E0; --replace-tint:rgba(196,163,224,.13);
+    }
+  }
+  :root[data-theme="dark"]{
+    --paper:#0E1918; --ink:#E7E5DB; --muted:#9DABA8; --rule:rgba(231,229,219,.16);
+    --card:#132120; --card-edge:rgba(231,229,219,.14); --code-bg:rgba(231,229,219,.08);
+    --accent:#5CB6B8; --accent-tint:rgba(92,182,184,.12);
+    --keep:#95A5A2; --keep-tint:rgba(149,165,162,.10);
+    --add:#7CC59A; --add-tint:rgba(124,197,154,.13);
+    --remove:#E07A7A; --remove-tint:rgba(224,122,122,.12);
+    --rename:#D9A85C; --rename-tint:rgba(217,168,92,.14);
+    --replace:#C4A3E0; --replace-tint:rgba(196,163,224,.13);
+  }
+  *{box-sizing:border-box}
+  body{margin:0; background:var(--paper); color:var(--ink); font-family:var(--serif); font-size:17px; line-height:1.6; -webkit-font-smoothing:antialiased}
+  a{color:var(--accent)}
+  :focus-visible{outline:2px solid var(--accent); outline-offset:2px}
+  .wrap{max-width:900px; margin:0 auto; padding:0 20px}
+  code{font-family:var(--mono); font-size:.84em; background:var(--code-bg); border-radius:4px; padding:1px 5px}
+  pre{font-family:var(--mono); font-size:12.5px; line-height:1.5; background:var(--card); border:1px solid var(--card-edge); border-radius:8px; padding:16px 18px; overflow-x:auto; white-space:pre-wrap; margin:0}
+
+  header.hero{padding:44px 0 22px; border-bottom:2px solid var(--ink)}
+  .eyebrow{font-family:var(--sans); font-size:11.5px; font-weight:700; letter-spacing:.14em; text-transform:uppercase; color:var(--accent)}
+  h1{font-size:clamp(28px,4.6vw,40px); line-height:1.12; margin:10px 0 12px; font-weight:700; text-wrap:balance; max-width:22ch}
+  .stand{max-width:64ch; font-size:18px; margin:0}
+  .legend{display:flex; gap:8px; flex-wrap:wrap; margin-top:18px; font-family:var(--sans); font-size:12.5px}
+  .legend span{border:1px solid var(--rule); border-radius:99px; padding:5px 12px; display:inline-flex; align-items:center; gap:7px; background:var(--card)}
+  .sw{width:11px; height:11px; border-radius:3px; flex:none; border:1.5px solid}
+  .sw.keep{background:var(--keep-tint); border-color:var(--keep)} .sw.add{background:var(--add-tint); border-color:var(--add)} .sw.remove{background:var(--remove-tint); border-color:var(--remove)} .sw.rename{background:var(--rename-tint); border-color:var(--rename)} .sw.replace{background:var(--replace-tint); border-color:var(--replace)}
+
+  .counts{display:grid; grid-template-columns:repeat(auto-fit,minmax(130px,1fr)); gap:10px; margin:22px 0 0}
+  .count{border:1px solid var(--card-edge); background:var(--card); border-radius:8px; padding:12px 14px; border-top:3px solid var(--rule)}
+  .count.add{border-top-color:var(--add)} .count.remove{border-top-color:var(--remove)} .count.rename{border-top-color:var(--rename)} .count.replace{border-top-color:var(--replace)} .count.accent{border-top-color:var(--accent)}
+  .count .n{font-family:var(--sans); font-size:26px; font-weight:800; line-height:1; font-variant-numeric:tabular-nums}
+  .count .l{font-family:var(--sans); font-size:10.5px; letter-spacing:.09em; text-transform:uppercase; color:var(--muted); margin-top:6px; line-height:1.3}
+
+  section{margin-top:44px}
+  .s-head{display:flex; align-items:baseline; gap:12px; flex-wrap:wrap; border-bottom:2px solid var(--ink); padding-bottom:8px; margin-bottom:16px}
+  .s-head h2{margin:0; font-size:clamp(21px,3.2vw,27px); line-height:1.15}
+  .s-head .s-eyebrow{font-family:var(--sans); font-size:11.5px; font-weight:700; letter-spacing:.12em; text-transform:uppercase; color:var(--accent)}
+  p.lead{max-width:66ch; margin:0 0 14px}
+
+  .tbl{border:1px solid var(--card-edge); background:var(--card); border-radius:12px; padding:14px 16px 12px; margin-top:12px}
+  .tbl.new{border-color:var(--add); border-width:1.5px}
+  .tbl.drop{border-color:var(--remove); border-width:1.5px}
+  .tbl-h{display:flex; gap:10px; align-items:baseline; flex-wrap:wrap}
+  .tbl-h h3{margin:0; font-family:var(--mono); font-size:16px}
+  .tbl-h .verdict{font-family:var(--sans); font-size:12.5px; color:var(--muted)}
+  .tbl-h .badge{font-family:var(--sans); font-size:10px; font-weight:800; letter-spacing:.06em; text-transform:uppercase; border-radius:5px; padding:2px 7px; border:1.5px solid}
+  .badge.add{color:var(--add); border-color:var(--add); background:var(--add-tint)}
+  .badge.remove{color:var(--remove); border-color:var(--remove); background:var(--remove-tint)}
+  .badge.rename{color:var(--rename); border-color:var(--rename); background:var(--rename-tint)}
+  .badge.keep{color:var(--keep); border-color:var(--keep)}
+  .rows{margin:10px 0 0; padding:0; list-style:none; font-family:var(--sans); font-size:13.5px}
+  .rows li{display:grid; grid-template-columns:82px 1fr; gap:6px 12px; padding:6px 0; border-top:1px dotted var(--rule); align-items:start; line-height:1.45}
+  .rows li:first-child{border-top:none}
+  .act{font-family:var(--sans); font-size:10px; font-weight:800; letter-spacing:.06em; text-transform:uppercase; border-radius:5px; padding:3px 0; text-align:center; border:1.5px solid; margin-top:1px}
+  .act.keep{color:var(--keep); border-color:var(--keep); background:var(--keep-tint)}
+  .act.add{color:var(--add); border-color:var(--add); background:var(--add-tint)}
+  .act.remove{color:var(--remove); border-color:var(--remove); background:var(--remove-tint)}
+  .act.rename{color:var(--rename); border-color:var(--rename); background:var(--rename-tint)}
+  .act.replace{color:var(--replace); border-color:var(--replace); background:var(--replace-tint)}
+  .rows b{font-family:var(--mono); font-weight:700; font-size:12.5px}
+  .rows .why{color:var(--muted)}
+  .rows s{color:var(--muted)}
+  @media (max-width:560px){ .rows li{grid-template-columns:1fr} }
+
+  .box{border-left:3px solid var(--accent); background:var(--accent-tint); border-radius:0 8px 8px 0; padding:12px 16px; font-family:var(--sans); font-size:13.5px; margin-top:14px; line-height:1.5}
+  .box b{display:block; font-size:10.5px; letter-spacing:.09em; text-transform:uppercase; color:var(--accent); margin-bottom:3px}
+  .guard{border-left-color:var(--remove); background:var(--remove-tint)} .guard b{color:var(--remove)}
+  .copybar{display:flex; justify-content:space-between; align-items:center; gap:10px; margin:14px 0 8px; font-family:var(--sans); font-size:12.5px; color:var(--muted)}
+  .copybar button{font-family:var(--sans); font-size:12.5px; font-weight:700; border:1px solid var(--rule); background:var(--card); color:var(--ink); border-radius:6px; padding:5px 11px; cursor:pointer}
+  ul.clean{margin:0; padding:0 0 0 18px; font-family:var(--sans); font-size:13.5px; line-height:1.55}
+  ul.clean li{margin:5px 0}
+  footer{margin:50px 0 40px; padding-top:15px; border-top:1px solid var(--rule); font-family:var(--sans); font-size:12.5px; color:var(--muted); line-height:1.7}
+</style>
+
+<header class="hero">
+  <div class="wrap">
+    <div class="eyebrow">P2P-26 · what is on the branch today, and what it needs to become</div>
+    <h1>The data model, column by column: keep, add, remove, rename</h1>
+    <p class="stand">Everything below is a database change. No endpoints, no business logic, no screens. It compares the tables Tommy has on <code>feat/P2P-61_Foundations-Config</code> with the model agreed on 8 September, so the next step is a list of table edits rather than a new design.</p>
+    <div class="legend">
+      <span><i class="sw keep"></i> Keep as built</span>
+      <span><i class="sw add"></i> Add</span>
+      <span><i class="sw remove"></i> Remove</span>
+      <span><i class="sw rename"></i> Rename or retype</span>
+      <span><i class="sw replace"></i> Replace with something else</span>
+    </div>
+    <div class="counts">
+      <div class="count add"><div class="n">1</div><div class="l">new table<br>Note</div></div>
+      <div class="count remove"><div class="n">1</div><div class="l">table dropped<br>NoteFeeConfig</div></div>
+      <div class="count add"><div class="n">~20</div><div class="l">columns added</div></div>
+      <div class="count remove"><div class="n">~20</div><div class="l">columns removed</div></div>
+      <div class="count rename"><div class="n">5</div><div class="l">columns renamed<br>Campaign 1 · Investment 4</div></div>
+      <div class="count replace"><div class="n">2</div><div class="l">enums replaced</div></div>
+      <div class="count accent"><div class="n">3</div><div class="l">indexes added<br>slug · investment · current version</div></div>
+    </div>
+  </div>
+</header>
+
+<main class="wrap">
+
+  <section>
+    <div class="s-head"><span class="s-eyebrow">Shared tables</span><h2>Two existing tables change</h2></div>
+
+    <div class="tbl">
+      <div class="tbl-h"><h3>Campaign</h3><span class="badge rename">existing · changed</span><span class="verdict">the three new columns are right; one rename, one index, and the backfill rule change</span></div>
+      <ul class="rows">
+        <li><span class="act keep">keep</span><div><b>ProductType</b> · <b>ShariahType</b> · <b>MinimumInvestmentAmount</b> <span class="why">— built as specified. Database default must be a real value, not 0.</span></div></li>
+        <li><span class="act rename">rename</span><div><b>PricePerShare → PricePerAsset</b> <span class="why">— the note's unit price lives here, shared with equity. How the rename is done (model now, column later, or both) is Tony's call since equity code reads it.</span></div></li>
+        <li><span class="act add">add</span><div><b>unique index on Slug</b> <span class="why">— all campaigns will share <code>/invest/:slug</code>. Check existing rows for duplicates first.</span></div></li>
+        <li><span class="act rename">retype</span><div><b>backfill</b> <span class="why">— every existing campaign is equity, so ProductType = ECF for all; ShariahType = Islamic where the share class is an Islamic class or the payment account is DuitNow Shariah, otherwise Conventional. Written so a re-run cannot undo a corrected row.</span></div></li>
+      </ul>
+    </div>
+
+    <div class="tbl">
+      <div class="tbl-h"><h3>Investment</h3><span class="badge rename">existing · changed</span><span class="verdict">no new columns; four columns get instrument-agnostic names, one falls out of use for notes</span></div>
+      <ul class="rows">
+        <li><span class="act rename">rename</span><div><b>ShareQuantity → AssetQuantity</b> <span class="why">— for a note: amount ÷ the campaign's price per asset, stored at investment.</span></div></li>
+        <li><span class="act rename">rename</span><div><b>PricePerShare → PricePerAsset</b> <span class="why">— copied from the campaign at investment.</span></div></li>
+        <li><span class="act rename">rename</span><div><b>ShareType → AssetType</b> <span class="why">— Note for a note investment.</span></div></li>
+        <li><span class="act rename">rename</span><div><b>EcfAccountNo → AccountNumber</b></div></li>
+        <li><span class="act keep">keep</span><div><b>IsNominee</b> <span class="why">— always true for a note.</span> <b>LotQuantity</b> <span class="why">— stays for equity, unused by notes.</span> Everything else unchanged.</div></li>
+      </ul>
+    </div>
+  </section>
+
+  <section>
+    <div class="s-head"><span class="s-eyebrow">Note tables</span><h2>One is right, one is new, three change shape</h2></div>
+
+    <div class="tbl">
+      <div class="tbl-h"><h3>CampaignNoteTerm</h3><span class="badge keep">built · adjust</span><span class="verdict">the debt terms are right; the fee block needs three columns in and three out</span></div>
+      <ul class="rows">
+        <li><span class="act keep">keep</span><div><b>CampaignId</b> (unique) · <b>NoteReference</b> · <b>ProductClass</b> · <b>InterestRate</b> · <b>TenureValue</b> · <b>TenureUnit</b> · <b>RepaymentFrequency</b> · <b>Purpose</b> · <b>RiskGrade</b> · <b>RiskRationale</b> · <b>DefaultClass</b> · <b>FaceValue</b> · <b>AdvanceRate</b> · <b>CounterpartyName</b> · <b>CounterpartySector</b></div></li>
+        <li><span class="act keep">keep</span><div><b>SuccessFeeRate</b> · <b>EarlySettlementFeeRate</b> · <b>RenewalFee</b> · <b>LateFlatFee</b> · <b>LateInterestRatePerDay</b> <span class="why">— all nullable until the setup screen stamps them from P2P-27.</span></div></li>
+        <li><span class="act add">add</span><div><b>GracePeriodDays</b> · <b>DelinquencyDpd</b> · <b>DefaultDpdThreshold</b> (int, nullable) <span class="why">— the servicing terms the issuer agreed and the note discloses (Annex A §5): how many days of grace before a late fee, when the note counts as delinquent, when it counts as in default. They are copied onto the note at setup so a later change to the platform setting cannot reach a note already issued.</span></div></li>
+        <li><span class="act remove">remove</span><div><b>LateFeeCap</b> · <b>CorrespondenceFee</b> · <b>GSTRate</b> <span class="why">— correspondence fee and tax are live platform values, never copied onto a note; the cap was never specified.</span></div></li>
+        <li><span class="act keep">keep</span><div>audit columns <span class="why">— CreatedBy, CreatedAt, ModifiedBy, ModifiedAt: who created or last changed the row, and when. Every table on the platform has them. This table carries no status and no unit price; it is the offer as disclosed, frozen after setup.</span></div></li>
+      </ul>
+    </div>
+
+    <div class="tbl new">
+      <div class="tbl-h"><h3>Note</h3><span class="badge add">new table</span><span class="verdict">the issued loan, created at close; equity's counter</span></div>
+      <ul class="rows">
+        <li><span class="act add">add</span><div><b>Id</b> · <b>CampaignId</b> (unique, 1 : 1) · <b>NoteReference</b> (copied from the terms)</div></li>
+        <li><span class="act add">add</span><div><b>PrincipalIssued</b> decimal(15,2) · <b>Units</b> int <span class="why">— the amount raised and its units at close.</span></div></li>
+        <li><span class="act add">add</span><div><b>InterestRate</b> · <b>TenureValue</b> · <b>TenureUnit</b> · <b>RepaymentFrequency</b> · <b>DefaultClass</b> <span class="why">— the loan's terms in force. Copied from the offer at close; changed only by a restructure, together with a new schedule version. The offer on CampaignNoteTerm never changes, so what was disclosed and what is now in force are both on record.</span></div></li>
+        <li><span class="act add">add</span><div><b>Status</b> enum NoteStatus <span class="why">— Issued 1 · Performing 2 · Late 3 · Restructured 4 · DefaultInRecovery 5 · DefaultLowNoRecovery 6 · WrittenOff 7 · ClosedRedeemed 8 · FailedRefunded 9.</span></div></li>
+        <li><span class="act add">add</span><div><b>IssuedAt</b> · <b>DisbursedAt</b> · <b>MaturityDate</b> (date) · <b>ClosedAt</b> <span class="why">— when the note was issued, when the money went to the issuer, when the last instalment falls due, and the date the note reached Closed or Written off. All nullable except IssuedAt.</span></div></li>
+        <li><span class="act add">add</span><div><b>PrincipalRepaid</b> · <b>InterestPaid</b> · <b>PrincipalOutstanding</b> decimal(15,2) · <b>LastPaidAt</b> nullable <span class="why">— running totals, written only by payouts.</span></div></li>
+        <li><span class="act add">add</span><div>audit columns <span class="why">— who created or last changed the row, and when.</span> No soft delete.</div></li>
+      </ul>
+    </div>
+
+    <div class="tbl">
+      <div class="tbl-h"><h3>NoteRegister</h3><span class="badge rename">built · reshape</span><span class="verdict">the holding record; loses the copies of terms and the servicing state, gains the parent, the holder identity and the running share</span></div>
+      <ul class="rows">
+        <li><span class="act add">add</span><div><b>NoteId</b> FK <span class="why">— the parent. <b>CampaignId</b> stays as a convenience copy, as Share keeps one.</span></div></li>
+        <li><span class="act keep">keep</span><div><b>InvestmentId</b> <span class="why">— make the index unique: one slice per paid investment.</span> · <b>UserId</b> · <b>SliceReference</b> <span class="why">— unique across the platform, not per campaign.</span> · <b>PrincipalAmount</b></div></li>
+        <li><span class="act add">add</span><div><b>CompanyId</b> <span class="why">— copied from the campaign, as Share does; the track-record query path.</span> · <b>Units</b> int</div></li>
+        <li><span class="act remove">remove</span><div><b>InvestorCategory</b> <span class="why">— the investor's category at the time of investing is already recorded on the linked Investment row, and the investor's current details live on the user record. Nothing to copy here.</span></div></li>
+        <li><span class="act replace">replace</span><div><b>Status</b> (ten note states) → <b>HoldingStatus</b> <span class="why">— Active 1 · BoughtBack 2 · Refunded 3 · Transferred 4 (reserved). Plus <b>ExitedAt</b> and <b>ExitAmount</b>, nullable.</span></div></li>
+        <li><span class="act remove">remove</span><div><b>InterestRate</b> · <b>TenureValue</b> · <b>TenureUnit</b> · <b>ExpectedInterest</b> · <b>TotalPayable</b> · <b>DefaultClass</b> <span class="why">— facts about the loan; read them from the terms.</span></div></li>
+        <li><span class="act remove">remove</span><div><b>DaysPastDue</b> <span class="why">— computed by servicing, never stored.</span> · <b>FundedAt</b> · <b>DisbursedAt</b> · <b>MaturityDate</b> · <b>ClosedAt</b> <span class="why">— dates of the loan, on Note.</span></div></li>
+        <li><span class="act keep">keep</span><div><b>PrincipalRepaid</b> · <b>InterestRepaid</b> <span class="why">— rename the second to InterestReceived if you like; both are the holder's running share.</span></div></li>
+        <li><span class="act add">add</span><div><b>FeesDeducted</b> · <b>NetReceived</b> · <b>PrincipalOutstanding</b> decimal(15,2) · <b>LastPaidAt</b> nullable <span class="why">— the rest of the running share, written only by payouts. FeesDeducted is the platform's management fee on this holder's interest plus the tax on that fee, taken out before the wallet credit (§6.2); NetReceived is what actually reached the wallet.</span></div></li>
+        <li><span class="act add">add</span><div><b>ConsentId</b> → UserConsent, nullable · <b>DocumentAttachmentId</b> → attachment store, nullable, as Share's certificate id · <b>ExecutedAt</b> nullable <span class="why">— set at close by the minting operation.</span></div></li>
+        <li><span class="act remove">remove</span><div><b>IsDeleted</b> · <b>DeletedAt</b> <span class="why">— rows are never deleted; the FK to Investment is restrict, not cascade.</span></div></li>
+      </ul>
+    </div>
+
+    <div class="tbl">
+      <div class="tbl-h"><h3>RepaymentSchedule</h3><span class="badge rename">built · re-parent</span><span class="verdict">right columns, wrong parent</span></div>
+      <ul class="rows">
+        <li><span class="act replace">replace</span><div><b>NoteRegisterId</b> → <b>CampaignId</b> <span class="why">— one set of versions per note, never per investor. The campaign is the parent rather than the Note row because the Indicative version exists at setup, before the note is issued; the campaign and the note are 1 : 1, so nothing is lost. Unique on (CampaignId, VersionNo).</span></div></li>
+        <li><span class="act add">add</span><div><b>filtered unique index</b> on CampaignId where IsCurrent <span class="why">— exactly one current version per note, enforced by the database.</span></div></li>
+        <li><span class="act add">add</span><div><b>InterestRate</b> · <b>TenureValue</b> <span class="why">— the terms this version was built on, so a restructure that changes them is provable version by version.</span></div></li>
+        <li><span class="act keep">keep</span><div><b>VersionNo</b> · <b>ScheduleType</b> · <b>IsCurrent</b> · <b>TotalPrincipal</b> · <b>TotalInterest</b> · <b>TotalPayable</b> · <b>GeneratedAt</b> · audit</div></li>
+        <li><span class="act remove">remove</span><div><b>IsDeleted</b> · <b>DeletedAt</b> <span class="why">— versions are never deleted.</span></div></li>
+      </ul>
+    </div>
+
+    <div class="tbl">
+      <div class="tbl-h"><h3>RepaymentScheduleRow</h3><span class="badge rename">built · trim</span><span class="verdict">one row per instalment: when it is due and how much principal and interest it carries. This is the Annex A §4 table investors are shown, exactly</span></div>
+      <ul class="rows">
+        <li><span class="act keep">keep</span><div><b>RepaymentScheduleId</b> · <b>InstalmentNo</b> · <b>Principal</b> · <b>Interest</b> · <b>Total</b> <span class="why">— the ticket names them PrincipalAmount, InterestAmount, TotalAmount; either name, but the ticket and the code must agree.</span></div></li>
+        <li><span class="act rename">retype</span><div><b>DueDate</b> → date <span class="why">— days past due must not depend on a time zone.</span></div></li>
+        <li><span class="act remove">remove</span><div><b>OutstandingPrincipal</b> · <b>AmountPaid</b> · <b>PaidAt</b> · <b>DaysPastDue</b> · <b>IsDeleted</b> · <b>DeletedAt</b> <span class="why">— a row is the promise; what was paid is a payout, the balance is on the register and the note.</span></div></li>
+      </ul>
+    </div>
+
+    <div class="tbl drop">
+      <div class="tbl-h"><h3>NoteFeeConfig</h3><span class="badge remove">drop</span><span class="verdict">a fee-settings table the generated code invented, with its own seeded fee values. Fee settings and their audit trail are P2P-27's, so this one goes</span></div>
+      <ul class="rows">
+        <li><span class="act remove">remove</span><div>the table, its mapping, its seed rows and the service that copies from it. <span class="why">Until P2P-27's read service exists, the fee block on the terms stays null.</span></div></li>
+      </ul>
+    </div>
+
+    <div class="tbl">
+      <div class="tbl-h"><h3>NoteReferenceSequence</h3><span class="badge keep">keep</span><span class="verdict">a one-row-per-year counter that hands out the next note number: N-2026-00001, N-2026-00002 and so on. A small helper, and fine</span></div>
+    </div>
+
+    <div class="tbl">
+      <div class="tbl-h"><h3>Enums</h3><span class="badge rename">adjust</span></div>
+      <ul class="rows">
+        <li><span class="act keep">keep</span><div><b>NoteProductClass</b> · <b>RepaymentFrequency</b> · <b>TenureUnit</b> · <b>RiskGrade</b> · <b>DefaultClass</b> · <b>NotePurpose</b> · <b>ScheduleType</b> · <b>ShariahType</b></div></li>
+        <li><span class="act replace">replace</span><div><b>NoteRegisterStatus</b> → <b>NoteStatus</b> (on Note, nine values above) and <b>HoldingStatus</b> (on the register, four values above)</div></li>
+        <li><span class="act remove">remove</span><div><b>InvestorCategorySnapshot</b> <span class="why">— use the platform's InvestorType.</span></div></li>
+      </ul>
+    </div>
+  </section>
+
+  <section>
+    <div class="s-head"><span class="s-eyebrow">What must be true afterwards</span><h2>Three things anyone can check</h2></div>
+    <ul class="clean">
+      <li><b>Every existing campaign</b> is marked as equity, and as Islamic where it is an Islamic campaign. No campaign is left unmarked.</li>
+      <li><b>Two example notes exist</b> for checking: a Term note still raising, which has terms and an indicative schedule but no Note row and no register rows yet, and an AR note after disbursement, which has its Note row marked Performing, its register rows Active, and a Final schedule with the Indicative one kept.</li>
+      <li><b>The database refuses</b> a second register row for the same investment, a second current schedule for the same note, two campaigns with the same slug, and the deletion of a register row or a schedule version.</li>
+    </ul>
+    <div class="box guard"><b>Scope guard</b>This ticket changes tables, columns, enums and indexes. It adds no endpoint and no business logic. How the change reaches the database, and how the example notes are created, is engineering's to decide. Increments (P2P-68), fee configuration (P2P-27), minting and close (lane E), payouts (F4.3) and servicing (lane G) are other tickets.</div>
+  </section>
+
+  
+
+  <footer>Prepared 8 September 2026. "Delivered" is read from feat/P2P-61_Foundations-Config at b26908d1f; "target" is the model agreed on the lifecycle walkthrough the same day.</footer>
+</main>
+
+<script>
+(function(){
+  var b=document.getElementById("copy"), t=document.getElementById("ticket");
+  if(!b||!t) return;
+  b.addEventListener("click",function(){
+    var txt=t.textContent;
+    function done(ok){ b.textContent=ok?"Copied":"Select and copy manually"; setTimeout(function(){ b.textContent="Copy text"; },1800); }
+    if(navigator.clipboard&&navigator.clipboard.writeText){ navigator.clipboard.writeText(txt).then(function(){done(true)},function(){done(false)}); }
+    else { try{ var r=document.createRange(); r.selectNodeContents(t); var s=window.getSelection(); s.removeAllRanges(); s.addRange(r); done(document.execCommand("copy")); }catch(e){ done(false); } }
+  });
+})();
+</script>
+
+</body></html>
