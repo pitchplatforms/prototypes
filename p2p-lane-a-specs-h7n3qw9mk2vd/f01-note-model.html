@@ -312,7 +312,7 @@
         <h3>On <code>Campaign</code></h3>
         <div class="sub">Shared across products — the fundraise and the pricing</div>
         <ul>
-          <li><code>ProductType</code> <em>ECF · TCF · P2P — never None</em></li>
+          <li><code>AssetClass</code> <em>Equity · Note · Token — renamed from ProductType, never None</em></li>
           <li><code>MinimumTargetAmount</code> · <code>MaximumTargetAmount</code> <em>existing, reused</em></li>
           <li><code>MinimumInvestmentAmount</code> <em>new, shared — ECF migrates onto it (P2P-68)</em></li>
           <li><code>PricePerAsset</code> <em>renamed from PricePerShare — the note's unit price</em></li>
@@ -329,6 +329,7 @@
           <li><code>AssetQuantity</code> <em>renamed from ShareQuantity — amount ÷ unit price</em></li>
           <li><code>AccountNumber</code> <em>renamed from EcfAccountNo</em></li>
           <li><code>IsNominee</code> <em>always true for a note</em> · <code>LotQuantity</code> <em>unused by notes</em></li>
+          <li><code>NoteRegisterId</code> <em>new, nullable — set at close, the holder's register row; equity's ShareId</em></li>
         </ul>
       </div>
       <div class="col">
@@ -340,7 +341,7 @@
           <li><code>RepaymentFrequency</code> · <code>Purpose</code> <em>fixed list</em></li>
           <li><code>RiskGrade</code> + <code>RiskRationale</code> · <code>DefaultClass</code> <em>derived</em></li>
           <li><code>FaceValue</code> + <code>AdvanceRate</code> · <code>CounterpartyName</code> + <code>CounterpartySector</code> <em>AR/AP only</em></li>
-          <li><em>fee terms copied from P2P-27 at setup:</em> <code>SuccessFeeRate</code> · <code>EarlySettlementFeeRate</code> · <code>RenewalFee</code> · <code>LateFlatFee</code> · <code>LateInterestRatePerDay</code> · <code>GracePeriodDays</code> · <code>DelinquencyDpd</code> · <code>DefaultDpdThreshold</code></li>
+          <li><em>fee terms copied from P2P-27 at setup:</em> <code>SuccessFeeRate</code> · <code>EarlySettlementFeeRate</code> · <code>LateFlatFee</code> · <code>LateInterestRatePerDay</code> · <code>GracePeriodDays</code> · <code>DelinquencyDpd</code> · <code>DefaultDpdThreshold</code></li>
         </ul>
       </div>
       <div class="col">
@@ -349,20 +350,22 @@
         <ul>
           <li><code>CampaignId</code> <em>1 : 1</em> · <code>NoteReference</code></li>
           <li><code>PrincipalIssued</code> · <code>Units</code></li>
-          <li><code>Status</code> <em>Issued · Performing · Late · Restructured · DefaultInRecovery · DefaultLowNoRecovery · WrittenOff · ClosedRedeemed · FailedRefunded</em></li>
+          <li><code>InterestRate</code> · <code>TenureValue</code> · <code>TenureUnit</code> · <code>RepaymentFrequency</code> · <code>DefaultClass</code> <em>the terms in force — copied from the offer at close, changed only by a restructure</em></li>
+          <li><code>GracePeriodDays</code> · <code>DelinquencyDpd</code> · <code>DefaultDpdThreshold</code> · <code>EarlySettlementFeeRate</code> · <code>LateFlatFee</code> · <code>LateInterestRatePerDay</code> <em>the servicing terms, copied at close — once issued, nothing reads the offer again</em></li>
+          <li><code>Status</code> <em>Issued · Performing · Late · Restructured · DefaultInRecovery · DefaultLowNoRecovery · WrittenOff · ClosedRedeemed</em></li>
           <li><code>IssuedAt</code> · <code>DisbursedAt</code> · <code>MaturityDate</code> · <code>ClosedAt</code></li>
           <li><code>PrincipalRepaid</code> · <code>InterestPaid</code> · <code>PrincipalOutstanding</code> · <code>LastPaidAt</code> <em>running totals, written only by payouts</em></li>
         </ul>
       </div>
       <div class="col">
         <h3>On <code>NoteRegister</code></h3>
-        <div class="sub">Who holds what — one row per paid investment, created at close, like equity's holder record</div>
+        <div class="sub">Who holds what — one row per holder, created at close by adding up that holder's paid investments, like equity's Share</div>
         <ul>
-          <li><code>SliceReference</code> · <code>NoteId</code> · <code>CampaignId</code> · <code>CompanyId</code> · <code>InvestmentId</code> <em>unique</em> · <code>UserId</code></li>
-          <li><code>Units</code> · <code>PrincipalAmount</code> · <code>InvestorType</code> <em>the existing enum, copied from the investment</em></li>
-          <li><code>HoldingStatus</code> <em>Active · BoughtBack · Refunded · Transferred</em> · <code>ExitedAt</code> · <code>ExitAmount</code></li>
-          <li><code>ConsentId</code> <em>given at payment</em> · <code>DocumentAttachmentId</code> + <code>ExecutedAt</code> <em>the note executed at close</em></li>
-          <li><code>PrincipalRepaid</code> · <code>InterestReceived</code> · <code>FeesDeducted</code> · <code>NetReceived</code> · <code>PrincipalOutstanding</code> · <code>LastPaidAt</code> <em>this holder's running share, written only by payouts</em></li>
+          <li><code>SliceReference</code> · <code>NoteId</code> · <code>CampaignId</code> · <code>CompanyId</code> · <code>UserId</code> <em>unique with NoteId — one row per holder per note; the holder's investments point here</em></li>
+          <li><code>Units</code> · <code>PrincipalAmount</code> <em>summed across the holder's paid investments; investor type is read from them</em></li>
+          <li><code>HoldingStatus</code> <em>Active · Exited · WrittenOff</em> · <code>ExitedAt</code> · <code>ExitAmount</code></li>
+          <li><code>DocumentAttachmentId</code> + <code>ExecutedAt</code> <em>the note executed at close; consent stays on the investment</em></li>
+          <li><code>PrincipalRepaid</code> · <code>InterestReceived</code> · <code>PrincipalOutstanding</code> · <code>LastPaidAt</code> <em>this holder's running share, written only by payouts; fee and net per payout live on the F4.3 allocation</em></li>
         </ul>
       </div>
     </div>
@@ -397,7 +400,7 @@ erDiagram
     CAMPAIGN ||..o| CAMPAIGN_TOKEN_TERM : "IEO terms - future"
     CAMPAIGN ||--o| NOTE : "the issued loan - created at close"
     NOTE ||--o{ NOTE_REGISTER : "holders"
-    INVESTMENT ||--o| NOTE_REGISTER : "one slice per paid investment - at close"
+    NOTE_REGISTER ||--o{ INVESTMENT : "each paid investment points at its holder row - set at close"
     INVESTMENT ||..o| INVESTMENT_EQUITY_DETAIL : "lots and shares - future"
     INVESTMENT ||--o{ SHAREHOLDER_REGISTRY : "allots shares"
     INVESTMENT ||..o{ TOKEN_HOLDING : "allots tokens - future"
@@ -412,11 +415,11 @@ erDiagram
     TOKEN_HOLDING |o..o{ DISTRIBUTION_ALLOCATION : "token payouts"
     DISTRIBUTION_ALLOCATION }o..o| WALLET_TRANSACTION : "credits wallet"
     USER ||--o{ USER_CONSENT : "accepts"
-    NOTE_REGISTER }o..o| USER_CONSENT : "consent given at payment"
+    INVESTMENT }o..o| USER_CONSENT : "consent given at payment"
 
     CAMPAIGN {
         int Id PK
-        int ProductType "NEW - ECF TCF P2P - never None"
+        int AssetClass "RENAMED from ProductType - Equity Note Token - never None"
         decimal MinimumTargetAmount "existing - reused"
         decimal MaximumTargetAmount "existing - reused"
         decimal MinimumInvestmentAmount "NEW - shared with ECF"
@@ -445,7 +448,6 @@ erDiagram
         string CounterpartySector "AR-AP - shown to investors"
         decimal SuccessFeeRate "fee terms copied from P2P-27 at setup"
         decimal EarlySettlementFeeRate
-        decimal RenewalFee "AR-AP only"
         decimal LateFlatFee
         decimal LateInterestRatePerDay "three decimals"
         int GracePeriodDays
@@ -458,7 +460,18 @@ erDiagram
         string NoteReference "copied from the terms"
         decimal PrincipalIssued "the amount raised"
         int Units "principal divided by the unit price"
-        int Status "Issued Performing Late Restructured DefaultInRecovery DefaultLowNoRecovery WrittenOff ClosedRedeemed FailedRefunded"
+        decimal InterestRate "terms in force - copied at close - changed only by restructure"
+        int TenureValue
+        int TenureUnit
+        int RepaymentFrequency
+        int DefaultClass
+        int GracePeriodDays "servicing terms - copied at close"
+        int DelinquencyDpd
+        int DefaultDpdThreshold
+        decimal EarlySettlementFeeRate
+        decimal LateFlatFee
+        decimal LateInterestRatePerDay
+        int Status "Issued Performing Late Restructured DefaultInRecovery DefaultLowNoRecovery WrittenOff ClosedRedeemed"
         timestamp IssuedAt
         timestamp DisbursedAt
         date MaturityDate
@@ -491,6 +504,7 @@ erDiagram
         decimal AssetQuantity "RENAMED from ShareQuantity - the units bought"
         string AccountNumber "RENAMED from EcfAccountNo"
         bool IsNominee "true for notes"
+        int NoteRegisterId FK "NEW - set at close - the holder row - like ShareId"
         decimal LotQuantity "equity only - unused by notes - MIGRATES OUT"
     }
     INVESTMENT_EQUITY_DETAIL {
@@ -498,26 +512,21 @@ erDiagram
         decimal LotQuantity "moves off Investment"
     }
     NOTE_REGISTER {
-        int Id PK "AXIS 3 - one row per paid investment - created at close"
+        int Id PK "AXIS 3 - one row per holder - created at close"
         string SliceReference UK "N-2026-00042-0001"
         int NoteId FK "the parent"
         int CampaignId FK "copy"
         int CompanyId FK "copy - the track record path"
-        int InvestmentId FK, UK "1-to-1 with a paid investment"
-        string UserId FK "copy"
+        string UserId FK "UK with NoteId - one row per holder"
         int Units
-        decimal PrincipalAmount "investor fraction"
-        int InvestorType "existing enum - copied from the investment"
-        int HoldingStatus "Active BoughtBack Refunded Transferred"
+        decimal PrincipalAmount "the holder total"
+        int HoldingStatus "Active Exited WrittenOff"
         timestamp ExitedAt
         decimal ExitAmount
-        int ConsentId FK "UserConsent - given at payment"
         int DocumentAttachmentId FK "the executed note PDF - generated at close"
         timestamp ExecutedAt "at close"
         decimal PrincipalRepaid "this holder's running share - payouts only"
         decimal InterestReceived
-        decimal FeesDeducted
-        decimal NetReceived
         decimal PrincipalOutstanding
         timestamp LastPaidAt
     }
@@ -593,8 +602,8 @@ erDiagram
     <div class="rulebox" style="margin-top:16px">
       <b>How to read it — four design calls baked in</b>
       <b style="display:inline; font-size:inherit; letter-spacing:0; text-transform:none; color:var(--ink)">One transaction table.</b> Every subscription — equity or note — is a row in the existing <code>INVESTMENT</code> table riding the existing pledge→pay→refund pipeline, with its quantity, price and asset-type columns named for any instrument. Until close, an investor's money is an Investment row and a balance in trust; nothing else exists yet.
-      <br><br><b style="display:inline; font-size:inherit; letter-spacing:0; text-transform:none; color:var(--ink)">The note and its register are created at close.</b> After the cooling-off period, when Admin confirms the raise succeeded, the platform creates the <code>NOTE</code> row — the issued loan, equity's share counter — and one <code>NOTE_REGISTER</code> row per paid investment, in investment order, each with its executed note document. The investments move to Completed at the same moment, exactly as equity's share allotment does.
-      <br><br><b style="display:inline; font-size:inherit; letter-spacing:0; text-transform:none; color:var(--ink)">Two statuses, on two rows.</b> The note's status — Issued · Performing · Late · Restructured · Default in recovery · Default with low or no recovery · Written off · Closed · Failed and refunded — describes the issuer's repayment of the one loan and lives on <code>NOTE</code>. Each register row carries a holding status — Active · Bought back · Refunded · Transferred — for what can happen to one holder alone. Both are written only by the events that cause them; there is no status screen.
+      <br><br><b style="display:inline; font-size:inherit; letter-spacing:0; text-transform:none; color:var(--ink)">The note and its register are created at close.</b> After the cooling-off period, when Admin confirms the raise succeeded, the platform creates the <code>NOTE</code> row — the issued loan, equity's share counter — and one <code>NOTE_REGISTER</code> row per holder, adding up that holder's paid investments, each with its executed note document; every investment then points at its holder's row, as equity's Investment.ShareId does. The investments move to Completed at the same moment, exactly as equity's share allotment does.
+      <br><br><b style="display:inline; font-size:inherit; letter-spacing:0; text-transform:none; color:var(--ink)">Two statuses, on two rows.</b> The note's status — Issued · Performing · Late · Restructured · Default in recovery · Default with low or no recovery · Written off · Closed — describes the issuer's repayment of the one loan and lives on <code>NOTE</code>. Each register row carries a holding status — Active · Exited · Written off — for what can happen to one holder alone. Both are written only by the events that cause them; there is no status screen.
       <br><br><b style="display:inline; font-size:inherit; letter-spacing:0; text-transform:none; color:var(--ink)">Every payout source keeps its own table; distribution consumes them.</b> A note's repayments are known at issue, so they live in the versioned schedule. Dividends and redemptions are declared when they happen and get their own event table later. The shared distribution layer takes whichever source fires, allocates pro-rata across the register or the shareholder registry, and updates the running totals on the note and on each holder's row — the allocations stay the ledger everything reconciles to.
     </div>
   </section>
