@@ -118,9 +118,9 @@
       <div class="count remove"><div class="n">1</div><div class="l">table dropped<br>NoteFeeConfig</div></div>
       <div class="count add"><div class="n">~20</div><div class="l">columns added</div></div>
       <div class="count remove"><div class="n">~20</div><div class="l">columns removed</div></div>
-      <div class="count rename"><div class="n">5</div><div class="l">columns renamed<br>Campaign 1 · Investment 4</div></div>
-      <div class="count replace"><div class="n">2</div><div class="l">enums replaced</div></div>
-      <div class="count accent"><div class="n">3</div><div class="l">indexes added<br>slug · investment · current version</div></div>
+      <div class="count rename"><div class="n">6</div><div class="l">columns renamed<br>Campaign 2 · Investment 4</div></div>
+      <div class="count replace"><div class="n">2</div><div class="l">enums replaced<br>+ AssetClass added</div></div>
+      <div class="count accent"><div class="n">3</div><div class="l">indexes added<br>slug · holder · current version</div></div>
     </div>
   </div>
 </header>
@@ -131,23 +131,24 @@
     <div class="s-head"><span class="s-eyebrow">Shared tables</span><h2>Two existing tables change</h2></div>
 
     <div class="tbl">
-      <div class="tbl-h"><h3>Campaign</h3><span class="badge rename">existing · changed</span><span class="verdict">the three new columns are right; one rename, one index, and the backfill rule change</span></div>
+      <div class="tbl-h"><h3>Campaign</h3><span class="badge rename">existing · changed</span><span class="verdict">the three new columns are right; two renames, one index, and the backfill rule change</span></div>
       <ul class="rows">
-        <li><span class="act keep">keep</span><div><b>ProductType</b> · <b>ShariahType</b> · <b>MinimumInvestmentAmount</b> <span class="why">— built as specified. Database default must be a real value, not 0.</span></div></li>
+        <li><span class="act rename">rename</span><div><b>ProductType → AssetClass</b> · <b>ShariahType</b> · <b>MinimumInvestmentAmount</b> <span class="why">— built as specified, with one rename: the column and its enum are <b>AssetClass</b> (Equity 1 · Note 2 · Token 3), named for what the investor ends up holding rather than for the licensing regime. The forms module keeps its own ProductType (ECF · TCF · P2P) untouched. Database default must be a real value, not 0.</span></div></li>
         <li><span class="act rename">rename</span><div><b>PricePerShare → PricePerAsset</b> <span class="why">— the note's unit price lives here, shared with equity. How the rename is done (model now, column later, or both) is Tony's call since equity code reads it.</span></div></li>
-        <li><span class="act add">add</span><div><b>unique index on Slug</b> <span class="why">— all campaigns will share <code>/invest/:slug</code>. Check existing rows for duplicates first.</span></div></li>
-        <li><span class="act rename">retype</span><div><b>backfill</b> <span class="why">— every existing campaign is equity, so ProductType = ECF for all; ShariahType = Islamic where the share class is an Islamic class or the payment account is DuitNow Shariah, otherwise Conventional. Written so a re-run cannot undo a corrected row.</span></div></li>
+        <li><span class="act add">add</span><div><b>unique index on Slug</b> <span class="why">— Campaign already has a Slug column and an index on it, but that index does not enforce uniqueness. All campaigns will share <code>/invest/:slug</code>, so it must. Check existing rows for duplicates first.</span></div></li>
+        <li><span class="act rename">retype</span><div><b>backfill</b> <span class="why">— every existing campaign is equity, so AssetClass = Equity for all; ShariahType = Islamic where the share class is an Islamic class or the payment account is DuitNow Shariah, otherwise Conventional. Written so a re-run cannot undo a corrected row.</span></div></li>
       </ul>
     </div>
 
     <div class="tbl">
-      <div class="tbl-h"><h3>Investment</h3><span class="badge rename">existing · changed</span><span class="verdict">no new columns; four columns get instrument-agnostic names, one falls out of use for notes</span></div>
+      <div class="tbl-h"><h3>Investment</h3><span class="badge rename">existing · changed</span><span class="verdict">one new column; four columns get instrument-agnostic names, one falls out of use for notes</span></div>
       <ul class="rows">
         <li><span class="act rename">rename</span><div><b>ShareQuantity → AssetQuantity</b> <span class="why">— for a note: amount ÷ the campaign's price per asset, stored at investment.</span></div></li>
         <li><span class="act rename">rename</span><div><b>PricePerShare → PricePerAsset</b> <span class="why">— copied from the campaign at investment.</span></div></li>
         <li><span class="act rename">rename</span><div><b>ShareType → AssetType</b> <span class="why">— Note for a note investment.</span></div></li>
         <li><span class="act rename">rename</span><div><b>EcfAccountNo → AccountNumber</b></div></li>
-        <li><span class="act keep">keep</span><div><b>IsNominee</b> <span class="why">— always true for a note.</span> <b>LotQuantity</b> <span class="why">— stays for equity, unused by notes.</span> Everything else unchanged.</div></li>
+        <li><span class="act add">add</span><div><b>NoteRegisterId</b> FK, nullable <span class="why">— set at close, pointing at the holder's register row; equity's ShareId. Two investments by one holder point at the same row. A refunded investment never gets one.</span></div></li>
+        <li><span class="act keep">keep</span><div><b>IsNominee</b> <span class="why">— always true for a note.</span> <b>LotQuantity</b> <span class="why">— unused by notes. The investment set-up is being changed separately to remove lots (separate ticket); what happens to this column belongs there, and the renames above hold either way.</span> Everything else unchanged.</div></li>
       </ul>
     </div>
   </section>
@@ -156,13 +157,13 @@
     <div class="s-head"><span class="s-eyebrow">Note tables</span><h2>One is right, one is new, three change shape</h2></div>
 
     <div class="tbl">
-      <div class="tbl-h"><h3>CampaignNoteTerm</h3><span class="badge keep">built · adjust</span><span class="verdict">the debt terms are right; the fee block needs three columns in and three out</span></div>
+      <div class="tbl-h"><h3>CampaignNoteTerm</h3><span class="badge keep">built · adjust</span><span class="verdict">the debt terms are right; the fee block needs three columns in and four out</span></div>
       <ul class="rows">
         <li><span class="act keep">keep</span><div><b>CampaignId</b> (unique) · <b>NoteReference</b> · <b>ProductClass</b> · <b>InterestRate</b> · <b>TenureValue</b> · <b>TenureUnit</b> · <b>RepaymentFrequency</b> · <b>Purpose</b> · <b>RiskGrade</b> · <b>RiskRationale</b> · <b>DefaultClass</b> · <b>FaceValue</b> · <b>AdvanceRate</b> · <b>CounterpartyName</b> · <b>CounterpartySector</b></div></li>
-        <li><span class="act keep">keep</span><div><b>SuccessFeeRate</b> · <b>EarlySettlementFeeRate</b> · <b>RenewalFee</b> · <b>LateFlatFee</b> · <b>LateInterestRatePerDay</b> <span class="why">— all nullable until the setup screen stamps them from P2P-27.</span></div></li>
+        <li><span class="act keep">keep</span><div><b>SuccessFeeRate</b> · <b>EarlySettlementFeeRate</b> · <b>LateFlatFee</b> · <b>LateInterestRatePerDay</b> <span class="why">— all nullable until the setup screen stamps them from P2P-27.</span></div></li>
         <li><span class="act add">add</span><div><b>GracePeriodDays</b> · <b>DelinquencyDpd</b> · <b>DefaultDpdThreshold</b> (int, nullable) <span class="why">— the servicing terms the issuer agreed and the note discloses (Annex A §5): how many days of grace before a late fee, when the note counts as delinquent, when it counts as in default. They are copied onto the note at setup so a later change to the platform setting cannot reach a note already issued.</span></div></li>
-        <li><span class="act remove">remove</span><div><b>LateFeeCap</b> · <b>CorrespondenceFee</b> · <b>GSTRate</b> <span class="why">— correspondence fee and tax are live platform values, never copied onto a note; the cap was never specified.</span></div></li>
-        <li><span class="act keep">keep</span><div>audit columns <span class="why">— CreatedBy, CreatedAt, ModifiedBy, ModifiedAt: who created or last changed the row, and when. Every table on the platform has them. This table carries no status and no unit price; it is the offer as disclosed, frozen after setup.</span></div></li>
+        <li><span class="act remove">remove</span><div><b>LateFeeCap</b> · <b>CorrespondenceFee</b> · <b>GSTRate</b> · <b>RenewalFee</b> <span class="why">— correspondence fee and tax are live platform values, never copied onto a note; the cap was never specified; the RM150 annual AR/AP facility renewal (§6.1) is invoiced when it happens, like the restructuring fee, and is not a term of one note.</span></div></li>
+        <li><span class="act keep">keep</span><div>audit columns <span class="why">— CreatedBy, CreatedAt, ModifiedBy, ModifiedAt: who created or last changed the row, and when. Every table on the platform has them. This table carries no status and no unit price; it is the offer as disclosed, frozen after setup. It is what the listing showed. Once the note is issued nothing reads it again: servicing reads Note.</span></div></li>
       </ul>
     </div>
 
@@ -172,7 +173,8 @@
         <li><span class="act add">add</span><div><b>Id</b> · <b>CampaignId</b> (unique, 1 : 1) · <b>NoteReference</b> (copied from the terms)</div></li>
         <li><span class="act add">add</span><div><b>PrincipalIssued</b> decimal(15,2) · <b>Units</b> int <span class="why">— the amount raised and its units at close.</span></div></li>
         <li><span class="act add">add</span><div><b>InterestRate</b> · <b>TenureValue</b> · <b>TenureUnit</b> · <b>RepaymentFrequency</b> · <b>DefaultClass</b> <span class="why">— the loan's terms in force. Copied from the offer at close; changed only by a restructure, together with a new schedule version. The offer on CampaignNoteTerm never changes, so what was disclosed and what is now in force are both on record.</span></div></li>
-        <li><span class="act add">add</span><div><b>Status</b> enum NoteStatus <span class="why">— Issued 1 · Performing 2 · Late 3 · Restructured 4 · DefaultInRecovery 5 · DefaultLowNoRecovery 6 · WrittenOff 7 · ClosedRedeemed 8 · FailedRefunded 9.</span></div></li>
+        <li><span class="act add">add</span><div><b>GracePeriodDays</b> · <b>DelinquencyDpd</b> · <b>DefaultDpdThreshold</b> · <b>EarlySettlementFeeRate</b> · <b>LateFlatFee</b> · <b>LateInterestRatePerDay</b> <span class="why">— the servicing terms, copied from the offer at close for the same reason. The rule: CampaignNoteTerm is what the listing showed; Note is what servicing reads; anything both need is copied once, at close. Success fee stays on the offer (charged once at disbursement); management fee, tax and correspondence fee are live platform values and sit on neither.</span></div></li>
+        <li><span class="act add">add</span><div><b>Status</b> enum NoteStatus <span class="why">— Issued 1 · Performing 2 · Late 3 · Restructured 4 · DefaultInRecovery 5 · DefaultLowNoRecovery 6 · WrittenOff 7 · ClosedRedeemed 8. No FailedRefunded: the Note row is only created once Admin confirms success, so a failed raise never has one; the refunds are on the Investment rows.</span></div></li>
         <li><span class="act add">add</span><div><b>IssuedAt</b> · <b>DisbursedAt</b> · <b>MaturityDate</b> (date) · <b>ClosedAt</b> <span class="why">— when the note was issued, when the money went to the issuer, when the last instalment falls due, and the date the note reached Closed or Written off. All nullable except IssuedAt.</span></div></li>
         <li><span class="act add">add</span><div><b>PrincipalRepaid</b> · <b>InterestPaid</b> · <b>PrincipalOutstanding</b> decimal(15,2) · <b>LastPaidAt</b> nullable <span class="why">— running totals, written only by payouts.</span></div></li>
         <li><span class="act add">add</span><div>audit columns <span class="why">— who created or last changed the row, and when.</span> No soft delete.</div></li>
@@ -180,26 +182,27 @@
     </div>
 
     <div class="tbl">
-      <div class="tbl-h"><h3>NoteRegister</h3><span class="badge rename">built · reshape</span><span class="verdict">the holding record; loses the copies of terms and the servicing state, gains the parent, the holder identity and the running share</span></div>
+      <div class="tbl-h"><h3>NoteRegister</h3><span class="badge rename">built · reshape</span><span class="verdict">the holding record, one row per holder as equity's Share is; loses the copies of terms, the servicing state and the fee columns, gains the parent, the holder identity and the running share</span></div>
       <ul class="rows">
         <li><span class="act add">add</span><div><b>NoteId</b> FK <span class="why">— the parent. <b>CampaignId</b> stays as a convenience copy, as Share keeps one.</span></div></li>
-        <li><span class="act keep">keep</span><div><b>InvestmentId</b> <span class="why">— make the index unique: one slice per paid investment.</span> · <b>UserId</b> · <b>SliceReference</b> <span class="why">— unique across the platform, not per campaign.</span> · <b>PrincipalAmount</b></div></li>
+        <li><span class="act remove">remove</span><div><b>InvestmentId</b> <span class="why">— the link runs the other way, as equity's Investment.ShareId does: each paid investment points at its holder's row (Investment.NoteRegisterId, above). One row per holder per note, unique on (NoteId, UserId), built at close by adding up that holder's paid investments, exactly as Share consolidates. A holder who invested twice has one row; a refunded investment has none; a row nothing points at is a secondary holding, for later.</span></div></li>
+        <li><span class="act keep">keep</span><div><b>UserId</b> · <b>SliceReference</b> <span class="why">— unique across the platform, one per holder.</span> · <b>PrincipalAmount</b> <span class="why">— the holder's total.</span></div></li>
         <li><span class="act add">add</span><div><b>CompanyId</b> <span class="why">— copied from the campaign, as Share does; the track-record query path.</span> · <b>Units</b> int</div></li>
-        <li><span class="act remove">remove</span><div><b>InvestorCategory</b> <span class="why">— the investor's category at the time of investing is already recorded on the linked Investment row, and the investor's current details live on the user record. Nothing to copy here.</span></div></li>
-        <li><span class="act replace">replace</span><div><b>Status</b> (ten note states) → <b>HoldingStatus</b> <span class="why">— Active 1 · BoughtBack 2 · Refunded 3 · Transferred 4 (reserved). Plus <b>ExitedAt</b> and <b>ExitAmount</b>, nullable.</span></div></li>
+        <li><span class="act remove">remove</span><div><b>InvestorCategory</b> <span class="why">— the investor's category at the time of investing is already recorded on the Investment rows that point at this one, and the investor's current details live on the user record. Nothing to copy here.</span></div></li>
+        <li><span class="act replace">replace</span><div><b>Status</b> (ten note states) → <b>HoldingStatus</b> <span class="why">— Active 1 · Exited 2 · WrittenOff 3. Generic on purpose: a holder is still holding, has left (repaid in full, bought back or transferred), or was written off with the note. No Refunded: register rows are only created at close, so a failed raise never reaches this table. Plus <b>ExitedAt</b> and <b>ExitAmount</b>, nullable; the event that wrote them says why.</span></div></li>
         <li><span class="act remove">remove</span><div><b>InterestRate</b> · <b>TenureValue</b> · <b>TenureUnit</b> · <b>ExpectedInterest</b> · <b>TotalPayable</b> · <b>DefaultClass</b> <span class="why">— facts about the loan; read them from the terms.</span></div></li>
         <li><span class="act remove">remove</span><div><b>DaysPastDue</b> <span class="why">— computed by servicing, never stored.</span> · <b>FundedAt</b> · <b>DisbursedAt</b> · <b>MaturityDate</b> · <b>ClosedAt</b> <span class="why">— dates of the loan, on Note.</span></div></li>
-        <li><span class="act keep">keep</span><div><b>PrincipalRepaid</b> · <b>InterestRepaid</b> <span class="why">— rename the second to InterestReceived if you like; both are the holder's running share.</span></div></li>
-        <li><span class="act add">add</span><div><b>FeesDeducted</b> · <b>NetReceived</b> · <b>PrincipalOutstanding</b> decimal(15,2) · <b>LastPaidAt</b> nullable <span class="why">— the rest of the running share, written only by payouts. FeesDeducted is the platform's management fee on this holder's interest plus the tax on that fee, taken out before the wallet credit (§6.2); NetReceived is what actually reached the wallet.</span></div></li>
-        <li><span class="act add">add</span><div><b>ConsentId</b> → UserConsent, nullable · <b>DocumentAttachmentId</b> → attachment store, nullable, as Share's certificate id · <b>ExecutedAt</b> nullable <span class="why">— set at close by the minting operation.</span></div></li>
-        <li><span class="act remove">remove</span><div><b>IsDeleted</b> · <b>DeletedAt</b> <span class="why">— rows are never deleted; the FK to Investment is restrict, not cascade.</span></div></li>
+        <li><span class="act keep">keep</span><div><b>PrincipalRepaid</b> · <b>InterestRepaid</b> <span class="why">— the holder's running share; the names stay as built.</span></div></li>
+        <li><span class="act add">add</span><div><b>PrincipalOutstanding</b> decimal(15,2) · <b>LastPaidAt</b> nullable <span class="why">— the rest of the running share, written only by payouts. No fee or net columns: the fee taken and the net credited are facts of each payout, not of the holding, and live on the F4.3 allocation, as PSTX keeps trade fees on the contract rather than on the holder.</span></div></li>
+        <li><span class="act add">add</span><div><b>DocumentAttachmentId</b> → attachment store, nullable, as Share's certificate id · <b>ExecutedAt</b> nullable <span class="why">— set at close by the minting operation. No ConsentId here: consent is given per payment and stays with the Investment (lane D).</span></div></li>
+        <li><span class="act remove">remove</span><div><b>IsDeleted</b> · <b>DeletedAt</b> <span class="why">— rows are never deleted; foreign keys restrict, not cascade.</span></div></li>
       </ul>
     </div>
 
     <div class="tbl">
-      <div class="tbl-h"><h3>RepaymentSchedule</h3><span class="badge rename">built · re-parent</span><span class="verdict">right columns, wrong parent</span></div>
+      <div class="tbl-h"><h3>RepaymentSchedule</h3><span class="badge rename">built · re-parent</span><span class="verdict">right columns, wrong parent: keyed per holder slice today, must be per note</span></div>
       <ul class="rows">
-        <li><span class="act replace">replace</span><div><b>NoteRegisterId</b> → <b>CampaignId</b> <span class="why">— one set of versions per note, never per investor. The campaign is the parent rather than the Note row because the Indicative version exists at setup, before the note is issued; the campaign and the note are 1 : 1, so nothing is lost. Unique on (CampaignId, VersionNo).</span></div></li>
+        <li><span class="act replace">replace</span><div><b>NoteRegisterId</b> → <b>CampaignId</b> (required) + <b>NoteId</b> (nullable) <span class="why">— one set of versions per note, never per investor slice. Both keys: CampaignId is always set, because the Indicative version exists at setup before any note; NoteId is stamped at close when the note is minted, so after issue servicing reads the schedule by note and never touches the campaign. Carrying both also means a campaign that one day issues more than one note (as an equity campaign can end up with more than one share counter) does not force a re-keying. Unique on (CampaignId, VersionNo) today.</span></div></li>
         <li><span class="act add">add</span><div><b>filtered unique index</b> on CampaignId where IsCurrent <span class="why">— exactly one current version per note, enforced by the database.</span></div></li>
         <li><span class="act add">add</span><div><b>InterestRate</b> · <b>TenureValue</b> <span class="why">— the terms this version was built on, so a restructure that changes them is provable version by version.</span></div></li>
         <li><span class="act keep">keep</span><div><b>VersionNo</b> · <b>ScheduleType</b> · <b>IsCurrent</b> · <b>TotalPrincipal</b> · <b>TotalInterest</b> · <b>TotalPayable</b> · <b>GeneratedAt</b> · audit</div></li>
@@ -231,8 +234,9 @@
       <div class="tbl-h"><h3>Enums</h3><span class="badge rename">adjust</span></div>
       <ul class="rows">
         <li><span class="act keep">keep</span><div><b>NoteProductClass</b> · <b>RepaymentFrequency</b> · <b>TenureUnit</b> · <b>RiskGrade</b> · <b>DefaultClass</b> · <b>NotePurpose</b> · <b>ScheduleType</b> · <b>ShariahType</b></div></li>
-        <li><span class="act replace">replace</span><div><b>NoteRegisterStatus</b> → <b>NoteStatus</b> (on Note, nine values above) and <b>HoldingStatus</b> (on the register, four values above)</div></li>
+        <li><span class="act replace">replace</span><div><b>NoteRegisterStatus</b> → <b>NoteStatus</b> (on Note, eight values above) and <b>HoldingStatus</b> (on the register, three values above)</div></li>
         <li><span class="act remove">remove</span><div><b>InvestorCategorySnapshot</b> <span class="why">— use the platform's InvestorType.</span></div></li>
+        <li><span class="act add">add</span><div><b>AssetClass</b> <span class="why">— Equity 1 · Note 2 · Token 3, on Campaign.</span></div></li>
       </ul>
     </div>
   </section>
@@ -242,14 +246,14 @@
     <ul class="clean">
       <li><b>Every existing campaign</b> is marked as equity, and as Islamic where it is an Islamic campaign. No campaign is left unmarked.</li>
       <li><b>Two example notes exist</b> for checking: a Term note still raising, which has terms and an indicative schedule but no Note row and no register rows yet, and an AR note after disbursement, which has its Note row marked Performing, its register rows Active, and a Final schedule with the Indicative one kept.</li>
-      <li><b>The database refuses</b> a second register row for the same investment, a second current schedule for the same note, two campaigns with the same slug, and the deletion of a register row or a schedule version.</li>
+      <li><b>The database refuses</b> a second register row for the same holder on the same note, a second current schedule for the same note, two campaigns with the same slug, and the deletion of a register row or a schedule version.</li>
     </ul>
     <div class="box guard"><b>Scope guard</b>This ticket changes tables, columns, enums and indexes. It adds no endpoint and no business logic. How the change reaches the database, and how the example notes are created, is engineering's to decide. Increments (P2P-68), fee configuration (P2P-27), minting and close (lane E), payouts (F4.3) and servicing (lane G) are other tickets.</div>
   </section>
 
   
 
-  <footer>Prepared 8 September 2026. "Delivered" is read from feat/P2P-61_Foundations-Config at b26908d1f; "target" is the model agreed on the lifecycle walkthrough the same day.</footer>
+  <footer>Prepared 8 September 2026, revised the same evening after Nicholas's review. "Delivered" is read from feat/P2P-61_Foundations-Config at b26908d1f; "target" is the model agreed on the lifecycle walkthrough the same day.</footer>
 </main>
 
 <script>
