@@ -365,7 +365,7 @@
           <li><code>Units</code> · <code>PrincipalAmount</code> <em>summed across the holder's paid investments; investor type is read from them</em></li>
           <li><code>HoldingStatus</code> <em>Active · Exited · WrittenOff</em> · <code>ExitedAt</code> · <code>ExitAmount</code></li>
           <li><code>DocumentAttachmentId</code> + <code>ExecutedAt</code> <em>the note executed at close; consent stays on the investment</em></li>
-          <li><code>PrincipalRepaid</code> · <code>InterestReceived</code> · <code>PrincipalOutstanding</code> · <code>LastPaidAt</code> <em>this holder's running share, written only by payouts; fee and net per payout live on the F4.3 allocation</em></li>
+          <li><code>PrincipalRepaid</code> · <code>InterestRepaid</code> · <code>PrincipalOutstanding</code> · <code>LastPaidAt</code> <em>this holder's running share, written only by payouts; fee and net per payout live on the F4.3 allocation</em></li>
         </ul>
       </div>
     </div>
@@ -404,7 +404,8 @@ erDiagram
     INVESTMENT ||..o| INVESTMENT_EQUITY_DETAIL : "lots and shares - future"
     INVESTMENT ||--o{ SHAREHOLDER_REGISTRY : "allots shares"
     INVESTMENT ||..o{ TOKEN_HOLDING : "allots tokens - future"
-    CAMPAIGN ||--o{ REPAYMENT_SCHEDULE : "versioned - notes only"
+    CAMPAIGN ||--o{ REPAYMENT_SCHEDULE : "versioned - notes only - from setup"
+    NOTE ||..o{ REPAYMENT_SCHEDULE : "stamped at close - how servicing finds it"
     REPAYMENT_SCHEDULE ||--o{ SCHEDULE_ROW : "instalments"
     CAMPAIGN ||..o{ EQUITY_PAYMENT_EVENT : "declared ad-hoc - future"
     SCHEDULE_ROW |o..o{ DISTRIBUTION_EVENT : "source"
@@ -526,7 +527,7 @@ erDiagram
         int DocumentAttachmentId FK "the executed note PDF - generated at close"
         timestamp ExecutedAt "at close"
         decimal PrincipalRepaid "this holder's running share - payouts only"
-        decimal InterestReceived
+        decimal InterestRepaid
         decimal PrincipalOutstanding
         timestamp LastPaidAt
     }
@@ -538,7 +539,8 @@ erDiagram
     }
     REPAYMENT_SCHEDULE {
         int Id PK "notes only - equity has no schedule"
-        int CampaignId FK "one set of versions per note"
+        int CampaignId FK "always set - the Indicative version exists before the note"
+        int NoteId FK "nullable - stamped at close - servicing reads by note"
         int VersionNo "1 2 3 per note"
         int ScheduleType "Indicative - Final - Restructured"
         bool IsCurrent "exactly one per note - database enforced"
@@ -620,6 +622,7 @@ erDiagram
       <table class="ref">
         <thead><tr><th>Version header</th><th>Type</th><th>Notes</th></tr></thead>
         <tbody>
+          <tr><td><code>CampaignId</code> / <code>NoteId</code></td><td>FK / FK, nullable</td><td>The campaign from setup; the note once it exists, stamped at close, so servicing never reads the campaign</td></tr>
           <tr><td><code>VersionNo</code></td><td>int</td><td>1, 2, 3… per note</td></tr>
           <tr><td><code>ScheduleType</code></td><td>enum</td><td>Indicative · Final · Restructured</td></tr>
           <tr><td><code>IsCurrent</code></td><td>bool</td><td>Exactly one current version per note</td></tr>
