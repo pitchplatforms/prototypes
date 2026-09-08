@@ -148,7 +148,7 @@
         <li><span class="act rename">rename</span><div><b>ShareType → AssetType</b> <span class="why">— Note for a note investment.</span></div></li>
         <li><span class="act rename">rename</span><div><b>EcfAccountNo → AccountNumber</b></div></li>
         <li><span class="act add">add</span><div><b>NoteRegisterId</b> FK, nullable <span class="why">— set at close, pointing at the holder's register row; equity's ShareId. Two investments by one holder point at the same row. A refunded investment never gets one.</span></div></li>
-        <li><span class="act keep">keep</span><div><b>IsNominee</b> <span class="why">— always true for a note.</span> <b>LotQuantity</b> <span class="why">— unused by notes. The investment set-up is being changed separately to remove lots (separate ticket); what happens to this column belongs there, and the renames above hold either way.</span> Everything else unchanged.</div></li>
+        <li><span class="act keep">keep</span><div><b>IsNominee</b> <span class="why">— always true for a note.</span> <b>LotQuantity</b> <span class="why">— unused by notes. Lots stay for equity: INC-333 (in progress) adds share-based top-up increments on ECF offers alongside them, and touches the same Investment service, so whichever of INC-333 and this work merges second rebases. The renames above hold either way.</span> Everything else unchanged.</div></li>
       </ul>
     </div>
   </section>
