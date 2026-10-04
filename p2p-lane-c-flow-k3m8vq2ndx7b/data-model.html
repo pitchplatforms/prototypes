@@ -1,0 +1,420 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex">
+<title>The tables behind the onboarding portal</title>
+<style>
+  :root{
+    --paper:#FBFAF6; --ink:#20302F; --muted:#5F6E6C; --rule:rgba(32,48,47,.16);
+    --accent:#2D7F81; --accent-strong:#256A6C; --on-accent:#FFFFFF;
+    --tint:rgba(45,137,139,.09);
+    --card:#FFFFFF; --card-edge:rgba(32,48,47,.12);
+    --changed:#A8731F; --changed-tint:rgba(168,115,31,.12);
+    --reused:#5F6E6C; --reused-tint:rgba(95,110,108,.10);
+    --legacy:#8A8F8E; --legacy-tint:rgba(138,143,142,.08);
+    --lanea:#7B4EA8; --lanea-tint:rgba(123,78,168,.10);
+    --serif:"Charter","Iowan Old Style",Georgia,"Times New Roman",serif;
+    --sans:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+    --mono:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+  }
+  @media (prefers-color-scheme: dark){
+    :root:not([data-theme="light"]){
+      --paper:#0E1918; --ink:#E7E5DB; --muted:#9DABA8; --rule:rgba(231,229,219,.16);
+      --accent:#5CB6B8; --accent-strong:#7BC8CA; --on-accent:#0E1918; --tint:rgba(92,182,184,.11);
+      --card:#132120; --card-edge:rgba(231,229,219,.14);
+      --changed:#D9A85C; --changed-tint:rgba(217,168,92,.13);
+      --reused:#9DABA8; --reused-tint:rgba(157,171,168,.12);
+      --legacy:#7E8887; --legacy-tint:rgba(126,136,135,.10);
+      --lanea:#C4A3E0; --lanea-tint:rgba(196,163,224,.13);
+    }
+  }
+  :root[data-theme="dark"]{
+    --paper:#0E1918; --ink:#E7E5DB; --muted:#9DABA8; --rule:rgba(231,229,219,.16);
+    --accent:#5CB6B8; --accent-strong:#7BC8CA; --on-accent:#0E1918; --tint:rgba(92,182,184,.11);
+    --card:#132120; --card-edge:rgba(231,229,219,.14);
+    --changed:#D9A85C; --changed-tint:rgba(217,168,92,.13);
+    --reused:#9DABA8; --reused-tint:rgba(157,171,168,.12);
+    --legacy:#7E8887; --legacy-tint:rgba(126,136,135,.10);
+    --lanea:#C4A3E0; --lanea-tint:rgba(196,163,224,.13);
+  }
+  *{box-sizing:border-box}
+  body{margin:0; background:var(--paper); color:var(--ink); font-family:var(--serif); font-size:16.5px; line-height:1.55; -webkit-font-smoothing:antialiased}
+  .wrap{max-width:980px; margin:0 auto; padding:0 20px 72px}
+  a{color:var(--accent-strong)}
+  a:focus-visible, summary:focus-visible{outline:2px solid var(--accent); outline-offset:2px}
+  .crumb{display:block; padding:14px 0 0; font:11px var(--mono); letter-spacing:.12em; text-transform:uppercase; color:var(--accent); text-decoration:none}
+  header.hero{padding:30px 0 22px; border-bottom:2px solid var(--ink); margin-bottom:8px}
+  .eyebrow{font-family:var(--sans); font-size:11.5px; font-weight:700; letter-spacing:.14em; text-transform:uppercase; color:var(--accent); margin:0}
+  h1{font-size:clamp(28px,4.6vw,40px); line-height:1.1; margin:12px 0 12px; font-weight:700; max-width:24ch; text-wrap:balance}
+  .stand{margin:0; max-width:64ch; color:var(--muted); font-size:17px}
+  .stand b{color:var(--ink); font-weight:600}
+  h2{font-size:24px; line-height:1.2; margin:48px 0 6px; text-wrap:balance}
+  h2 + p.lede{margin:0 0 16px; color:var(--muted); max-width:68ch}
+  p{max-width:70ch}
+  code{font-family:var(--mono); font-size:.86em; background:var(--tint); padding:1px 5px; border-radius:4px}
+
+  .legend{display:flex; gap:8px; flex-wrap:wrap; margin:18px 0 0; font-family:var(--sans); font-size:12.5px}
+  .legend span{border:1px solid var(--rule); border-radius:99px; padding:4px 11px; display:inline-flex; align-items:center; gap:7px}
+  .sw{width:12px; height:12px; border-radius:3px; flex:none; border:1.5px solid}
+  .sw.new{background:var(--tint); border-color:var(--accent)}
+  .sw.changed{background:var(--changed-tint); border-color:var(--changed)}
+  .sw.reused{background:var(--reused-tint); border-color:var(--reused)}
+  .sw.legacy{background:var(--legacy-tint); border-color:var(--legacy); border-style:dashed}
+
+  .counts{display:grid; grid-template-columns:repeat(auto-fit,minmax(160px,1fr)); gap:10px; margin:18px 0 0; font-family:var(--sans)}
+  .counts > div{border:1px solid var(--card-edge); background:var(--card); border-radius:10px; padding:12px 14px; border-left-width:4px}
+  .counts .n{font-size:26px; font-weight:700; line-height:1}
+  .counts .l{font-size:12.5px; color:var(--muted); margin-top:4px}
+  .counts .new{border-left-color:var(--accent)} .counts .changed{border-left-color:var(--changed)}
+  .counts .reused{border-left-color:var(--reused)} .counts .legacy{border-left-color:var(--legacy); border-left-style:dashed}
+
+  .rulebox{margin:16px 0 0; border-left:3px solid var(--accent); background:var(--tint); border-radius:0 8px 8px 0; padding:11px 14px; font-family:var(--sans); font-size:13.5px; line-height:1.55; max-width:none}
+  .rulebox > b:first-child{display:block; font-size:10.5px; letter-spacing:.09em; text-transform:uppercase; color:var(--accent-strong); margin-bottom:3px}
+
+
+  /* the picture: lanes, not a web of arrows */
+  .flow{display:grid; gap:12px; margin-top:16px; font-family:var(--sans)}
+  .lane{border:1px solid var(--card-edge); background:var(--card); border-radius:12px; padding:14px 16px 16px}
+  .lane.side{background:transparent; border-style:dashed}
+  .lane header{display:flex; gap:12px; align-items:flex-start; margin-bottom:12px}
+  .lane header .num{flex:none; width:26px; height:26px; border-radius:50%; background:var(--ink); color:var(--paper); font:700 13px/26px var(--sans); text-align:center}
+  .lane header b{display:block; font-size:15.5px}
+  .lane header span:not(.num){display:block; font-size:13px; color:var(--muted); margin-top:1px}
+  .steps{display:flex; flex-wrap:wrap; gap:8px; align-items:stretch}
+  .stepcard{flex:1 1 200px; border:1px solid var(--rule); border-radius:9px; padding:10px 12px; background:var(--paper)}
+  .stepcard.wide{flex:2 1 300px}
+  .arrow{flex:none; align-self:center; width:22px; height:2px; background:var(--muted); position:relative; opacity:.7}
+  .arrow::after{content:""; position:absolute; right:-1px; top:-4px; border-left:7px solid var(--muted); border-top:5px solid transparent; border-bottom:5px solid transparent}
+  @media (max-width:640px){ .arrow{width:2px; height:16px; margin:0 auto; flex-basis:100%} .arrow::after{right:-4px; top:auto; bottom:-2px; border-left:5px solid transparent; border-right:5px solid transparent; border-top:7px solid var(--muted); border-bottom:0} }
+  .what{margin:0 0 8px; font-size:13.5px; font-weight:600; line-height:1.35; max-width:none}
+  .fine{margin:8px 0 0; font-size:12.5px; color:var(--muted); line-height:1.45; max-width:none}
+  .fine code{background:none; padding:0}
+  .piles{display:grid; grid-template-columns:repeat(auto-fit,minmax(260px,1fr)); gap:8px}
+  .pile{border:1px solid var(--rule); border-radius:9px; padding:10px 12px; background:var(--paper)}
+  .pile ul{list-style:none; margin:0; padding:0}
+  .pile li{padding:7px 0; border-top:1px dashed var(--rule); line-height:1.9}
+  .pile li:first-child{border-top:0; padding-top:0}
+  .pile li em{display:block; font-style:normal; font-size:12.5px; color:var(--muted); line-height:1.4; margin-top:1px}
+  .chip{display:inline-block; font:600 12px var(--mono); padding:2px 8px; border-radius:6px; border:1.5px solid; line-height:1.5; word-break:break-word}
+  .chip.new{background:var(--tint); border-color:var(--accent); color:var(--ink)}
+  .chip.changed{background:var(--changed-tint); border-color:var(--changed); color:var(--ink)}
+  .chip.reused{background:var(--reused-tint); border-color:var(--reused); color:var(--ink)}
+  .chip.legacy{background:var(--legacy-tint); border-color:var(--legacy); border-style:dashed; color:var(--ink)}
+  .plain{font-size:13px; font-weight:600}
+  .to{font-size:11.5px; color:var(--muted); white-space:nowrap}
+  .to::before{content:"→ "}
+  .cap{font-family:var(--sans); font-size:13px; color:var(--muted); margin-top:12px; max-width:74ch}
+
+  .tpl{display:grid; grid-template-columns:.9fr auto 1.5fr auto 1fr; gap:10px; align-items:start; margin-top:14px; font-family:var(--sans)}
+  @media (max-width:760px){ .tpl{grid-template-columns:1fr} .tarrow{transform:rotate(90deg); justify-self:center; height:40px} }
+  .tpl .chip{font-size:11px; word-break:normal}
+  .tcard{border:1px solid var(--card-edge); background:var(--card); border-radius:11px; padding:12px 13px}
+  .tcard.app{border-color:var(--accent); border-width:2px}
+  .th{display:flex; flex-direction:column; gap:3px; margin-bottom:8px}
+  .tsub{font-size:12.5px; color:var(--muted); line-height:1.4}
+  .tl-items{margin:0; padding-left:18px; font-size:13px; line-height:1.55}
+  .tl-items li i{color:var(--muted); font-style:normal; font-size:11.5px; margin-left:6px}
+  .tl-items li b{font-weight:600; font-size:11.5px; margin-left:6px; color:var(--accent-strong)}
+  .tl-items li.dim{color:var(--muted); list-style:none; margin-left:-18px}
+  .tver{border:1px solid var(--rule); border-radius:9px; padding:10px 11px; margin-top:8px; background:var(--paper)}
+  .tver.draft{border-style:dashed; opacity:.85}
+  .tarrow{align-self:center; display:flex; flex-direction:column; align-items:center; gap:4px; color:var(--muted); font-size:11.5px; text-align:center; width:80px}
+  .tarrow::before{content:"→"; font-size:26px; line-height:1; color:var(--accent)}
+  details.sect{margin-top:34px; border-top:2px solid var(--ink); padding-top:6px}
+  details.sect > summary{list-style:none; cursor:pointer; display:flex; align-items:baseline; gap:12px; padding:8px 0}
+  details.sect > summary::-webkit-details-marker{display:none}
+  details.sect > summary h2{margin:0; font-size:22px}
+  details.sect > summary h2::before{content:"›"; display:inline-block; margin-right:10px; color:var(--muted); transition:transform .12s}
+  details.sect[open] > summary h2::before{transform:rotate(90deg)}
+  details.sect > summary .hint{font-family:var(--sans); font-size:13px; color:var(--muted)}
+
+  .group{margin-top:26px}
+  .group h3{font-family:var(--sans); font-size:13px; letter-spacing:.08em; text-transform:uppercase; margin:0 0 10px; display:flex; align-items:center; gap:8px}
+  .egrid{display:grid; grid-template-columns:repeat(auto-fill,minmax(290px,1fr)); gap:10px; align-items:start}
+  details.e{border:1px solid var(--card-edge); background:var(--card); border-radius:11px; border-left-width:4px; overflow:hidden}
+  details.e.new{border-left-color:var(--accent)} details.e.changed{border-left-color:var(--changed)}
+  details.e.reused{border-left-color:var(--reused)} details.e.legacy{border-left-color:var(--legacy); border-left-style:dashed}
+  details.e summary{list-style:none; cursor:pointer; padding:11px 14px; display:flex; gap:8px; align-items:baseline; font-family:var(--sans)}
+  details.e summary::-webkit-details-marker{display:none}
+  details.e summary::before{content:"›"; color:var(--muted); font-size:16px; line-height:1; transition:transform .12s}
+  details.e[open] summary::before{transform:rotate(90deg)}
+  details.e summary .n{font-family:var(--mono); font-size:13px; font-weight:700}
+  details.e summary .d{font-size:12.5px; color:var(--muted); margin-left:auto; text-align:right; max-width:52%}
+  details.e .b{padding:0 14px 12px 30px; font-family:var(--sans); font-size:13px; line-height:1.5}
+  details.e .b p{margin:0 0 8px; color:var(--muted); max-width:none}
+  details.e ul{margin:0; padding-left:16px}
+  details.e li{margin:2px 0}
+  details.e li code{background:none; padding:0; font-size:12px}
+  details.e li.add code{background:var(--changed-tint); padding:1px 5px}
+  .k{display:inline-block; font:700 10px var(--sans); letter-spacing:.08em; text-transform:uppercase; padding:1px 6px; border-radius:99px; border:1px solid var(--rule); color:var(--muted); vertical-align:1px; white-space:nowrap}
+  .k.new{border-color:var(--accent); color:var(--accent-strong); background:var(--tint)}
+  .k.changed{border-color:var(--changed); color:var(--changed); background:var(--changed-tint)}
+
+  table{border-collapse:collapse; width:100%; font-family:var(--sans); font-size:13.5px}
+  .tablewrap{overflow-x:auto; border:1px solid var(--card-edge); border-radius:8px; background:var(--card); margin-top:12px}
+  th,td{text-align:left; padding:8px 12px; border-bottom:1px solid var(--rule); vertical-align:top}
+  th{font-size:11.5px; letter-spacing:.08em; text-transform:uppercase; color:var(--muted); font-weight:700}
+  tr:last-child td{border-bottom:0}
+  footer{margin-top:52px; padding-top:16px; border-top:1px solid var(--rule); font-family:var(--mono); font-size:11.5px; color:var(--muted); line-height:1.8}
+
+  .rows{font-size:13px}
+  .rows td:first-child, .rows th:first-child{white-space:nowrap}
+  .rows .rt{font:600 12px var(--mono); color:var(--accent-strong)}
+  .two{display:grid; grid-template-columns:repeat(auto-fit,minmax(280px,1fr)); gap:12px; margin-top:14px; font-family:var(--sans)}
+  .two > div{border:1px solid var(--card-edge); background:var(--card); border-radius:12px; padding:14px 16px; font-size:14px; line-height:1.55}
+  .two h4{margin:0 0 6px; font-size:14.5px}
+  .two .ok{color:var(--accent-strong); font-weight:700} .two .bad{color:var(--changed); font-weight:700}
+
+  .sw.lanea{background:var(--lanea-tint); border-color:var(--lanea)}
+  .counts .lanea{border-left-color:var(--lanea)}
+  .chip.lanea{background:var(--lanea-tint); border-color:var(--lanea); color:var(--ink)}
+  details.e.lanea{border-left-color:var(--lanea)}
+  details.e summary{display:grid; grid-template-columns:auto 1fr; column-gap:8px; row-gap:3px; align-items:baseline}
+  details.e summary .n{grid-column:2}
+  details.e summary .p{grid-column:2; font-size:13.5px; line-height:1.45; color:var(--ink); font-weight:400}
+  details.e .eg{margin:0 0 8px; font-size:12.5px; color:var(--muted)}
+  details.e .eg b{color:var(--ink); font-weight:600}
+  details.e h5{margin:10px 0 4px; font:700 10.5px var(--sans); letter-spacing:.08em; text-transform:uppercase; color:var(--muted)}
+  pre.json{margin:10px 0 0; padding:10px 12px; border-radius:8px; background:var(--card); border:1px solid var(--rule); font:12px/1.55 var(--mono); overflow-x:auto; white-space:pre}
+  .about{font:600 10.5px var(--sans); letter-spacing:.06em; text-transform:uppercase; color:var(--muted); white-space:nowrap}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <a class="crumb" href="./">&larr; Start here · Issuer onboarding portal</a>
+
+  <header class="hero">
+    <p class="eyebrow">P2P MVP Launch · Lane C · P2P-31, 87, 73, 74, 124</p>
+    <h1>The tables behind the onboarding portal</h1>
+    <p class="stand">Which tables are <b>new</b>, which existing ones <b>change</b>, and which the portal simply <b>reuses</b>. Nine new tables. Open a table for what it holds; engineering settles exact column names and types.</p>
+    <div class="legend">
+      <span><i class="sw new"></i> New</span>
+      <span><i class="sw changed"></i> Existing, gains columns</span>
+      <span><i class="sw lanea"></i> Built in Lane A (P2P-26), written to once</span>
+      <span><i class="sw reused"></i> Existing, reused as it is</span>
+      <span><i class="sw legacy"></i> Legacy, kept for the old screens</span>
+    </div>
+  </header>
+
+  <div class="counts">
+    <div class="new"><div class="n">9</div><div class="l">new tables: 5 to set things up and copy them, 3 for what happens on an item, 1 for help</div></div>
+    <div class="changed"><div class="n">1</div><div class="l">existing table gains columns</div></div>
+    <div class="lanea"><div class="n">2</div><div class="l">Lane A tables written to once; one gains two columns</div></div>
+    <div class="reused"><div class="n">4</div><div class="l">existing tables reused, no change</div></div>
+    <div class="legacy"><div class="n">1</div><div class="l">legacy table untouched until P2P-77</div></div>
+  </div>
+
+  <div class="rulebox"><b>The two rules the whole shape follows</b>1 · The checklist an issuer sees is a <b>copy</b> of a template, made when they apply — or when admin moves an application already in progress onto the portal (P2P-124). The library and the templates can change any time; a live checklist never notices.<br>2 · Everything that happens afterwards <b>adds a row and never overwrites one</b> — a re-upload keeps the old file, a return keeps its reasons, a waiver that ends gets a second line saying so.</div>
+
+  <h2 id="picture">The picture</h2>
+  <p class="lede">Read it top to bottom, in the order things happen. Each coloured chip is a table. A chip after an arrow is a table that already exists.</p>
+
+  <div class="flow">
+    <section class="lane">
+      <header><span class="num">1</span><div><b>Admin sets it up, once</b><span>Nothing here belongs to any one issuer.</span></div></header>
+      <div class="steps">
+        <div class="stepcard"><p class="what">The menu — everything we can ask for</p><span class="chip new">RequirementItem</span></div>
+        <span class="arrow" aria-hidden="true"></span>
+        <div class="stepcard"><p class="what">A named list, picking from the menu, in order</p><span class="chip new">RequirementTemplate</span> <span class="chip new">RequirementTemplateItem</span></div>
+        <span class="arrow" aria-hidden="true"></span>
+        <div class="stepcard"><p class="what">Publishing freezes the list as a numbered version</p><span class="chip new">RequirementTemplateVersion</span></div>
+      </div>
+    </section>
+
+    <section class="lane">
+      <header><span class="num">2</span><div><b>An issuer applies</b><span>Their checklist is a copy. Later edits to the menu never reach it.</span></div></header>
+      <div class="steps">
+        <div class="stepcard"><p class="what">The application, as today</p><span class="chip changed">CompanyFundApplication</span><p class="fine">+ what they are raising with · + whether it has the portal (P2P-124) · + when onboarding was signed off</p></div>
+        <span class="arrow" aria-hidden="true"></span>
+        <div class="stepcard wide"><p class="what">One row per line on their checklist, copied from the published version</p><span class="chip new">ApplicationRequirement</span><p class="fine">The copied wording, the kind, required or not, where the item has got to — and, when admin adds one, a note from pitchIN for this issuer.</p></div>
+      </div>
+    </section>
+
+    <section class="lane">
+      <header><span class="num">3</span><div><b>Work happens on each checklist item</b><span>Three tables. Every action adds a row; nothing is overwritten.</span></div></header>
+      <div class="piles">
+        <div class="pile"><p class="what">Files the issuer sends</p><ul><li><span class="chip new">FileVersion</span> <span class="to">existing</span> <span class="chip reused">Attachment</span><em>one row per upload, with where it came from</em></li></ul></div>
+        <div class="pile"><p class="what">Forms the issuer sends</p><ul><li><span class="chip new">FormSubmission</span> <span class="to">existing</span> <span class="chip reused">UserDynamicFormSubmission</span><em>one row per round, with who filled it in</em></li></ul></div>
+        <div class="pile"><p class="what">The logbook — every decision and confirmation</p><ul><li><span class="chip new">RequirementRecord</span><em>one line per event: what kind, who, when, why, and the detail</em></li></ul></div>
+      </div>
+      <p class="fine" style="margin-top:12px">Two things land in tables that already exist. A <b>fee</b> is one row in <span class="chip reused">CompanyFundRaiseApplicationProcess</span> — today's per-step row, which the portal uses for one thing only: holding the payment, so FPX runs exactly as it does now. <b>Create funding round</b> copies the approved terms once into Lane A's <span class="chip lanea">Campaign</span> and <span class="chip lanea">CampaignNoteTerm</span>.</p>
+    </section>
+
+    <section class="lane side">
+      <header><span class="num">+</span><div><b>Beside the checklist</b></div></header>
+      <div class="piles two">
+        <div class="pile"><p class="what">The issuer asks for help</p><ul><li><span class="chip new">HelpRequest</span> <span class="to">creates</span> <span class="chip reused">ClickUp task</span><em>kept even if ClickUp fails</em></li></ul></div>
+        <div class="pile"><p class="what">Today's checklist</p><ul><li><span class="chip legacy">FundRaiseApplicationStep</span><em>untouched; keeps serving the old screens until P2P-77</em></li></ul></div>
+      </div>
+    </section>
+  </div>
+  <p class="cap">One link is deliberately absent: a checklist item never reads the library for its wording. It keeps the library item's id for matching only, so a library edit can never rewrite a running application.</p>
+
+
+  <h2 id="template-to-checklist">How a template becomes a checklist</h2>
+  <p class="lede">The part people get wrong. Four tables, one concrete example.</p>
+  <div class="tpl">
+    <div class="tcol">
+      <div class="tcard lib"><div class="th"><span class="chip new">RequirementItem</span><span class="tsub">the library · 19 items</span></div>
+        <ul class="tl-items"><li>Business registration (SSM)</li><li>Company constitution</li><li>Bank statements, last 6 months</li><li>Cash flow projection</li><li>Board resolution</li><li>Offer terms</li><li class="dim">… 13 more</li></ul></div>
+    </div>
+    <div class="tarrow"><span>picks, in order</span></div>
+    <div class="tcol">
+      <div class="tcard"><div class="th"><span class="chip new">RequirementTemplate</span><span class="tsub">"Note · at submission"</span></div>
+        <div class="tver pub"><div class="th"><span class="chip new">RequirementTemplateVersion</span><span class="tsub">v1 · published 18 Jul</span></div>
+          <ol class="tl-items"><li>Offer terms <i>required</i></li><li>Onboarding fee <i>required</i></li><li>Company constitution <i>required</i></li><li>Bank statements, last 6 months <i>required</i></li><li>Company profile up to date <i>optional</i></li><li class="dim">… 6 more</li></ol>
+          <div class="tsub" style="margin-top:6px">each line is one <span class="chip new">RequirementTemplateItem</span></div></div>
+        <div class="tver draft"><div class="th"><span class="chip new">RequirementTemplateVersion</span><span class="tsub">v2 · draft — admin is editing</span></div><div class="tsub">Publishing freezes it. Live applications keep v1.</div></div>
+      </div>
+    </div>
+    <div class="tarrow"><span>copied when Terra applies</span></div>
+    <div class="tcol">
+      <div class="tcard app"><div class="th"><span class="chip new">ApplicationRequirement</span><span class="tsub">Terra's checklist · 11 rows</span></div>
+        <ol class="tl-items"><li>Offer terms <b>Not started</b></li><li>Onboarding fee <b>Not started</b></li><li>Company constitution <b>Returned</b></li><li>Bank statements <b>With pitchIN</b></li><li>Company profile <b>In progress</b></li><li class="dim">… 6 more</li></ol>
+        <div class="tsub" style="margin-top:6px">Each row copies the wording and keeps the library id for matching only. Library and template edits never reach it.</div></div>
+    </div>
+  </div>
+  <p class="cap">Two templates per application type: <b>at submission</b> (copied when the issuer applies) and <b>at approval</b> (merged in when Lane B approves). A version freezes <i>which</i> items, in what order, required or not — not their wording, which is copied fresh from the library on the day.</p>
+  <h2 id="logbook-example">The logbook, in use</h2>
+  <p class="lede">Two of Terra's items, from the walkthroughs in the guide. Every line is one row in <code>RequirementRecord</code>.</p>
+  <div class="tablewrap">
+  <table class="rows">
+    <thead><tr><th>When</th><th>Item</th><th>Kind of record</th><th>Who</th><th>Reason, in admin's words</th><th>Detail</th></tr></thead>
+    <tbody>
+      <tr><td>5 Aug 17:40</td><td>Company constitution</td><td class="rt">Returned</td><td>Alex Doe · admin</td><td>Pages 4 to 7 are missing — send the complete copy, front to back. · The signature page is not readable at full size.</td><td>judged file version 1</td></tr>
+      <tr><td>6 Aug 11:04</td><td>Company constitution</td><td class="rt">Accepted</td><td>Alex Doe · admin</td><td>—</td><td>judged file version 2</td></tr>
+      <tr><td>7 Aug 10:15</td><td>Shareholder agreement</td><td class="rt">Waived</td><td>Alex Doe · admin</td><td>Sole shareholder per SSM register; no agreement exists.</td><td>—</td></tr>
+      <tr><td>28 Aug 11:02</td><td>Shareholder agreement</td><td class="rt">MarkedOutOfDate</td><td>Alex Doe · admin</td><td>—</td><td>—</td></tr>
+      <tr><td>28 Aug 11:02</td><td>Shareholder agreement</td><td class="rt">WaiverEnded</td><td>system</td><td>—</td><td>the item moved off Accepted</td></tr>
+    </tbody>
+  </table>
+  </div>
+  <p class="cap">Read in date order for one item, this table <i>is</i> the per-item history P2P-81 shows later. The platform's existing <code>AuditTrail</code> table has the same shape: one table, a kind on every row.</p>
+
+  <div class="rulebox"><b>Payment — no new table</b><code>CompanyFundRaiseApplicationProcess</code> is today's per-step row (one per checklist step per application). The portal keeps it out of the new checklist except for fees: a fee item creates one row of type FPX payment or upload receipt, and the existing FPX flow writes to it exactly as it does today. The item's status is read off that row. A proof of transfer is also kept as a file version on the item, so admin opens it like any other document.</div>
+  <details class="sect" id="logbook"><summary><h2>The logbook in detail</h2><span class="hint">what each kind of record must contain · how an offer fits in one row</span></summary>
+  <h3 style="font-family:var(--sans);font-size:15px;margin:26px 0 4px">How a whole offer fits in one row</h3>
+  <p style="margin:0">The Detail column holds structured text. For an offer, that is the shared block plus the block for its asset class — which is what lets an equity or token block be added later without touching the table.</p>
+<pre class="json">kind:    TermsProposed
+who:     Sam Doe · issuer
+detail:  { "shared": { "shariahType": "Conventional", "purpose": "WorkingCapital",
+                     "minimumToRaise": 400000.00, "maximumToRaise": 500000.00,
+                     "securityOffered": ["PersonalGuaranteeFromDirectors"] },
+           "note":   { "financingType": "BusinessTerm", "tenure": 36 } }
+
+kind:    TermsEdited
+who:     Alex Doe · admin
+detail:  { "field": "rate", "from": null, "to": 11.0 }</pre>
+  <p class="cap">Nobody searches these rows for numbers. When admin creates the funding round, the approved terms are copied into ordinary columns on <code>Campaign</code> and <code>CampaignNoteTerm</code>, and everything downstream reads those.</p>
+
+  <p class="lede" style="margin-top:18px"><b>This is the activity log, not the status.</b> The status is the one word the issuer sees on their checklist (six of them — see <a href="reference.html#status">how a status moves</a>). A record is one thing someone did to the item. Some records change the status (accepted, returned, waived); others do not (a note to the issuer, an edit to the terms, sign-off).</p>
+  <div class="rulebox"><b>One table, many kinds — so what each kind must contain is checked in code</b>A waiver needs a written reason; an acceptance does not. One table cannot make a column compulsory for some rows only, so the database allows blanks and the application checks before it saves. Two things keep that safe, both part of story 31.A: <b>the list below</b>, and <b>one automated test</b> that fails if any kind can be saved without what it must contain — the same discipline the status sentences follow.</div>
+
+  <div class="tablewrap">
+  <table>
+    <thead><tr><th>Kind of record</th><th>About</th><th>Written by</th><th>Must contain</th><th>Used by</th></tr></thead>
+    <tbody>
+      <tr><td class="rt">Returned</td><td class="about">item</td><td>Admin</td><td>At least one written line — what is wrong and what is needed instead, shown to the issuer verbatim · the file version, form round or confirmation it judged</td><td>Document, form, acknowledgement</td></tr>
+      <tr><td class="rt">Accepted</td><td class="about">item</td><td>Admin</td><td>What it judged</td><td>Document, form, acknowledgement, fee proof</td></tr>
+      <tr><td class="rt">NoteToIssuer</td><td class="about">item</td><td>Admin</td><td>The note as written</td><td>Any kind, until the item is accepted</td></tr>
+      <tr><td class="rt">MarkedOutOfDate</td><td class="about">item</td><td>Admin</td><td>—</td><td>Document, form, acknowledgement</td></tr>
+      <tr><td class="rt">Waived</td><td class="about">item</td><td>Admin</td><td>A written reason</td><td>Every kind except offer terms</td></tr>
+      <tr><td class="rt">WaiverEnded</td><td class="about">item</td><td>System</td><td>What ended it</td><td>A waived item that moves off Accepted</td></tr>
+      <tr><td class="rt">Acknowledged</td><td class="about">item</td><td>Issuer</td><td>The statement wording exactly as copied · the lines ticked</td><td>Acknowledgement</td></tr>
+      <tr><td class="rt">Attested · Withdrawn</td><td class="about">item</td><td>Admin</td><td>—</td><td>Checked by pitchIN</td></tr>
+      <tr><td class="rt">TermsProposed</td><td class="about">item</td><td>Issuer</td><td>The offer as proposed</td><td>Offer terms <span class="k">P2P-87</span></td></tr>
+      <tr><td class="rt">TermsEdited</td><td class="about">item</td><td>Admin</td><td>Field · from · to</td><td>Offer terms</td></tr>
+      <tr><td class="rt">TermsConfirmed</td><td class="about">item</td><td>Issuer</td><td>The offer as it stood when confirmed</td><td>Offer terms</td></tr>
+      <tr><td class="rt">TermsApproved</td><td class="about">item</td><td>Admin</td><td>The approved terms</td><td>Offer terms</td></tr>
+      <tr><td class="rt">RoundCreated</td><td class="about">item</td><td>Admin</td><td>The funding round · the note reference</td><td>Offer terms</td></tr>
+      <tr><td class="rt">TermsReopened</td><td class="about">item</td><td>Admin</td><td>—</td><td>Offer terms, while the round is a draft</td></tr>
+      <tr><td class="rt">ItemAdded · ItemRemoved</td><td class="about">item</td><td>Admin</td><td>A written reason</td><td>Changing one application <span class="k">P2P-74</span></td></tr>
+      <tr><td class="rt">TemplateSwapped</td><td class="about">application</td><td>Admin</td><td>A written reason · from which version to which · what was added, kept and dropped</td><td>Changing one application <span class="k">P2P-74</span></td></tr>
+      <tr><td class="rt">SignedOff</td><td class="about">application</td><td>Admin</td><td>—</td><td>Onboarding sign-off <span class="k">P2P-73</span></td></tr>
+<tr><td class="rt">MovedToPortal</td><td class="about">application</td><td>Admin</td><td>— (the type admin picked, if the application had none)</td><td>Move to new portal <span class="k">P2P-124</span></td></tr>
+<tr><td class="rt">TypeChanged</td><td class="about">application</td><td>Admin</td><td>A written reason · from which type to which</td><td>Changing Note ↔ Equity <span class="k">P2P-124</span></td></tr>
+    </tbody>
+  </table>
+  </div>
+  <p class="cap">Every line also carries the application, who, their role and when. Sending an offer to the issuer to confirm adds no line of its own: the edits before it and the confirmation after it are the record. Adding a kind later is a code change and a line in this list, not a new table.</p>
+
+
+
+  </details>
+
+  <details class="sect" id="tables"><summary><h2>Every table, one by one</h2><span class="hint">purpose, an example, and what it holds — open a table</span></summary>
+  <p class="lede" style="margin-top:8px">Highlighted lines are columns being added.</p>
+  <p class="lede">The line under each name says what the table is for. Open it for what it holds; highlighted lines are columns being added.</p>
+
+  <div class="group"><h3><i class="sw new"></i> New — set up once, then copied (5)</h3><div class="egrid">
+      <details class="e new" id="t-RequirementItem"><summary><span class="n">RequirementItem</span><span class="p">The menu. Every document, form, fee or check pitchIN can ask an issuer for, written once by admin.</span></summary><div class="b"><p class="eg"><b>For example:</b> "Bank statements, last 6 months" — a document upload, PDF only, up to 6 files.</p><h5>What it holds</h5><ul><li>the kind of item — <code>ItemType</code>, a new enum (not <code>RaiseFundApplicationActionType</code>)</li><li>section (a closed list of five)</li><li>name · optional help text</li><li>file rules: formats, how many files, size each, must-include lines</li><li>settings for its kind: which form to show (<code>DynamicFormTemplateId</code>) · the fee (<code>FeeAmount</code>) · the statement to confirm (title, lines, body) · what admin checks</li><li>extraction flag (reserved for reading documents automatically, later)</li></ul></div></details>
+      <details class="e new" id="t-RequirementTemplate"><summary><span class="n">RequirementTemplate</span><span class="p">A named shopping list for one type of application at one moment — what a note issuer is asked for when they submit, or once they are approved.</span></summary><div class="b"><p class="eg"><b>For example:</b> "Note · at submission".</p><h5>What it holds</h5><ul><li>name</li><li>application type (asset class)</li><li>its role for that type: <b>at submission</b> or <b>at approval</b></li><li>whether it is the default for that type and role</li></ul><p style="margin-top:8px">Exactly one template is the default for each type and role, and those are what an application gets automatically. Other published templates can exist; admin swaps one in by hand (P2P-74), and changing an application's type swaps it onto the new type's templates the same way (P2P-124). Four ship seeded by name, with an empty library: Note and Equity, each at submission and at approval.</p></div></details>
+      <details class="e new" id="t-RequirementTemplateVersion"><summary><span class="n">RequirementTemplateVersion</span><span class="p">A numbered print-run of the list, so we always know exactly which list an issuer was given.</span></summary><div class="b"><p class="eg"><b>For example:</b> "Note · at submission · v1, published 18 Jul 2026".</p><h5>What it holds</h5><ul><li>template · version number</li><li>state: <b>draft</b> or <b>published</b> — admin edits the draft; publishing freezes it, and the next edit starts a new draft</li><li>published when, by whom</li></ul><p style="margin-top:8px">A published version freezes <i>which</i> items, their order and whether each is required. It does not freeze their wording: that is copied from the library at the moment an issuer applies.</p></div></details>
+      <details class="e new" id="t-RequirementTemplateItem"><summary><span class="n">RequirementTemplateItem</span><span class="p">One line on the list: which library item, in what position, required or optional.</span></summary><div class="b"><p class="eg"><b>For example:</b> Line 9 of "Note · at submission · v1" is "Bank statements, last 6 months", required.</p><h5>What it holds</h5><ul><li>template version · library item</li><li>position in the order</li><li><code>IsRequired</code> (default true) — required belongs to the line on the list, not to the library item</li></ul></div></details>
+      <details class="e new" id="t-ApplicationRequirement"><summary><span class="n">ApplicationRequirement</span><span class="p">One line on one issuer's checklist: a photocopy of the library item taken the day they applied, plus where it has got to.</span></summary><div class="b"><p class="eg"><b>For example:</b> Terra's "Company constitution" — Returned.</p><h5>What it holds</h5><ul><li>the application it belongs to</li><li>the copied content: name, help text, file rules, settings for its kind</li><li>kind · required or not · status (six live values; Past due is reserved)</li><li>which library item it was copied from — <b>for matching only</b>, never read for wording; <b>empty for a one-off item</b> admin added to this application only (P2P-74)</li><li>which template version it came from — empty for any item admin added later</li><li>whether it is waived · whether it has been removed from this application (P2P-74 — what was sent is kept)</li><li>a <b>note from pitchIN</b> — admin's words for this issuer about this item ("the guarantee from Encik Razak, stating the amount"), shown under the help text, editable until the item is accepted</li><li>fee items: the id of the existing payment row</li><li>offer terms items: the current offer, whether the issuer has confirmed it, whether it is locked, the approved terms, and the funding round created from them with its note reference (P2P-87)</li></ul><p style="margin-top:8px">Screens read status, waived, confirmed and locked straight from here. They are never worked out from the logbook.</p></div></details>
+  </div></div>
+  <div class="group"><h3><i class="sw new"></i> New — what happens on a checklist item (3), and help (1)</h3><div class="egrid">
+      <details class="e new" id="t-FileVersion"><summary><span class="n">FileVersion</span><span class="p">Every file ever sent for an item, newest on top. A new upload sits beside the old one; nothing is replaced.</span></summary><div class="b"><p class="eg"><b>For example:</b> Company constitution: version 1 (returned), version 2 (accepted).</p><h5>What it holds</h5><ul><li>checklist item · the file, in the existing <code>Attachment</code> store</li><li>where it came from: issuer upload · camera · admin on their behalf</li><li>who · when</li></ul><p style="margin-top:8px">A proof of bank transfer on a fee item is a file version too, and so is an executed agreement (phase 2).</p></div></details>
+      <details class="e new" id="t-FormSubmission"><summary><span class="n">FormSubmission</span><span class="p">Every time a form was sent in. The answers themselves stay where the existing form module keeps them.</span></summary><div class="b"><p class="eg"><b>For example:</b> Debtor ageing listing · round 1 · filled in by the issuer.</p><h5>What it holds</h5><ul><li>checklist item · the existing <code>UserDynamicFormSubmission</code> row holding the answers</li><li>round number</li><li><code>FilledBy</code>: Issuer or Admin</li><li>sent when</li></ul><p style="margin-top:8px">A saved draft leaves the item In progress; sending it makes the item With pitchIN.</p></div></details>
+      <details class="e new" id="t-RequirementRecord"><summary><span class="n">RequirementRecord</span><span class="p">The logbook. One line each time someone decides, confirms or writes something — returned, accepted, waived, a note to the issuer, signed off — with who, when and why.</span></summary><div class="b"><p class="eg"><b>For example:</b> "5 Aug · Company constitution · Returned · Alex Doe · Pages 4 to 7 are missing — send the complete copy".</p><h5>What it holds</h5><ul><li>the application — always</li><li>the checklist item — when the line is about one item (sign-off and a template swap are about the whole application)</li><li>kind of record (the list above)</li><li>who · their role (issuer, admin, system) · when</li><li>the reason, in admin's own words — shown to the issuer on a return, kept internal on a waiver</li><li>detail — what that kind needs, as structured text: the file version judged, the wording confirmed, the offer proposed, the field changed …</li></ul><p style="margin-top:8px">Append-only: lines are added, never edited or deleted. Today's <code>Remark</code> is one string overwritten on every review; this is what closes that gap.</p></div></details>
+      <details class="e new" id="t-HelpRequest"><summary><span class="n">HelpRequest</span><span class="p">A message from the issuer saying "I'm stuck", kept here and handed to support as a ClickUp task.</span></summary><div class="b"><p class="eg"><b>For example:</b> "Can we do 30 months instead of 36?" — raised from the Offer terms item.</p><h5>What it holds</h5><ul><li>application · the checklist item, if raised from one</li><li>message · who · when</li><li>ClickUp task id — empty if ClickUp could not be reached; the message is kept either way</li></ul></div></details>
+  </div></div>
+  <div class="group"><h3><i class="sw changed"></i> Existing, gains columns (1)</h3><div class="egrid">
+      <details class="e changed" id="t-CompanyFundApplication"><summary><span class="n">CompanyFundApplication</span><span class="p">The issuer's application, exactly as today. It learns three new things: what they are raising with, whether it has the portal, and when onboarding was signed off.</span></summary><div class="b"><p class="eg"><b>For example:</b> Terra · Note · onboarding complete, signed off by Alex Doe on 12 Sep 2026.</p><h5>What it holds</h5><ul><li class="add"><code>AssetClass</code> — Equity 1 · Note 2 · Token 3, the same enum Lane A puts on <code>Campaign</code></li><li class="add">has the portal (yes/no) · moved at · moved by — empty when the switch gave it the portal (P2P-124)</li><li class="add">onboarding complete · signed off by · signed off at (P2P-73)</li></ul><p style="margin-top:8px">Asset class is set at submission: until the intake (P2P-30) sets it, it is stamped from the submitted form's <code>DynamicFormTemplate.ProductType</code> — P2P → Note, ECF → Equity. Existing rows read Equity. Admin can change Note ↔ Equity with a reason until sign-off (P2P-124).</p><p style="margin-top:8px"><b>Who has the portal is this one marker, never the switch.</b> An application gets it when created while the switch is on, or when admin presses Move to new portal; every screen reads the marker, so turning the switch off never takes the portal away. Without it, the application keeps today's screens untouched. Token applications never get it.</p></div></details>
+  </div></div>
+  <div class="group"><h3><i class="sw lanea"></i> Built in Lane A, written to once (2)</h3><div class="egrid">
+      <details class="e lanea" id="t-Campaign"><summary><span class="n">Campaign</span><span class="p">The funding round. Onboarding writes to it once, when admin presses Create funding round.</span></summary><div class="b"><p class="eg"><b>For example:</b> N-2026-00042, created as a draft from Terra's approved terms.</p><h5>What it holds</h5><ul><li>written from the approved terms: <code>ShariahType</code> · <code>MinimumTargetAmount</code> / <code>MaximumTargetAmount</code> · <code>MinimumInvestmentAmount</code> · asset class</li></ul><p style="margin-top:8px">The round is a copy, made once through Lane A's note service — never a live link back into the checklist. Reopening the terms while the round is still a draft overwrites the draft in place.</p></div></details>
+      <details class="e lanea" id="t-CampaignNoteTerm"><summary><span class="n">CampaignNoteTerm</span><span class="p">The note's terms as the listing will show them. Filled from the approved offer at the same moment.</span></summary><div class="b"><p class="eg"><b>For example:</b> Business term · 36 months · 11.0% · grade B1.</p><h5>What it holds</h5><ul><li>written from the approved terms: financing type · tenure · repayment · purpose · risk grade and rationale · rate · face value, advance rate and counterparty for invoice or purchase-order financing</li><li>stamped by Lane A's service: the fee and servicing terms · the note reference</li><li class="add"><code>SecurityOffered</code> — personal guarantee · corporate guarantee · post-dated cheques · other</li><li class="add"><code>SecurityOther</code></li></ul><p style="margin-top:8px">The two security columns are the only thing this lane adds to Lane A's table (P2P-87). The guarantee documents themselves are checklist items admin adds by hand (P2P-74).</p></div></details>
+  </div></div>
+  <div class="group"><h3><i class="sw reused"></i> Existing, reused as it is (4)</h3><div class="egrid">
+      <details class="e reused" id="t-CompanyFundRaiseApplicationProcess"><summary><span class="n">CompanyFundRaiseApplicationProcess</span><span class="p">Today's checklist keeps one of these rows per step per application — that step's status, file, form or payment. The portal does not use it for steps at all. It uses it for one thing: a fee's payment row, because the FPX code writes here and is left untouched.</span></summary><div class="b"><p class="eg"><b>For example:</b> Terra's onboarding fee — FPX, paid.</p><h5>What it holds</h5><ul><li>one row per fee item, created on the first attempt, of type <code>FPXPayment</code> or <code>UploadReceipt</code></li><li><code>PaymentGatewayReferenceNumber</code> — the FPX reference · <code>AttachmentId</code> — the proof, if by transfer</li><li>its status drives the item: <code>PendingFPXApproval</code> or proof uploaded → With pitchIN · <code>Paid</code> → Accepted · <code>BypassPayment</code> → Accepted and waived</li></ul></div></details>
+      <details class="e reused" id="t-UserDynamicFormSubmission"><summary><span class="n">UserDynamicFormSubmission</span><span class="p">Where the existing form module keeps a filled-in form. The portal reuses the module whole, so a form item needs no new form builder.</span></summary><div class="b"><h5>What it holds</h5><ul><li>one row per round, pointed at by a <code>FormSubmission</code></li><li>the answers, as the module stores them today (<code>UserDynamicFormAnswer</code>)</li></ul><p style="margin-top:8px">Fields are designed in form management, not in the library. There is no table field today; spreadsheet import (P2P-85) adds one first.</p></div></details>
+      <details class="e reused" id="t-Attachment"><summary><span class="n">Attachment</span><span class="p">The platform's file store. Every file version points at one file here, stored as uploads are stored today.</span></summary><div class="b"><h5>What it holds</h5><ul><li>the file, as today</li></ul><p style="margin-top:8px">Phase-2 Google Drive import (P2P-84) copies the file here at once; a link to Drive is not a record.</p></div></details>
+      <details class="e reused" id="t-ClickUpTask"><summary><span class="n">ClickUp task</span><span class="p">Where the support team picks up a help request.</span></summary><div class="b"><h5>What it holds</h5><ul><li>one task per help request, in Customer Support › Fundraising Query (the list id is a new setting beside the existing ClickUp ones)</li></ul><p style="margin-top:8px">Support replies by email or phone. Replies inside the portal are P2P-78.</p></div></details>
+  </div></div>
+  <div class="group"><h3><i class="sw legacy"></i> Legacy, kept untouched (1)</h3><div class="egrid">
+      <details class="e legacy" id="t-FundRaiseApplicationStep"><summary><span class="n">FundRaiseApplicationStep</span><span class="p">Today's fixed checklist. Left alone, so in-flight ECF applications keep working on the old screens.</span></summary><div class="b"><h5>What it holds</h5><ul><li>a step's type, title, order and admin-only flag — one fixed list per module, read live by the old screens</li></ul><p style="margin-top:8px">It has no template, version or copy-per-application, which is why the engine is new tables rather than an extension of this one. P2P-77 retires it once nothing runs on it. Nothing is migrated: in-flight applications are moved one at a time with Move to new portal (P2P-124), and their old rows stay where they are.</p></div></details>
+  </div></div>
+
+  </details>
+
+  <details class="sect" id="enums"><summary><h2>Enums</h2><span class="hint">new and reused</span></summary>
+  <div class="tablewrap">
+  <table>
+    <thead><tr><th>Enum</th><th></th><th>Values</th></tr></thead>
+    <tbody>
+      <tr><td><code>ItemType</code></td><td><span class="k new">new</span></td><td>File request · Form · Payment · Acknowledgement · Admin-verified · Offer terms (phase 1) · Signature (P2P-75) · In-platform task (P2P-79). The library's picker offers only the types built.</td></tr>
+      <tr><td>Requirement status</td><td><span class="k new">new</span></td><td>Not started · In progress · With pitchIN · Returned · Accepted · Out of date, plus Past due — reserved in the model, never set or shown. Not every status is reachable for every type; the reachability map and a string-table test enforce the gaps.</td></tr>
+      <tr><td><code>RequirementSection</code></td><td><span class="k new">new</span></td><td>Application · Company · Financial · Key persons · Funding round — a closed list, in code.</td></tr>
+      <tr><td>Kind of record</td><td><span class="k new">new</span></td><td>The list above. The offer-terms kinds arrive with P2P-87, sign-off with P2P-73, the change kinds with P2P-74, and MovedToPortal and TypeChanged with P2P-124.</td></tr>
+      
+      <tr><td><code>AssetClass</code></td><td><span class="k">P2P-26</span></td><td>Equity 1 · Note 2 · Token 3 — Lane A's enum, reused on <code>CompanyFundApplication</code>.</td></tr>
+      <tr><td><code>RaiseFundApplicationActionType</code></td><td><span class="k">legacy</span></td><td>Not extended. <code>FPXPayment</code> and <code>UploadReceipt</code> are the two values the portal still writes, on the payment row.</td></tr>
+    </tbody>
+  </table>
+  </div>
+
+  </details>
+
+  <footer>
+    Companion to <a href="./">start here</a>, the <a href="guide.html">walkthroughs</a> and the <a href="reference.html">reference</a>. Checked against pitchinAPI <code>staging_v8</code> and the Lane A branch. Entities extend <code>EntityBase</code> and are wired by their <code>IEntityTypeConfiguration</code> mapping, as every module does.
+  </footer>
+</div>
+<script>
+(function(){
+  function openHash(){
+    var id = decodeURIComponent((location.hash || '').slice(1));
+    if (!id) return;
+    var el = document.getElementById(id);
+    if (!el) return;
+    for (var p = el; p; p = p.parentElement) { if (p.tagName === 'DETAILS') p.open = true; }
+    el.scrollIntoView({block:'start'});
+  }
+  window.addEventListener('hashchange', openHash);
+  openHash();
+})();
+</script>
+</body>
+</html>

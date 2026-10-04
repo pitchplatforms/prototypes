@@ -1,0 +1,304 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Issuer onboarding portal — start here</title>
+<style>
+  :root{
+    --paper:#FBFAF6; --ink:#20302F; --muted:#5F6E6C; --rule:rgba(32,48,47,.16);
+    --accent:#2D7F81; --accent-strong:#256A6C; --on-accent:#FFFFFF;
+    --tint:rgba(45,137,139,.09);
+    --card:#FFFFFF; --card-edge:rgba(32,48,47,.12);
+    --changed:#A8731F; --changed-tint:rgba(168,115,31,.12);
+    --reused:#5F6E6C; --reused-tint:rgba(95,110,108,.10);
+    --legacy:#8A8F8E; --legacy-tint:rgba(138,143,142,.08);
+    --lanea:#7B4EA8; --lanea-tint:rgba(123,78,168,.10);
+    --serif:"Charter","Iowan Old Style",Georgia,"Times New Roman",serif;
+    --sans:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+    --mono:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+  }
+  @media (prefers-color-scheme: dark){
+    :root:not([data-theme="light"]){
+      --paper:#0E1918; --ink:#E7E5DB; --muted:#9DABA8; --rule:rgba(231,229,219,.16);
+      --accent:#5CB6B8; --accent-strong:#7BC8CA; --on-accent:#0E1918; --tint:rgba(92,182,184,.11);
+      --card:#132120; --card-edge:rgba(231,229,219,.14);
+      --changed:#D9A85C; --changed-tint:rgba(217,168,92,.13);
+      --reused:#9DABA8; --reused-tint:rgba(157,171,168,.12);
+      --legacy:#7E8887; --legacy-tint:rgba(126,136,135,.10);
+      --lanea:#C4A3E0; --lanea-tint:rgba(196,163,224,.13);
+    }
+  }
+  :root[data-theme="dark"]{
+    --paper:#0E1918; --ink:#E7E5DB; --muted:#9DABA8; --rule:rgba(231,229,219,.16);
+    --accent:#5CB6B8; --accent-strong:#7BC8CA; --on-accent:#0E1918; --tint:rgba(92,182,184,.11);
+    --card:#132120; --card-edge:rgba(231,229,219,.14);
+    --changed:#D9A85C; --changed-tint:rgba(217,168,92,.13);
+    --reused:#9DABA8; --reused-tint:rgba(157,171,168,.12);
+    --legacy:#7E8887; --legacy-tint:rgba(126,136,135,.10);
+    --lanea:#C4A3E0; --lanea-tint:rgba(196,163,224,.13);
+  }
+  *{box-sizing:border-box}
+  body{margin:0; background:var(--paper); color:var(--ink); font-family:var(--serif); font-size:16.5px; line-height:1.55; -webkit-font-smoothing:antialiased}
+  .wrap{max-width:980px; margin:0 auto; padding:0 20px 72px}
+  a{color:var(--accent-strong)}
+  a:focus-visible, summary:focus-visible{outline:2px solid var(--accent); outline-offset:2px}
+  .crumb{display:block; padding:14px 0 0; font:11px var(--mono); letter-spacing:.12em; text-transform:uppercase; color:var(--accent); text-decoration:none}
+  header.hero{padding:30px 0 22px; border-bottom:2px solid var(--ink); margin-bottom:8px}
+  .eyebrow{font-family:var(--sans); font-size:11.5px; font-weight:700; letter-spacing:.14em; text-transform:uppercase; color:var(--accent); margin:0}
+  h1{font-size:clamp(28px,4.6vw,40px); line-height:1.1; margin:12px 0 12px; font-weight:700; max-width:24ch; text-wrap:balance}
+  .stand{margin:0; max-width:64ch; color:var(--muted); font-size:17px}
+  .stand b{color:var(--ink); font-weight:600}
+  h2{font-size:24px; line-height:1.2; margin:48px 0 6px; text-wrap:balance}
+  h2 + p.lede{margin:0 0 16px; color:var(--muted); max-width:68ch}
+  p{max-width:70ch}
+  code{font-family:var(--mono); font-size:.86em; background:var(--tint); padding:1px 5px; border-radius:4px}
+
+  .legend{display:flex; gap:8px; flex-wrap:wrap; margin:18px 0 0; font-family:var(--sans); font-size:12.5px}
+  .legend span{border:1px solid var(--rule); border-radius:99px; padding:4px 11px; display:inline-flex; align-items:center; gap:7px}
+  .sw{width:12px; height:12px; border-radius:3px; flex:none; border:1.5px solid}
+  .sw.new{background:var(--tint); border-color:var(--accent)}
+  .sw.changed{background:var(--changed-tint); border-color:var(--changed)}
+  .sw.reused{background:var(--reused-tint); border-color:var(--reused)}
+  .sw.legacy{background:var(--legacy-tint); border-color:var(--legacy); border-style:dashed}
+
+  .counts{display:grid; grid-template-columns:repeat(auto-fit,minmax(160px,1fr)); gap:10px; margin:18px 0 0; font-family:var(--sans)}
+  .counts > div{border:1px solid var(--card-edge); background:var(--card); border-radius:10px; padding:12px 14px; border-left-width:4px}
+  .counts .n{font-size:26px; font-weight:700; line-height:1}
+  .counts .l{font-size:12.5px; color:var(--muted); margin-top:4px}
+  .counts .new{border-left-color:var(--accent)} .counts .changed{border-left-color:var(--changed)}
+  .counts .reused{border-left-color:var(--reused)} .counts .legacy{border-left-color:var(--legacy); border-left-style:dashed}
+
+  .rulebox{margin:16px 0 0; border-left:3px solid var(--accent); background:var(--tint); border-radius:0 8px 8px 0; padding:11px 14px; font-family:var(--sans); font-size:13.5px; line-height:1.55; max-width:none}
+  .rulebox > b:first-child{display:block; font-size:10.5px; letter-spacing:.09em; text-transform:uppercase; color:var(--accent-strong); margin-bottom:3px}
+
+
+  /* the picture: lanes, not a web of arrows */
+  .flow{display:grid; gap:12px; margin-top:16px; font-family:var(--sans)}
+  .lane{border:1px solid var(--card-edge); background:var(--card); border-radius:12px; padding:14px 16px 16px}
+  .lane.side{background:transparent; border-style:dashed}
+  .lane header{display:flex; gap:12px; align-items:flex-start; margin-bottom:12px}
+  .lane header .num{flex:none; width:26px; height:26px; border-radius:50%; background:var(--ink); color:var(--paper); font:700 13px/26px var(--sans); text-align:center}
+  .lane header b{display:block; font-size:15.5px}
+  .lane header span:not(.num){display:block; font-size:13px; color:var(--muted); margin-top:1px}
+  .steps{display:flex; flex-wrap:wrap; gap:8px; align-items:stretch}
+  .stepcard{flex:1 1 200px; border:1px solid var(--rule); border-radius:9px; padding:10px 12px; background:var(--paper)}
+  .stepcard.wide{flex:2 1 300px}
+  .arrow{flex:none; align-self:center; width:22px; height:2px; background:var(--muted); position:relative; opacity:.7}
+  .arrow::after{content:""; position:absolute; right:-1px; top:-4px; border-left:7px solid var(--muted); border-top:5px solid transparent; border-bottom:5px solid transparent}
+  @media (max-width:640px){ .arrow{width:2px; height:16px; margin:0 auto; flex-basis:100%} .arrow::after{right:-4px; top:auto; bottom:-2px; border-left:5px solid transparent; border-right:5px solid transparent; border-top:7px solid var(--muted); border-bottom:0} }
+  .what{margin:0 0 8px; font-size:13.5px; font-weight:600; line-height:1.35; max-width:none}
+  .fine{margin:8px 0 0; font-size:12.5px; color:var(--muted); line-height:1.45; max-width:none}
+  .fine code{background:none; padding:0}
+  .piles{display:grid; grid-template-columns:repeat(auto-fit,minmax(260px,1fr)); gap:8px}
+  .pile{border:1px solid var(--rule); border-radius:9px; padding:10px 12px; background:var(--paper)}
+  .pile ul{list-style:none; margin:0; padding:0}
+  .pile li{padding:7px 0; border-top:1px dashed var(--rule); line-height:1.9}
+  .pile li:first-child{border-top:0; padding-top:0}
+  .pile li em{display:block; font-style:normal; font-size:12.5px; color:var(--muted); line-height:1.4; margin-top:1px}
+  .chip{display:inline-block; font:600 12px var(--mono); padding:2px 8px; border-radius:6px; border:1.5px solid; line-height:1.5; word-break:break-word}
+  .chip.new{background:var(--tint); border-color:var(--accent); color:var(--ink)}
+  .chip.changed{background:var(--changed-tint); border-color:var(--changed); color:var(--ink)}
+  .chip.reused{background:var(--reused-tint); border-color:var(--reused); color:var(--ink)}
+  .chip.legacy{background:var(--legacy-tint); border-color:var(--legacy); border-style:dashed; color:var(--ink)}
+  .plain{font-size:13px; font-weight:600}
+  .to{font-size:11.5px; color:var(--muted); white-space:nowrap}
+  .to::before{content:"→ "}
+  .cap{font-family:var(--sans); font-size:13px; color:var(--muted); margin-top:12px; max-width:74ch}
+
+  .group{margin-top:26px}
+  .group h3{font-family:var(--sans); font-size:13px; letter-spacing:.08em; text-transform:uppercase; margin:0 0 10px; display:flex; align-items:center; gap:8px}
+  .egrid{display:grid; grid-template-columns:repeat(auto-fill,minmax(290px,1fr)); gap:10px; align-items:start}
+  details.e{border:1px solid var(--card-edge); background:var(--card); border-radius:11px; border-left-width:4px; overflow:hidden}
+  details.e.new{border-left-color:var(--accent)} details.e.changed{border-left-color:var(--changed)}
+  details.e.reused{border-left-color:var(--reused)} details.e.legacy{border-left-color:var(--legacy); border-left-style:dashed}
+  details.e summary{list-style:none; cursor:pointer; padding:11px 14px; display:flex; gap:8px; align-items:baseline; font-family:var(--sans)}
+  details.e summary::-webkit-details-marker{display:none}
+  details.e summary::before{content:"›"; color:var(--muted); font-size:16px; line-height:1; transition:transform .12s}
+  details.e[open] summary::before{transform:rotate(90deg)}
+  details.e summary .n{font-family:var(--mono); font-size:13px; font-weight:700}
+  details.e summary .d{font-size:12.5px; color:var(--muted); margin-left:auto; text-align:right; max-width:52%}
+  details.e .b{padding:0 14px 12px 30px; font-family:var(--sans); font-size:13px; line-height:1.5}
+  details.e .b p{margin:0 0 8px; color:var(--muted); max-width:none}
+  details.e ul{margin:0; padding-left:16px}
+  details.e li{margin:2px 0}
+  details.e li code{background:none; padding:0; font-size:12px}
+  details.e li.add code{background:var(--changed-tint); padding:1px 5px}
+  .k{display:inline-block; font:700 10px var(--sans); letter-spacing:.08em; text-transform:uppercase; padding:1px 6px; border-radius:99px; border:1px solid var(--rule); color:var(--muted); vertical-align:1px; white-space:nowrap}
+  .k.new{border-color:var(--accent); color:var(--accent-strong); background:var(--tint)}
+  .k.changed{border-color:var(--changed); color:var(--changed); background:var(--changed-tint)}
+
+  table{border-collapse:collapse; width:100%; font-family:var(--sans); font-size:13.5px}
+  .tablewrap{overflow-x:auto; border:1px solid var(--card-edge); border-radius:8px; background:var(--card); margin-top:12px}
+  th,td{text-align:left; padding:8px 12px; border-bottom:1px solid var(--rule); vertical-align:top}
+  th{font-size:11.5px; letter-spacing:.08em; text-transform:uppercase; color:var(--muted); font-weight:700}
+  tr:last-child td{border-bottom:0}
+  footer{margin-top:52px; padding-top:16px; border-top:1px solid var(--rule); font-family:var(--mono); font-size:11.5px; color:var(--muted); line-height:1.8}
+
+  .rows{font-size:13px}
+  .rows td:first-child, .rows th:first-child{white-space:nowrap}
+  .rows .rt{font:600 12px var(--mono); color:var(--accent-strong)}
+  .two{display:grid; grid-template-columns:repeat(auto-fit,minmax(280px,1fr)); gap:12px; margin-top:14px; font-family:var(--sans)}
+  .two > div{border:1px solid var(--card-edge); background:var(--card); border-radius:12px; padding:14px 16px; font-size:14px; line-height:1.55}
+  .two h4{margin:0 0 6px; font-size:14.5px}
+  .two .ok{color:var(--accent-strong); font-weight:700} .two .bad{color:var(--changed); font-weight:700}
+
+  .sw.lanea{background:var(--lanea-tint); border-color:var(--lanea)}
+  .counts .lanea{border-left-color:var(--lanea)}
+  .chip.lanea{background:var(--lanea-tint); border-color:var(--lanea); color:var(--ink)}
+  details.e.lanea{border-left-color:var(--lanea)}
+  details.e summary{display:grid; grid-template-columns:auto 1fr; column-gap:8px; row-gap:3px; align-items:baseline}
+  details.e summary .n{grid-column:2}
+  details.e summary .p{grid-column:2; font-size:13.5px; line-height:1.45; color:var(--ink); font-weight:400}
+  details.e .eg{margin:0 0 8px; font-size:12.5px; color:var(--muted)}
+  details.e .eg b{color:var(--ink); font-weight:600}
+  details.e h5{margin:10px 0 4px; font:700 10.5px var(--sans); letter-spacing:.08em; text-transform:uppercase; color:var(--muted)}
+  pre.json{margin:10px 0 0; padding:10px 12px; border-radius:8px; background:var(--card); border:1px solid var(--rule); font:12px/1.55 var(--mono); overflow-x:auto; white-space:pre}
+  .about{font:600 10.5px var(--sans); letter-spacing:.06em; text-transform:uppercase; color:var(--muted); white-space:nowrap}
+
+  .toc{display:flex; flex-wrap:wrap; gap:6px; margin:18px 0 0; font-family:var(--sans); font-size:13px}
+  .toc a{border:1px solid var(--rule); border-radius:99px; padding:4px 12px; text-decoration:none; color:var(--ink); background:var(--card)}
+  .toc a:hover{border-color:var(--accent)}
+  .lead3{display:grid; grid-template-columns:repeat(auto-fit,minmax(230px,1fr)); gap:10px; margin-top:16px; font-family:var(--sans)}
+  .lead3 div{border:1px solid var(--card-edge); background:var(--card); border-radius:11px; padding:13px 15px; font-size:14px; line-height:1.5}
+  .lead3 b{display:block; font-size:11px; letter-spacing:.09em; text-transform:uppercase; color:var(--accent-strong); margin-bottom:4px}
+  .ideas{display:grid; grid-template-columns:repeat(auto-fit,minmax(280px,1fr)); gap:10px; margin-top:16px; font-family:var(--sans)}
+  .idea{border:1px solid var(--card-edge); background:var(--card); border-radius:11px; padding:14px 16px}
+  .idea .no{font:700 11px var(--mono); color:var(--accent-strong)}
+  .idea h3{margin:2px 0 6px; font-size:16px; font-family:var(--serif)}
+  .idea p{margin:0; font-size:14px; line-height:1.5; max-width:none}
+  .idea .more{display:inline-block; margin-top:8px; font-size:12.5px}
+  .idea .mini{display:flex; flex-wrap:wrap; gap:5px; margin-top:9px}
+  .mini span{font:600 11.5px var(--sans); padding:2px 8px; border-radius:99px; border:1px solid var(--rule); color:var(--muted)}
+  .mini span.on{border-color:var(--accent); color:var(--accent-strong); background:var(--tint)}
+  .tl{margin:16px 0 0; padding:0; list-style:none; font-family:var(--sans); position:relative}
+  .tl::before{content:""; position:absolute; left:13px; top:8px; bottom:8px; width:2px; background:var(--rule)}
+  .tl li{position:relative; padding:0 0 16px 40px}
+  .tl li::before{content:attr(data-n); position:absolute; left:0; top:0; width:28px; height:28px; border-radius:50%; background:var(--ink); color:var(--paper); font:700 12.5px/28px var(--sans); text-align:center}
+  .tl li.loop::before{background:var(--accent); color:var(--on-accent)}
+  .tl b{font-size:15px}
+  .tl p{margin:3px 0 0; font-size:14px; line-height:1.5; color:var(--muted); max-width:68ch}
+  .who{display:inline-block; font:700 10px var(--sans); letter-spacing:.07em; text-transform:uppercase; padding:1px 7px; border-radius:4px; margin-right:6px; vertical-align:2px}
+  .who.issuer{background:var(--tint); color:var(--accent-strong)} .who.admin{background:var(--changed-tint); color:var(--changed)} .who.auto{background:var(--reused-tint); color:var(--reused)} .who.laneb{background:var(--lanea-tint); color:var(--lanea)}
+  .screens{display:grid; grid-template-columns:repeat(auto-fit,minmax(230px,1fr)); gap:10px; margin-top:14px; font-family:var(--sans)}
+  .screens div{border:1px solid var(--card-edge); background:var(--card); border-radius:11px; padding:13px 15px; font-size:14px; line-height:1.5}
+  .screens b{display:block; margin-bottom:3px}
+  .screens span{display:block; font-size:12.5px; color:var(--muted); margin-top:6px}
+  .feat{border:1px solid var(--card-edge); background:var(--card); border-radius:11px; margin-top:8px; font-family:var(--sans)}
+  .feat summary{list-style:none; cursor:pointer; display:grid; grid-template-columns:auto 1fr auto; gap:12px; align-items:center; padding:12px 14px}
+  .feat summary::-webkit-details-marker{display:none}
+  .fn{width:26px; height:26px; border-radius:50%; background:var(--ink); color:var(--paper); font:700 13px/26px var(--sans); text-align:center}
+  .ft b{display:block; font-size:15px} .ft span{display:block; font-size:13px; color:var(--muted); margin-top:1px; line-height:1.4}
+  .tk{font:700 11.5px var(--mono); border:1px solid var(--accent); color:var(--accent-strong); background:var(--tint); border-radius:6px; padding:2px 8px; text-decoration:none; white-space:nowrap}
+  .tk:hover{background:var(--accent); color:var(--on-accent)}
+  .fb{padding:0 14px 14px 52px}
+  .dep{margin:0 0 8px; font-size:13px; color:var(--muted); max-width:none}
+  .stories{list-style:none; margin:0; padding:0; display:grid; grid-template-columns:repeat(auto-fit,minmax(300px,1fr)); gap:4px 14px}
+  .stories a{display:block; padding:5px 0; border-top:1px dashed var(--rule); font-size:13.5px; line-height:1.4; text-decoration:none; color:var(--ink)}
+  .stories a:hover{color:var(--accent-strong)}
+  .stories b{font:700 11.5px var(--mono); color:var(--accent-strong); margin-right:4px}
+  .stories .ref{font:11px var(--mono); color:var(--muted); margin-left:4px}
+  .later{margin-top:12px; font-family:var(--sans); font-size:13.5px; line-height:1.9}
+  .later b{font-size:11px; letter-spacing:.08em; text-transform:uppercase; color:var(--muted); margin-right:6px}
+  .go{display:grid; grid-template-columns:repeat(auto-fit,minmax(200px,1fr)); gap:10px; margin-top:14px; font-family:var(--sans)}
+  .go a{display:block; border:1px solid var(--card-edge); background:var(--card); border-radius:11px; padding:13px 15px; text-decoration:none; color:var(--ink)}
+  .go a:hover{border-color:var(--accent)}
+  .go b{display:block; font-size:15px} .go span{display:block; font-size:13px; color:var(--muted); margin-top:3px; line-height:1.45}
+  .go em{display:block; font-style:normal; font:600 11px var(--sans); letter-spacing:.06em; text-transform:uppercase; color:var(--accent-strong); margin-bottom:4px}
+  ul.tight{margin:10px 0 0; padding-left:20px; font-family:var(--sans); font-size:14.5px; line-height:1.55; max-width:72ch} ul.tight li{margin:5px 0}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="hero" style="margin-top:14px">
+    <p class="eyebrow">P2P MVP Launch · Lane C · Epic <a class="tk" href="https://app.clickup.com/t/86d3ugnyn" target="_blank" rel="noopener">P2P-63</a></p>
+    <h1>Issuer onboarding portal — start here</h1>
+    <p class="stand">One page to understand what we are building, how it flows and which ticket builds each part. <b>Read this first</b>, then the ticket you are picking up.</p>
+    <nav class="toc" aria-label="On this page"><a href="#what">What we are building</a><a href="#ideas">Six ideas</a><a href="#flow">The flow</a><a href="#screens">The screens</a><a href="#build">What to build, in order</a><a href="#rules">Rules that are easy to break</a><a href="#deeper">Go deeper</a></nav>
+  </header>
+
+  <h2 id="what">What we are building</h2>
+  <div class="lead3">
+    <div><b>Today</b>After a company applies to raise, pitchIN collects its documents, forms and fees over email, Google Drive and WhatsApp. Nobody can see what is outstanding without asking.</div>
+    <div><b>What this builds</b>One checklist per application. The issuer sees exactly what is left to do. pitchIN staff see exactly what is waiting on them, review each item, and sign the application off.</div>
+    <div><b>The twist</b>The checklist is not a fixed list of documents. Staff define what can be asked for and assemble lists from it, without an engineer. Nobody gets it until pitchIN switches it on (P2P-124): one application at a time with <b>Move to new portal</b>, then every new note and equity application. Token applications come later.</div>
+  </div>
+
+  <h2 id="ideas">Six ideas to hold in your head</h2>
+  <p class="lede">Everything in the tickets follows from these.</p>
+  <div class="ideas">
+    <div class="idea"><span class="no">1</span><h3>Menu → list → copy</h3><p>Admin writes a <b>library</b> of things we can ask for. A <b>template</b> is an ordered pick from it, published as numbered versions. When an issuer applies, their checklist is a <b>copy</b>. Editing the library or a template later never touches a checklist that is already running.</p><a class="more" href="data-model.html">How it fits together →</a></div>
+    <div class="idea"><span class="no">2</span><h3>Eight kinds of item, and no more</h3><p>Admin can add any number of items, but each must be one of a closed set of kinds. A new kind is an engineering ticket. That is what stops this becoming a form builder.</p><div class="mini"><span class="on">Document</span><span class="on">Form</span><span class="on">Fee</span><span class="on">Acknowledgement</span><span class="on">Checked by pitchIN</span><span class="on">Offer terms</span><span>Signing · phase 2</span><span>Task elsewhere · phase 2</span></div><a class="more" href="reference.html#kinds">What each kind does →</a></div>
+    <div class="idea"><span class="no">3</span><h3>One status per item</h3><p>Not started · In progress · With pitchIN · Returned · Accepted · Out of date. Admin writes an item's name and help text; the sentence describing its <i>state</i> is fixed by the product, per kind, so it reads the same everywhere.</p><a class="more" href="reference.html#status">How a status moves, and every sentence →</a></div>
+    <div class="idea"><span class="no">4</span><h3>Nothing is overwritten</h3><p>A re-upload sits beside the old file. A return keeps its reasons. Every decision — accepted, waived, signed off — is a new line in one logbook, with who and when. History is never reconstructed; it is simply there.</p><a class="more" href="data-model.html">The tables →</a></div>
+    <div class="idea"><span class="no">5</span><h3>Four approvals that are not the same</h3><p><b>Accept</b> one item. <b>Approve the application</b> — we will work with this business (Lane B). <b>Approve the terms</b> — the deal. <b>Sign off</b> — onboarding is complete. None of them lists anything to investors.</p><a class="more" href="reference.html#words">The words, side by side →</a></div>
+    <div class="idea"><span class="no">6</span><h3>The deal lives on one item</h3><p>The issuer proposes terms, admin adds the grade and rate, the issuer confirms, admin approves. Only then does a separate action copy the terms into a funding round. Onboarding data stays in onboarding.</p><a class="more" href="reference.html#terms">Where the deal comes from →</a></div>
+  </div>
+
+  <h2 id="flow">The flow, end to end</h2>
+  <p class="lede">One application, from applying to a funding round. Steps 3 and 5 repeat until everything is in.</p>
+  <ol class="tl">
+    <li data-n="1"><b><span class="who issuer">Issuer</span>Submits the application form</b><p>That is Lane B's intake (P2P-30), not this portal. It tells us the asset class: Note, Equity or Token. Whether this application gets the portal is P2P-124: the switch (off by default), or admin pressing <b>Move to new portal</b> later. Note and equity can; token cannot. Without the portal, today's screens carry on unchanged.</p></li>
+    <li data-n="2"><b><span class="who auto">Automatic</span>Their checklist is created</b><p>Only for an application that has the portal. A copy of its type's at-submission template ("Note · at submission" or "Equity · at submission") — the light list, so they can start early.</p></li>
+    <li data-n="3" class="loop"><b><span class="who issuer">Issuer</span>Sends items <span class="who admin" style="margin-left:6px">Admin</span>reviews each one</b><p>Each item is sent on its own, whenever it is ready; only forms can be saved as a draft. Admin accepts it, returns it with a reason, or waives it. Any admin can act on any item.</p></li>
+    <li data-n="4"><b><span class="who laneb">Lane B</span>Approves the application <span class="who auto" style="margin-left:6px">Automatic</span>the fuller list merges in</b><p>The "at approval" items are added. Nothing already on the checklist is removed or reset.</p></li>
+    <li data-n="5" class="loop"><b><span class="who issuer">Issuer</span><span class="who admin">Admin</span>Agree the offer terms</b><p>Note applications only. Propose → admin completes the offer → issuer confirms → admin approves. It can happen at any point, and sign-off waits for it. An equity application has no offer-terms item until P2P-88 and keeps today's Offer creation step.</p></li>
+    <li data-n="6"><b><span class="who admin">Admin</span>Signs off onboarding</b><p>Allowed once every required item is accepted or waived. The issuer reads "Onboarding complete. We have everything we need."</p></li>
+    <li data-n="7"><b><span class="who admin">Admin</span>Creates the funding round</b><p>A separate, deliberate action, before or after sign-off: the approved terms are copied once into the round through Lane A's note service (P2P-26) and the note reference is issued.</p></li>
+  </ol>
+  <p class="cap">Want it blow by blow? The guide walks one company, Terra Agritech, through <a href="guide.html">thirteen situations</a> — a return, a waiver, the merge, a reopened deal — showing each screen and what gets saved.</p>
+
+  <h2 id="screens">The screens</h2>
+  <div class="screens">
+    <div><b>Issuer — their checklist</b>CustomerWeb, from the existing application screen (<code>raise/my-application</code>, <code>MyApplicationComponent</code>): "Open your checklist", and the Due diligence tab hidden (P2P-124). The checklist — tap a row to peek — and one page per item.<span>Built with <code>@pitchin/ui</code> · prototype: <a href="https://pitchplatforms.github.io/prototypes/lane-c-onboarding/?path=/story/prototypes-lane-c-clickable-walkthrough--issuer-checklist&amp;panel=false">checklist</a>, <a href="https://pitchplatforms.github.io/prototypes/lane-c-onboarding/?path=/story/prototypes-lane-c-clickable-walkthrough--issuer-document-item-page&amp;panel=false">item page</a></span></div>
+    <div><b>Admin — reviewing</b>AdminWeb: a new Onboarding tab on the application (<code>CampaignComponent</code>), beside today's checklist tab; "Move to new portal" in its header and Due diligence hidden for portal applications (P2P-124); and one queue across all applications.<span>AdminWeb's own conventions · prototype: <a href="https://pitchplatforms.github.io/prototypes/lane-c-onboarding/?path=/story/prototypes-lane-c-clickable-walkthrough--ops-review-application&amp;panel=false">application</a>, <a href="https://pitchplatforms.github.io/prototypes/lane-c-onboarding/?path=/story/prototypes-lane-c-clickable-walkthrough--ops-review-queue&amp;panel=false">queue</a></span></div>
+    <div><b>Admin — setting up</b>AdminWeb: the item library and the template builder, siblings of today's form management.<span>AdminWeb's own conventions · prototype: <a href="https://pitchplatforms.github.io/prototypes/lane-c-onboarding/?path=/story/prototypes-lane-c-clickable-walkthrough--ops-setup-library&amp;panel=false">library</a>, <a href="https://pitchplatforms.github.io/prototypes/lane-c-onboarding/?path=/story/prototypes-lane-c-clickable-walkthrough--ops-setup-template-builder&amp;panel=false">template builder</a></span></div>
+  </div>
+  <p class="cap">All three are in the <a href="https://pitchplatforms.github.io/prototypes/lane-c-onboarding/?path=/story/prototypes-lane-c-clickable-walkthrough--walkthrough&amp;panel=false">clickable prototype</a> (tabs Issuer · pitchIN review · pitchIN setup — review and setup are the same pitchIN staff). Turn on <b>Build notes</b> in its top bar (or open <a href="https://pitchplatforms.github.io/prototypes/lane-c-onboarding/?path=/story/prototypes-lane-c-clickable-walkthrough--build-notes-every-kind&amp;panel=false">Build notes — every kind</a>) to see one example of every kind, with notes on how it is built. "Move to new portal" and changing one live application (P2P-74) are not in it. Where the prototype and a ticket differ, the ticket wins.</p>
+
+  <h2 id="build">What to build, in order</h2>
+  <p class="lede">Six features, all <b>MVP phase 1</b>, each its own ClickUp ticket; open one to see its stories, listed in build order. Every chip opens the ticket. Phase 2 and later work is listed underneath.</p>
+  <details class="feat" id="feat-P2P-31" open><summary><span class="fn">1</span><span class="ft"><b>The engine and the review loop</b><span>Library, templates, the issuer's checklist, five kinds of item, accept / return / waive, Help.</span></span><a class="tk" href="https://app.clickup.com/t/86d3u5hf9" target="_blank" rel="noopener">P2P-31</a></summary><div class="fb"><p class="dep">Build first. 31.A unblocks everything. From other lanes: none needs to be deployed. Until Lane B's intake (<a class="tk" href="https://app.clickup.com/t/86d3u5hf8" target="_blank" rel="noopener">P2P-30</a>) lands, 31.A stamps the asset class from the submitted form; application approval (31.12's trigger) is Lane B's decision (<a class="tk" href="https://app.clickup.com/t/86d3ugnyd" target="_blank" rel="noopener">P2P-62</a>). The <code>AssetClass</code> enum is shared with Lane A (<a class="tk" href="https://app.clickup.com/t/86d3u5hf3" target="_blank" rel="noopener">P2P-26</a>).</p><ul class="stories"><li><a href="https://app.clickup.com/t/86d4an8gh" target="_blank" rel="noopener"><b>31.A</b> The tables, enums and the asset-class column <span class="ref">P2P-89</span></a></li><li><a href="https://app.clickup.com/t/86d4an8nr" target="_blank" rel="noopener"><b>31.1</b> Admin writes a library item <span class="ref">P2P-90</span></a></li><li><a href="https://app.clickup.com/t/86d4an8q6" target="_blank" rel="noopener"><b>31.2</b> Admin builds and publishes a template <span class="ref">P2P-91</span></a></li><li><a href="https://app.clickup.com/t/86d4an8t1" target="_blank" rel="noopener"><b>31.3</b> An application gets its checklist; the issuer sees it <span class="ref">P2P-92</span></a></li><li><a href="https://app.clickup.com/t/86d4an8uf" target="_blank" rel="noopener"><b>31.4</b> Issuer uploads a document <span class="ref">P2P-93</span></a></li><li><a href="https://app.clickup.com/t/86d4an8w5" target="_blank" rel="noopener"><b>31.5</b> Issuer fills a form, using the existing form module <span class="ref">P2P-94</span></a></li><li><a href="https://app.clickup.com/t/86d4an8xg" target="_blank" rel="noopener"><b>31.6</b> Issuer pays a fee, on the existing payment row <span class="ref">P2P-95</span></a></li><li><a href="https://app.clickup.com/t/86d4an8y7" target="_blank" rel="noopener"><b>31.7</b> Issuer confirms a statement, line by line <span class="ref">P2P-96</span></a></li><li><a href="https://app.clickup.com/t/86d4an90b" target="_blank" rel="noopener"><b>31.8</b> Checked-by-pitchIN items: attest and withdraw <span class="ref">P2P-98</span></a></li><li><a href="https://app.clickup.com/t/86d4an8zr" target="_blank" rel="noopener"><b>31.9</b> Admin's onboarding tab: see what was sent <span class="ref">P2P-97</span></a></li><li><a href="https://app.clickup.com/t/86d4an91y" target="_blank" rel="noopener"><b>31.10</b> Admin accepts or returns, writing what is needed instead <span class="ref">P2P-99</span></a></li><li><a href="https://app.clickup.com/t/86d4an93w" target="_blank" rel="noopener"><b>31.11</b> Admin waives, uploads on their behalf, marks out of date <span class="ref">P2P-100</span></a></li><li><a href="https://app.clickup.com/t/86d4an954" target="_blank" rel="noopener"><b>31.12</b> At-approval items merge in automatically <span class="ref">P2P-101</span></a></li><li><a href="https://app.clickup.com/t/86d4an96a" target="_blank" rel="noopener"><b>31.13</b> Help lands with the support team in ClickUp <span class="ref">P2P-102</span></a></li><li><a href="https://app.clickup.com/t/86d4an971" target="_blank" rel="noopener"><b>31.B</b> Smoke tests and gateway routes <span class="ref">P2P-103</span></a></li></ul></div></details><details class="feat" id="feat-P2P-87"><summary><span class="fn">2</span><span class="ft"><b>Offer terms</b><span>The deal is agreed on one checklist item; the funding round is created from it.</span></span><a class="tk" href="https://app.clickup.com/t/86d4ajq5h" target="_blank" rel="noopener">P2P-87</a></summary><div class="fb"><p class="dep">Needs P2P-31 deployed and Lane A's parameters read service (<a class="tk" href="https://app.clickup.com/t/86d3u5hf4" target="_blank" rel="noopener">P2P-27</a>) deployed first — no fallback. Create funding round needs Lane A's note service (<a class="tk" href="https://app.clickup.com/t/86d3u5hf3" target="_blank" rel="noopener">P2P-26</a>); until it lands, approval records the terms and the button is not offered. Note block only — the equity block is P2P-88, phase 2.</p><ul class="stories"><li><a href="https://app.clickup.com/t/86d4an99u" target="_blank" rel="noopener"><b>87.1</b> Issuer proposes the terms <span class="ref">P2P-104</span></a></li><li><a href="https://app.clickup.com/t/86d4an9ap" target="_blank" rel="noopener"><b>87.2</b> Admin completes the offer; every edit recorded <span class="ref">P2P-105</span></a></li><li><a href="https://app.clickup.com/t/86d4an9b9" target="_blank" rel="noopener"><b>87.3</b> Issuer confirms the offer, differences marked <span class="ref">P2P-106</span></a></li><li><a href="https://app.clickup.com/t/86d4an9c5" target="_blank" rel="noopener"><b>87.4</b> Admin approves; the headline shows the deal <span class="ref">P2P-107</span></a></li><li><a href="https://app.clickup.com/t/86d4an9d3" target="_blank" rel="noopener"><b>87.5</b> Admin creates the funding round from the approved terms <span class="ref">P2P-108</span></a></li><li><a href="https://app.clickup.com/t/86d4an9e7" target="_blank" rel="noopener"><b>87.6</b> Admin reopens the terms while the round is a draft <span class="ref">P2P-109</span></a></li><li><a href="https://app.clickup.com/t/86d4an9et" target="_blank" rel="noopener"><b>87.B</b> Smoke tests and gateway routes <span class="ref">P2P-110</span></a></li></ul></div></details><details class="feat" id="feat-P2P-73"><summary><span class="fn">3</span><span class="ft"><b>One queue, and sign-off</b><span>Admin sees everything waiting on pitchIN across applications, and closes an application off.</span></span><a class="tk" href="https://app.clickup.com/t/86d47vaby" target="_blank" rel="noopener">P2P-73</a></summary><div class="fb"><p class="dep">Needs P2P-31; the sign-off rules need P2P-87.</p><ul class="stories"><li><a href="https://app.clickup.com/t/86d4an9g2" target="_blank" rel="noopener"><b>73.1</b> One queue of everything waiting on pitchIN <span class="ref">P2P-111</span></a></li><li><a href="https://app.clickup.com/t/86d4an9gh" target="_blank" rel="noopener"><b>73.2</b> Act on an item from the queue <span class="ref">P2P-112</span></a></li><li><a href="https://app.clickup.com/t/86d4an9hh" target="_blank" rel="noopener"><b>73.3</b> Sign off an application <span class="ref">P2P-113</span></a></li><li><a href="https://app.clickup.com/t/86d4an9j6" target="_blank" rel="noopener"><b>73.B</b> Smoke tests and gateway routes <span class="ref">P2P-114</span></a></li></ul></div></details><details class="feat" id="feat-P2P-74"><summary><span class="fn">4</span><span class="ft"><b>Changing one live application</b><span>Add or remove an item, or swap a template — always with a reason, never losing what was sent. Not in the prototype.</span></span><a class="tk" href="https://app.clickup.com/t/86d47vagw" target="_blank" rel="noopener">P2P-74</a></summary><div class="fb"><p class="dep">Needs P2P-31.</p><ul class="stories"><li><a href="https://app.clickup.com/t/86d4an9k5" target="_blank" rel="noopener"><b>74.1</b> Add or remove one item, with a written reason <span class="ref">P2P-115</span></a></li><li><a href="https://app.clickup.com/t/86d4an9ky" target="_blank" rel="noopener"><b>74.2</b> Swap a template after seeing what changes <span class="ref">P2P-118</span></a></li><li><a href="https://app.clickup.com/t/86d4an9m8" target="_blank" rel="noopener"><b>74.3</b> Show each template's version and "Differs from current" <span class="ref">P2P-119</span></a></li><li><a href="https://app.clickup.com/t/86d4an9mk" target="_blank" rel="noopener"><b>74.B</b> Smoke tests and gateway routes <span class="ref">P2P-120</span></a></li></ul></div></details><details class="feat" id="feat-P2P-124"><summary><span class="fn">5</span><span class="ft"><b>Switching it on</b><span>A switch, off by default, gives every new note or equity application the portal; admin can move any one application onto it, and change its type.</span></span><a class="tk" href="https://app.clickup.com/t/14zmk4dk7mt" target="_blank" rel="noopener">P2P-124</a></summary><div class="fb"><p class="dep">Needs P2P-31; 124.5 also needs P2P-74. 124.1 unblocks the rest.</p><ul class="stories"><li><a href="https://app.clickup.com/t/14zmk4dk7mv" target="_blank" rel="noopener"><b>124.1</b> Each application records whether it has the portal <span class="ref">P2P-125</span></a></li><li><a href="https://app.clickup.com/t/14zmk4dk7mw" target="_blank" rel="noopener"><b>124.2</b> Admin moves one application to the new portal <span class="ref">P2P-126</span></a></li><li><a href="https://app.clickup.com/t/14zmk4dk7mx" target="_blank" rel="noopener"><b>124.3</b> Open your checklist from My application; Due diligence hidden <span class="ref">P2P-127</span></a></li><li><a href="https://app.clickup.com/t/14zmk4dk7my" target="_blank" rel="noopener"><b>124.4</b> The switch: new applications get the portal at submit <span class="ref">P2P-128</span></a></li><li><a href="https://app.clickup.com/t/14zmk4dk7mz" target="_blank" rel="noopener"><b>124.5</b> Admin changes an application's type <span class="ref">P2P-129</span></a></li></ul></div></details>
+  <details class="feat" id="feat-P2P-77"><summary><span class="fn">6</span><span class="ft"><b>Cutover</b><span>The switch goes on for good and the old screens are retired. In-flight applications are moved one at a time with P2P-124 — no bulk migration.</span></span><a class="tk" href="https://app.clickup.com/t/86d47vatc" target="_blank" rel="noopener">P2P-77</a></summary><div class="fb"><p class="dep">Last. Needs everything above. 77.1's ClickUp title still mentions a status mapping and a reversible migration; P2P-124 replaced both — follow the Feature ticket.</p><ul class="stories"><li><a href="https://app.clickup.com/t/86d4an9nu" target="_blank" rel="noopener"><b>77.1</b> The cutover condition, written down <span class="ref">P2P-121</span></a></li><li><a href="https://app.clickup.com/t/86d4an9qg" target="_blank" rel="noopener"><b>77.2</b> Everyone reaches the new checklist <span class="ref">P2P-122</span></a></li><li><a href="https://app.clickup.com/t/86d4an9r2" target="_blank" rel="noopener"><b>77.3</b> Delete the old checklist and review console <span class="ref">P2P-123</span></a></li></ul></div></details>
+  <p class="later"><b>Other lanes</b> Lane A: note model and note service <a class="tk" href="https://app.clickup.com/t/86d3u5hf3" target="_blank" rel="noopener">P2P-26</a> · parameters and limits <a class="tk" href="https://app.clickup.com/t/86d3u5hf4" target="_blank" rel="noopener">P2P-27</a> · consent ledger <a class="tk" href="https://app.clickup.com/t/86d3u5hf5" target="_blank" rel="noopener">P2P-28</a> (not waited on — acknowledgements are an in-lane record) · data-model corrections <a class="tk" href="https://app.clickup.com/t/86d4a0acb" target="_blank" rel="noopener">P2P-83</a> (fee list). Lane B: intake and application fee <a class="tk" href="https://app.clickup.com/t/86d3u5hf8" target="_blank" rel="noopener">P2P-30</a> · application approval <a class="tk" href="https://app.clickup.com/t/86d3ugnyd" target="_blank" rel="noopener">P2P-62</a>.<br><b>Phase 2</b> Signing agreements <a class="tk" href="https://app.clickup.com/t/86d47vamm" target="_blank" rel="noopener">P2P-75</a> · Tasks on another page <a class="tk" href="https://app.clickup.com/t/86d48ekzv" target="_blank" rel="noopener">P2P-79</a> · Funding round page <a class="tk" href="https://app.clickup.com/t/86d47vapk" target="_blank" rel="noopener">P2P-76</a> · Google Drive <a class="tk" href="https://app.clickup.com/t/86d4a23he" target="_blank" rel="noopener">P2P-84</a> · Spreadsheet import <a class="tk" href="https://app.clickup.com/t/86d4a23k9" target="_blank" rel="noopener">P2P-85</a> · Equity terms <a class="tk" href="https://app.clickup.com/t/86d4akv3v" target="_blank" rel="noopener">P2P-88</a><br><b>Later</b> Per-item history <a class="tk" href="https://app.clickup.com/t/86d49qmfq" target="_blank" rel="noopener">P2P-81</a> · Help as a conversation <a class="tk" href="https://app.clickup.com/t/86d48egw1" target="_blank" rel="noopener">P2P-78</a> · Emails to the issuer <a class="tk" href="https://app.clickup.com/t/86d48emg8" target="_blank" rel="noopener">P2P-80</a></p>
+
+  <h2 id="rules">Rules that are easy to break</h2>
+  <ul class="tight">
+    <li><b>A checklist item never reads the library for its wording.</b> It keeps the library item's id for matching only.</li>
+    <li><b>Help text describes the requirement, never its state.</b> The same sentence shows whether the item is untouched, returned or accepted.</li>
+    <li><b>Accept and Return appear only when something was actually sent</b> — judged from what was sent, never from the status.</li>
+    <li><b>Who has the portal is one marker on the application, never the switch.</b> An application gets it when created with the switch on, or when admin moves it; turning the switch off never takes it away (P2P-124).</li>
+  <li><b>An equity application has no offer-terms item</b> — not a disabled one, not a placeholder — until P2P-88 ships.</li>
+  <li><b>Any admin can act on any item.</b> There is no new role, no team ownership and no assignment.</li>
+    <li><b>A waived item shows the issuer as Accepted.</b> Admin's reason is never shown to them. Waiving is also the only way to undo an acceptance.</li>
+    <li><b>The prototype is a walkthrough, not the build.</b> It does not do four things the tickets require: the automatic merge at approval, keeping every review round, recording attest and withdraw, and keeping a waiver as a record. Its counts, names and top bar are demo only.</li>
+  </ul>
+
+  <h2 id="deeper">Go deeper</h2>
+  <div class="go">
+    <a href="https://pitchplatforms.github.io/prototypes/lane-c-onboarding/?path=/story/prototypes-lane-c-clickable-walkthrough--walkthrough&amp;panel=false" target="_blank" rel="noopener"><em>Click through it</em><b>The prototype</b><span>Every screen, for issuer and admin, on one shared set of data.</span></a>
+    <a href="guide.html"><em>Read next</em><b>Thirteen walkthroughs</b><span>Terra Agritech through everything that can happen — each screen, what is saved, and which story builds it. Four to start with.</span></a>
+    <a href="reference.html"><em>Reference</em><b>Kinds, sentences, where things live</b><span>Tables to scan from the ticket: every kind, every status sentence, the offer-terms fields.</span></a>
+    <a href="data-model.html"><em>Reference</em><b>The tables</b><span>Nine new tables, what each is for, and which existing ones are reused.</span></a>
+    <a href="https://app.clickup.com/t/86d3u5hf9" target="_blank" rel="noopener"><em>The spec</em><b>P2P-31 in ClickUp</b><span>The authoritative detail and acceptance criteria. Start there once this page makes sense.</span></a>
+  </div>
+
+  <footer>Terra Agritech Sdn Bhd and every count in the prototype and the guide are example data. Where this page and a ticket differ, the ticket wins.</footer>
+</div>
+<script>
+(function(){
+  function openHash(){
+    var id = decodeURIComponent((location.hash || '').slice(1));
+    if (!id) return;
+    var el = document.getElementById(id);
+    if (!el) return;
+    for (var p = el; p; p = p.parentElement) { if (p.tagName === 'DETAILS') p.open = true; }
+    el.scrollIntoView({block:'start'});
+  }
+  window.addEventListener('hashchange', openHash);
+  openHash();
+})();
+</script>
+</body>
+</html>

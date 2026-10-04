@@ -1,0 +1,10 @@
+{
+    "group": "default-sentry-report-group",
+    "max_age": 10886400,
+    "endpoints": [
+        {
+            "url": "https://o4504445196697600.ingest.sentry.io/api/4504445208494080/security/?sentry_key=420560e3956846bfad663f1116de5478"
+        }
+    ],
+    "include_subdomains": true
+}
