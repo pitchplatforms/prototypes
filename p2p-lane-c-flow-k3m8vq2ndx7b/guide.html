@@ -1,0 +1,583 @@
+<!doctype html>
+<html lang="en">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Thirteen walkthroughs — issuer onboarding portal</title>
+<style>
+  :root{
+    --paper:#FBFAF6; --ink:#20302F; --muted:#5F6E6C; --rule:rgba(32,48,47,.16);
+    --accent:#2D7F81; --accent-strong:#256A6C; --on-accent:#FFFFFF;
+    --tint:rgba(45,137,139,.07);
+    --card:#FFFFFF; --card-edge:rgba(32,48,47,.12);
+    --admin:#A8731F; --admin-tint:rgba(168,115,31,.12);
+    --auto:#6B7776; --auto-tint:rgba(107,119,118,.12);
+    --issuer:#2D7F81; --issuer-tint:rgba(45,137,139,.09);
+    --warn:#9A5B14; --warn-tint:rgba(154,91,20,.10);
+    --ledger:#F4F2EA; --ledger-edge:rgba(32,48,47,.10);
+    --serif:"Charter","Iowan Old Style",Georgia,"Times New Roman",serif;
+    --sans:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+    --mono:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+  }
+  @media (prefers-color-scheme: dark){
+    :root:not([data-theme="light"]){
+      --paper:#0E1918; --ink:#E7E5DB; --muted:#9DABA8; --rule:rgba(231,229,219,.16);
+      --accent:#5CB6B8; --accent-strong:#7BC8CA; --on-accent:#0E1918;
+      --tint:rgba(92,182,184,.09);
+      --card:#132120; --card-edge:rgba(231,229,219,.14);
+      --admin:#D9A85C; --admin-tint:rgba(217,168,92,.13);
+      --auto:#9DABA8; --auto-tint:rgba(157,171,168,.13);
+      --issuer:#5CB6B8; --issuer-tint:rgba(92,182,184,.11);
+      --warn:#E0A860; --warn-tint:rgba(224,168,96,.12);
+      --ledger:#101D1C; --ledger-edge:rgba(231,229,219,.12);
+    }
+  }
+  :root[data-theme="dark"]{
+    --paper:#0E1918; --ink:#E7E5DB; --muted:#9DABA8; --rule:rgba(231,229,219,.16);
+    --accent:#5CB6B8; --accent-strong:#7BC8CA; --on-accent:#0E1918;
+    --tint:rgba(92,182,184,.09);
+    --card:#132120; --card-edge:rgba(231,229,219,.14);
+    --admin:#D9A85C; --admin-tint:rgba(217,168,92,.13);
+    --auto:#9DABA8; --auto-tint:rgba(157,171,168,.13);
+    --issuer:#5CB6B8; --issuer-tint:rgba(92,182,184,.11);
+    --warn:#E0A860; --warn-tint:rgba(224,168,96,.12);
+    --ledger:#101D1C; --ledger-edge:rgba(231,229,219,.12);
+  }
+  *{box-sizing:border-box}
+  @media (prefers-reduced-motion: reduce){ *{transition:none !important; animation:none !important} }
+  body{margin:0; background:var(--paper); color:var(--ink); font-family:var(--serif); font-size:16.5px; line-height:1.55; -webkit-font-smoothing:antialiased}
+  .wrap{max-width:920px; margin:0 auto; padding:0 20px 72px}
+  a{color:var(--accent-strong)}
+  a:focus-visible, button:focus-visible{outline:2px solid var(--accent); outline-offset:2px}
+
+  .crumb{display:block; padding:14px 0 0; font:11px var(--mono); letter-spacing:.12em; text-transform:uppercase; color:var(--accent); text-decoration:none}
+  header.hero{padding:34px 0 26px; border-bottom:2px solid var(--ink); margin-bottom:8px}
+  .eyebrow{font-family:var(--sans); font-size:11.5px; font-weight:700; letter-spacing:.14em; text-transform:uppercase; color:var(--accent); margin:0}
+  h1{font-size:clamp(28px,4.6vw,42px); line-height:1.1; margin:12px 0 12px; font-weight:700; max-width:22ch; text-wrap:balance}
+  .stand{margin:0; max-width:62ch; color:var(--muted); font-size:17px}
+  .stand b{color:var(--ink); font-weight:600}
+  .meta{font-family:var(--mono); font-size:12px; color:var(--muted); margin-top:18px; display:flex; flex-wrap:wrap; gap:6px 18px}
+
+  h2{font-size:26px; line-height:1.2; margin:56px 0 8px; text-wrap:balance}
+  h2 + p.lede{margin:0 0 18px; color:var(--muted); max-width:66ch}
+  h3{font-family:var(--sans); font-size:14px; letter-spacing:.02em; margin:26px 0 8px}
+  p{max-width:68ch}
+  ul.plain{max-width:68ch; padding-left:20px} ul.plain li{margin:4px 0}
+
+  /* who does what */
+  .who3{display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:12px; margin-top:16px}
+  @media (max-width:720px){ .who3{grid-template-columns:1fr} }
+  .who3 div{border:1px solid var(--card-edge); background:var(--card); border-radius:10px; padding:14px 16px; font-family:var(--sans); font-size:14px; line-height:1.5}
+  .who3 b{display:block; font-size:15px; margin-bottom:4px}
+  .who3 .issuer b{color:var(--issuer)} .who3 .admin b{color:var(--admin)} .who3 .investor b{color:var(--muted)}
+
+  table{border-collapse:collapse; width:100%; font-family:var(--sans); font-size:14px}
+  .tablewrap{overflow-x:auto; border:1px solid var(--card-edge); border-radius:8px; background:var(--card)}
+  th,td{text-align:left; padding:9px 12px; border-bottom:1px solid var(--rule); vertical-align:top}
+  th{font-size:11.5px; letter-spacing:.08em; text-transform:uppercase; color:var(--muted); font-weight:700}
+  tr:last-child td{border-bottom:0}
+  td code, p code, li code{font-family:var(--mono); font-size:.86em; background:var(--tint); padding:1px 5px; border-radius:4px}
+  .ph{display:inline-block; font:700 10.5px var(--sans); letter-spacing:.08em; text-transform:uppercase; padding:2px 7px; border-radius:99px; border:1px solid var(--rule); color:var(--muted); white-space:nowrap}
+  .ph.one{border-color:var(--accent); color:var(--accent-strong); background:var(--tint)}
+  .ph.later{border-style:dashed}
+  .dash{color:var(--muted)}
+  .quote{font-family:var(--sans); color:var(--ink)}
+
+  /* the picture */
+  figure{margin:18px 0 0}
+  figure svg{max-width:100%; height:auto; display:block; color:var(--ink); font-family:var(--sans)}
+  figcaption{font-family:var(--sans); font-size:13px; color:var(--muted); margin-top:10px; max-width:70ch}
+
+  /* walkthroughs */
+  .legend{display:flex; gap:8px; flex-wrap:wrap; margin:14px 0 4px; font-family:var(--sans); font-size:12.5px}
+  .legend span{border:1px solid var(--rule); border-radius:99px; padding:4px 11px; display:inline-flex; align-items:center; gap:7px}
+  .sw{width:10px; height:10px; border-radius:2px; flex:none}
+  .sw.issuer{background:var(--issuer)} .sw.admin{background:var(--admin)} .sw.auto{background:var(--auto)}
+  .case{margin-top:30px; border:1px solid var(--card-edge); border-radius:10px; background:var(--card); overflow:hidden}
+  .case-head{padding:16px 18px 12px; border-bottom:1px solid var(--rule); display:flex; flex-wrap:wrap; gap:8px 14px; align-items:baseline}
+  .case-head .ref{font:700 11.5px var(--mono); letter-spacing:.06em; color:var(--accent-strong); background:var(--tint); border:1px solid var(--accent); border-radius:6px; padding:2px 8px}
+  .case-head h3{margin:0; font-family:var(--serif); font-size:20px; letter-spacing:0}
+  .case-head .why{flex-basis:100%; margin:4px 0 0; font-size:14.5px; color:var(--muted); max-width:70ch}
+  .case-body{display:grid; grid-template-columns:minmax(0,1.15fr) minmax(0,1fr); min-height:260px}
+  @media (max-width:720px){ .case-body{grid-template-columns:1fr} }
+  .steps{padding:14px 18px 16px; border-right:1px solid var(--rule)}
+  @media (max-width:720px){ .steps{border-right:0; border-bottom:1px solid var(--rule)} }
+  .step{display:grid; grid-template-columns:22px 1fr; gap:10px; padding:8px 0; cursor:pointer; border-radius:6px; font-family:var(--sans); font-size:14px; line-height:1.45}
+  .step:hover{background:var(--tint)}
+  .step .n{font:700 11px var(--mono); color:var(--muted); padding-top:3px; text-align:right}
+  .step.on .n{color:var(--ink)}
+  .step .who{display:inline-block; font:700 10.5px var(--sans); letter-spacing:.06em; text-transform:uppercase; padding:1px 6px; border-radius:4px; margin-right:6px; vertical-align:1px}
+  .who.issuer{background:var(--issuer-tint); color:var(--issuer)}
+  .who.admin{background:var(--admin-tint); color:var(--admin)}
+  .who.auto{background:var(--auto-tint); color:var(--auto)}
+  .step.on{background:var(--tint)}
+  .step.off{opacity:.8}
+  .step .note{display:block; margin-top:3px; color:var(--muted); font-size:13px}
+  /* the screen mock: what the person actually sees */
+  .screen{display:block; margin:8px 0 2px; border:1px solid var(--card-edge); border-radius:8px; background:var(--paper); padding:10px 12px; font-family:var(--sans); font-size:13px; line-height:1.45}
+  .screen .sc-eyebrow{font-size:10.5px; letter-spacing:.06em; text-transform:uppercase; color:var(--muted); margin-bottom:2px}
+  .screen .sc-title{font-weight:700; font-size:14px; display:flex; flex-wrap:wrap; align-items:center; gap:6px; margin-bottom:4px}
+  .screen .tag{font-size:10.5px; font-weight:700; padding:1px 7px; border-radius:99px; background:var(--tint); color:var(--accent-strong)}
+  .screen .tag.warn{background:var(--warn-tint); color:var(--warn)}
+  .screen .tag.ok{background:var(--issuer-tint); color:var(--issuer)}
+  .screen .tag.us{background:var(--auto-tint); color:var(--auto)}
+  .screen .sc-line{margin:2px 0}
+  .screen .sc-line.help{color:var(--ink)}
+  .screen .sc-line.state{color:var(--muted)}
+  .screen .sc-box{margin:6px 0 2px; border:1px solid var(--rule); border-radius:6px; padding:6px 8px; font-size:12.5px}
+  .screen .sc-box b{display:block; font-size:12px; margin-bottom:2px}
+  .screen .sc-btns{display:flex; flex-wrap:wrap; gap:6px; margin-top:6px}
+  .screen .sc-btns span{font-size:12px; font-weight:600; padding:3px 9px; border-radius:6px; border:1px solid var(--rule)}
+  .screen .sc-btns span.solid{background:var(--ink); color:var(--paper); border-color:var(--ink)}
+  .screen .sc-btns span.dis{opacity:.45}
+  .ledger{padding:14px 18px 16px; background:var(--ledger)}
+  .ledger h4{margin:0 0 10px; font:700 11.5px var(--sans); letter-spacing:.08em; text-transform:uppercase; color:var(--muted)}
+  .rec{border:1px solid var(--ledger-edge); background:var(--card); border-radius:7px; padding:8px 10px; margin:0 0 8px; font-family:var(--sans); font-size:12.5px; line-height:1.5; border-left-width:3px}
+  .rec.issuer{border-left-color:var(--issuer)} .rec.admin{border-left-color:var(--admin)} .rec.auto{border-left-color:var(--auto)}
+  .rec .t{font-weight:700; margin-bottom:3px; display:flex; justify-content:space-between; gap:8px}
+  .rec .t small{font-weight:400; color:var(--muted); font-family:var(--mono); font-size:11px}
+  .rec .f{color:var(--muted); font-family:var(--mono); font-size:11.5px} .rec .f b{color:var(--ink); font-weight:500}
+  .rec.upd{background:var(--tint)}
+  .rec.upd .t::after{content:"updated"; font-weight:400; color:var(--accent-strong); font-size:11px}
+  .rec.new .t::after{content:"new"; font-weight:400; color:var(--accent-strong); font-size:11px}
+  .rec.del{opacity:.55} .rec.del .t::after{content:"removed"; font-weight:400; color:var(--muted); font-size:11px}
+  .empty{font-family:var(--sans); font-size:13px; color:var(--muted); padding:6px 0}
+  .nav{display:flex; gap:8px; padding:0 18px 14px; font-family:var(--sans)}
+  .nav button{font:600 13px var(--sans); padding:7px 12px; border-radius:7px; border:1px solid var(--rule); background:var(--card); color:var(--ink); cursor:pointer}
+  .nav button.primary{background:var(--ink); color:var(--paper); border-color:var(--ink)}
+  .nav button:disabled{opacity:.4; cursor:default}
+  .nav .pos{margin-left:auto; font:12px var(--mono); color:var(--muted); align-self:center}
+  .rulebox{margin:14px 0 0; border-left:3px solid var(--accent); background:var(--tint); border-radius:0 8px 8px 0; padding:11px 14px; font-family:var(--sans); font-size:13.5px; line-height:1.55}
+  .rulebox b{display:block; font-size:10.5px; letter-spacing:.09em; text-transform:uppercase; color:var(--accent-strong); margin-bottom:3px}
+  footer{margin-top:52px; padding-top:16px; border-top:1px solid var(--rule); font-family:var(--mono); font-size:11.5px; color:var(--muted); line-height:1.8}
+  h2.tier{margin-top:40px}
+  details.case > summary{list-style:none; cursor:pointer}
+  details.case > summary::-webkit-details-marker{display:none}
+  details.case > summary .case-head{position:relative; padding-left:34px}
+  details.case > summary .case-head::before{content:"›"; position:absolute; left:16px; top:14px; font-size:20px; line-height:1; color:var(--muted); transition:transform .12s}
+  details.case[open] > summary .case-head::before{transform:rotate(90deg)}
+  .tks{flex-basis:100%; display:flex; flex-wrap:wrap; gap:5px; margin-top:6px}
+  .tks a{font:700 11px var(--mono); border:1px solid var(--accent); color:var(--accent-strong); background:var(--tint); border-radius:6px; padding:2px 7px; text-decoration:none; white-space:nowrap}
+  .tks a:hover{background:var(--accent); color:var(--on-accent)}
+  .tks .lbl{font:11px var(--sans); color:var(--muted); align-self:center; margin-right:2px}
+  .tks a.pr{font:600 11.5px var(--sans); border-style:dashed}
+  .case{scroll-margin-top:14px}
+  .nav .hint{font:12px var(--sans); color:var(--muted); align-self:center; margin-left:10px}
+</style>
+
+<div class="wrap">
+  <a class="crumb" href="./">&larr; Start here · Issuer onboarding portal</a>
+
+  <header class="hero">
+    <p class="eyebrow">P2P MVP Launch · Lane C · Epic P2P-63</p>
+    <h1>Thirteen walkthroughs</h1>
+    <p class="stand">One company — <b>Terra Agritech Sdn Bhd</b>, applying to raise with a note — through everything that can happen. Each step shows the screen the person sees; the right-hand side shows what has been saved so far. Every walkthrough names the story that builds it. Read the four under <b>start with these</b>; open the rest when the ticket you are on needs them. Every walkthrough assumes Terra's application <b>has the portal</b> — who gets it, and when, is <a href="https://app.clickup.com/t/14zmk4dk7mt" target="_blank" rel="noopener">P2P-124</a>.</p>
+    <p class="cap" id="jump">Jump to: <a href="#case-A">A · library item</a> · <a href="#case-B">B · template</a> · <a href="#case-C">C · applies</a> · <a href="#case-D">D · returned, accepted</a> · <a href="#case-E">E · waived, out of date</a> · <a href="#case-F">F · uploaded for them, note</a> · <a href="#case-G">G · approval merge</a> · <a href="#case-H">H · acknowledgement</a> · <a href="#case-I">I · checked by pitchIN</a> · <a href="#case-J">J · the deal</a> · <a href="#case-K">K · library edit</a> · <a href="#case-L">L · sign-off</a> · <a href="#case-M">M · terms reopened</a></p>
+    
+  </header>
+
+  
+  <div class="legend"><span><i class="sw issuer"></i>Issuer does something</span><span><i class="sw admin"></i>Admin does something</span><span><i class="sw auto"></i>Happens automatically</span></div>
+  <h2 class="tier" id="core">Start with these</h2>
+  <p class="lede">Apply and get a checklist · a document returned and accepted · the deal agreed · sign-off. Together they are the whole loop.</p>
+  <div id="core-cases"></div>
+  <h2 class="tier" id="more">When the ticket you are on needs them</h2>
+  <p class="lede">Collapsed. Open one from its title.</p>
+  <div id="more-cases"></div>
+  <p class="cap" style="margin-top:26px">Terra, Alex Doe, Sam Doe and every date are example data. Where a walkthrough and its ticket differ, the ticket wins. Every kind, every status sentence and where each thing lives are on the <a href="reference.html">reference page</a>.</p>
+</div>
+<script>
+(function(){
+  // who: 'issuer' | 'admin' | 'auto'
+  // screen: what that person sees — {for:'Issuer'|'Admin', eyebrow, title, tag:{t,cls}, help, state, box:{h,lines}, buttons:[{t,solid,dis}]}
+  // save: records written this step. change: records updated. drop: records removed (unused — nothing in the product deletes a record; a waiver is ended, not removed).
+  const REC = {
+    lib1:  {who:'admin', name:'Requirement (RequirementItem)', ref:'Bank statements, last 6 months'},
+    tpl:   {who:'admin', name:'Template (RequirementTemplate)', ref:'Note · at submission'},
+    tv1:   {who:'admin', name:'Template version (RequirementTemplateVersion)', ref:'Note · at submission · v1'},
+    app:   {who:'issuer', name:'Application (CompanyFundApplication)', ref:'FA-2026-00218'},
+    c02:   {who:'auto', name:'Checklist item (ApplicationRequirement)', ref:'Offer terms'},
+    c06:   {who:'auto', name:'Checklist item (ApplicationRequirement)', ref:'Company constitution'},
+    c07:   {who:'auto', name:'Checklist item (ApplicationRequirement)', ref:'Shareholder agreement'},
+    c09:   {who:'auto', name:'Checklist item (ApplicationRequirement)', ref:'Board resolution'},
+    c11:   {who:'auto', name:'Checklist item (ApplicationRequirement)', ref:'Management accounts'},
+    c12:   {who:'auto', name:'Checklist item (ApplicationRequirement)', ref:'Bank statements'},
+    c16:   {who:'auto', name:'Checklist item (ApplicationRequirement)', ref:'Consent for background check'},
+    c21:   {who:'auto', name:'Checklist item (ApplicationRequirement)', ref:'Debtor ageing listing'},
+    c22:   {who:'auto', name:'Checklist item (ApplicationRequirement)', ref:'Pitch deck'},
+    c23:   {who:'auto', name:'Checklist item (ApplicationRequirement)', ref:'Director credit check'},
+    fv1:   {who:'issuer', name:'File version (FileVersion)', ref:'Company constitution · version 1'},
+    fv2:   {who:'issuer', name:'File version (FileVersion)', ref:'Company constitution · version 2'},
+    fv3:   {who:'admin', name:'File version (FileVersion)', ref:'Management accounts · version 1'},
+    no1:   {who:'admin', name:'Record · note to issuer (RequirementRecord)', ref:'Management accounts · note'},
+    fs1:   {who:'issuer', name:'Form submission (FormSubmission)', ref:'Debtor ageing listing · round 1'},
+    rr1:   {who:'admin', name:'Record · review decision (RequirementRecord)', ref:'Company constitution · 1st review'},
+    rr2:   {who:'admin', name:'Record · review decision (RequirementRecord)', ref:'Company constitution · 2nd review'},
+    rr3:   {who:'admin', name:'Record · review decision (RequirementRecord)', ref:'Consent · 1st review'},
+    rr4:   {who:'admin', name:'Record · review decision (RequirementRecord)', ref:'Debtor ageing listing · 1st review'},
+    wv1:   {who:'admin', name:'Record · waived (RequirementRecord)', ref:'Shareholder agreement'},
+    wv2:   {who:'auto', name:'Record · waiver ended (RequirementRecord)', ref:'Shareholder agreement'},
+    ood1:  {who:'admin', name:'Record · marked out of date (RequirementRecord)', ref:'Shareholder agreement'},
+    ro1:   {who:'admin', name:'Record · terms reopened (RequirementRecord)', ref:'Offer terms'},
+    so1:   {who:'admin', name:'Record · signed off (RequirementRecord)', ref:'FA-2026-00218 · the whole application'},
+    ack1:  {who:'issuer', name:'Record · acknowledged (RequirementRecord)', ref:'Consent for background check'},
+    at1:   {who:'admin', name:'Record · attested (RequirementRecord)', ref:'Board resolution'},
+    at2:   {who:'admin', name:'Record · withdrawn (RequirementRecord)', ref:'Board resolution'},
+    ot1:   {who:'issuer', name:'Record · terms proposed (RequirementRecord)', ref:'Offer terms · as proposed'},
+    ot2a:  {who:'admin', name:'Record · terms edited (RequirementRecord)', ref:'Offer terms · risk grade'},
+    ot2b:  {who:'admin', name:'Record · terms edited (RequirementRecord)', ref:'Offer terms · rate'},
+    ot2c:  {who:'admin', name:'Record · terms edited (RequirementRecord)', ref:'Offer terms · risk rationale'},
+    ot3:   {who:'issuer', name:'Record · terms confirmed (RequirementRecord)', ref:'Offer terms · confirmed'},
+    ta1:   {who:'admin', name:'Record · terms approved (RequirementRecord)', ref:'Offer terms · approved'},
+    rc1:   {who:'admin', name:'Record · round created (RequirementRecord)', ref:'N-2026-00042'},
+    nt:    {who:'admin', name:'Funding round (Campaign + CampaignNoteTerm)', ref:'N-2026-00042 · draft'},
+    hr1:   {who:'issuer', name:'Help request (HelpRequest)', ref:'Offer terms · "Can we do 30 months?"'},
+    ot4:   {who:'admin', name:'Record · terms edited (RequirementRecord)', ref:'Offer terms · tenure'},
+    ot5:   {who:'issuer', name:'Record · terms confirmed (RequirementRecord)', ref:'Offer terms · confirmed again'},
+    ta2:   {who:'admin', name:'Record · terms approved (RequirementRecord)', ref:'Offer terms · approved again'},
+    rc2:   {who:'admin', name:'Record · round created (RequirementRecord)', ref:'N-2026-00042 · terms overwritten'},
+  };
+  const T = {us:{t:'With pitchIN',cls:'us'}, ret:{t:'Returned',cls:'warn'}, ok:{t:'Accepted',cls:'ok'}, ns:{t:'Not started',cls:'us'}, ip:{t:'In progress',cls:'warn'}, stale:{t:'Out of date',cls:'warn'}};
+
+  const CASES = [
+    { ref:'A', title:'Admin adds a new requirement to the library',
+      why:'This is where a requirement is defined — once. Nothing on any live application changes when admin does this.',
+      steps:[
+        {who:'admin', say:'In the admin portal, open the item library and add a file request called "Bank statements, last 6 months", in the Financial section.',
+         note:'The type picker offers only the six types built in phase 1. Admin cannot invent a type; a new type is an engineering ticket.',
+         screen:{for:'Admin', eyebrow:'Item library', title:'Bank statements, last 6 months', box:{h:'Type', lines:['File request  Form  Payment  Acknowledgement  Admin-verified  Offer terms']}, help:'Section  Financial', buttons:[{t:'Save changes',solid:1}]},
+         save:[{id:'lib1', f:{type:'File request', section:'Financial', name:'Bank statements, last 6 months'}}]},
+        {who:'admin', say:'Write the one line of help text the issuer will read, and set what files are allowed: PDF, up to 6 files, 20 MB each.',
+         note:'Help text says what the document is. It must read correctly whether the item is untouched, returned or accepted, because the same line shows in every state.',
+         screen:{for:'Admin', eyebrow:'Item library', title:'Bank statements, last 6 months', box:{h:'Help text (optional)', lines:['Six months of bank-issued statements from every operating account, used to verify your cash flow.']}, help:'Accepted formats  PDF · How many files  6 · Size each (MB)  20', buttons:[{t:'Save changes',solid:1}]},
+         change:[{id:'lib1', f:{help:'Six months of bank-issued statements from every operating account, used to verify your cash flow.', formats:'PDF', maxFiles:'6', maxSizeMb:'20'}}]},
+        {who:'auto', say:'The line the issuer will see is built from those numbers: "PDF · up to 6 files, 20 MB each". Admin never types it.',
+         note:'The same numbers reject a file that is too big later, so the sentence and the rule can never disagree.',
+         screen:{for:'Admin', eyebrow:'The issuer will see', title:'What we need', help:'PDF · up to 6 files, 20 MB each'}},
+      ]},
+    { ref:'B', title:'Admin builds a template and publishes it',
+      why:'A template is an ordered pick from the library, published as versions. A version freezes membership, order and required-ness; content is copied from the library when an application is snapshotted. Applications already running keep the version they started on.',
+      steps:[
+        {who:'admin', say:'Open the seeded template "Note · at submission" — the note application type, role at submission — and add items to it.',
+         note:'Templates are keyed by application type (asset class) and role, not by product or Shariah type. Exactly one template holds each (type × role); setting another template as the default for that pair replaces this one.',
+         screen:{for:'Admin', eyebrow:'Template builder', title:'Note · at submission', help:'Application type  Note · Role  At submission', buttons:[{t:'Add from the library'},{t:'Publish',solid:1}]},
+         save:[{id:'tpl', f:{name:'Note · at submission', applicationType:'Note', role:'At submission'}}]},
+        {who:'admin', say:'Add items from the library in the order the issuer should see them: offer terms (required — a note template must hold exactly one), risk and consent acknowledgement, SSM registration, constitution, board resolution, bank statements …',
+         note:'Only library items can be added; a template cannot invent a requirement. Required is set per entry here, not on the library item. The application form and the application fee are collected by the intake (P2P-30) and are never checklist items.',
+         screen:{for:'Admin', eyebrow:'Template builder', title:'Note · at submission', box:{h:'Items in order', lines:['1  Offer terms · required','2  Risk and consent acknowledgement · required','3  SSM registration · required','…','7  Bank statements, last 6 months · required']}, buttons:[{t:'Publish',solid:1}]},
+         change:[{id:'tpl', f:{items:'11, in order'}}]},
+        {who:'admin', say:'Publish.',
+         note:'Publishing refuses a note template with no offer terms item, or two, or one not marked required: "A note template must contain exactly one offer terms item, marked required." Applications that start from now snapshot this version.',
+         screen:{for:'Admin', eyebrow:'Template builder', title:'Note · at submission', tag:{t:'Published v1',cls:'ok'}, help:'Version 1 published. Applications that start from now snapshot this version.'},
+         save:[{id:'tv1', f:{template:'Note · at submission', role:'At submission', published:'18 Jul 2026', items:'11'}}]},
+      ]},
+    { ref:'C', title:'Terra applies — and gets its own checklist',
+      why:'The moment the issuer submits the application form, every item on the at-submission template is copied onto their own checklist. From now on, edits to the library or template do not reach them.',
+      steps:[
+        {who:'issuer', say:'Terra Agritech submits the application form for a note.',
+         note:'The application form is the intake\'s (P2P-30), not a checklist item. Submitting stamps the application\'s asset class (Note or Equity). This walkthrough assumes the portal switch is on (P2P-124), so a new note or equity application gets the new checklist. With the switch off, it opens the existing screens until admin moves it with Move to new portal; a token application always opens the existing screens.',
+         screen:{for:'Issuer', eyebrow:'Application', title:'Application form', tag:T.us, help:'Terra Agritech Sdn Bhd · note application', buttons:[{t:'Send application',solid:1}]},
+         save:[{id:'app', f:{company:'Terra Agritech Sdn Bhd', assetClass:'Note', headline:'Note terms to be agreed'}}]},
+        {who:'auto', say:'The at-submission template for notes is copied. Each item becomes a checklist item with its own copy of the name, help text and file rules, and whether it is required.',
+         note:'Each checklist item remembers which template version it came from, and the application records that version. An item pitchIN checks itself starts at With pitchIN — it is on pitchIN from day one.',
+         save:[{id:'c12', f:{copiedFrom:'Bank statements, last 6 months', templateVersion:'v1', required:'yes', help:'Six months of bank-issued statements …', files:'PDF · 6 · 20 MB', status:'Not started'}},
+               {id:'c06', f:{copiedFrom:'Company constitution', templateVersion:'v1', required:'yes', files:'PDF · 1 · 20 MB', status:'Not started'}},
+               {id:'c09', f:{copiedFrom:'Board resolution', type:'Admin-verified', templateVersion:'v1', required:'yes', status:'With pitchIN'}}],
+         change:[{id:'app', f:{atSubmissionTemplateVersion:'v1'}}]},
+        {who:'issuer', say:'Open the checklist. Every row shows a status label and the item name, grouped by whose turn it is: Yours to do, With pitchIN, Done. Tapping a row peeks at it — the sentence for its state, the help text and the next action; More details opens the item page below.',
+         screen:{for:'Issuer', eyebrow:'Item page · Your application · 0 of 11 done', title:'Bank statements, last 6 months', tag:T.ns, help:'Six months of bank-issued statements from every operating account, used to verify your cash flow.', state:'Send us this document when you have it.', buttons:[{t:'Upload',solid:1}]}},
+      ]},
+    { ref:'D', title:'A document is returned, then accepted',
+      why:'The most common path. Nothing is overwritten: the first file stays when the second arrives, and the first review stays when the item is finally accepted.',
+      steps:[
+        {who:'issuer', say:'Upload the company constitution.',
+         note:'"Take a photo" is not offered here — this item accepts only PDF. The Google Drive control is phase 2 and is not rendered in phase 1.',
+         screen:{for:'Issuer', eyebrow:'Company', title:'Company constitution', tag:T.ns, help:'The document that sets out how your company is governed: share classes, director powers and how decisions are made.', state:'Send us this document when you have it.', box:{h:'What we need', lines:['Every page, front to back','The stamped copy','Signatures readable at full size','PDF · one file, up to 20 MB']}, buttons:[{t:'Choose a file',solid:1}]},
+         save:[{id:'fv1', f:{file:'constitution_2019.pdf', source:'Issuer', sent:'5 Aug 2026 16:12'}}],
+         change:[{id:'c06', f:{status:'With pitchIN'}}]},
+        {who:'admin', say:'Open the item in the admin portal. What the issuer sent is shown first — the file opens, with a preview and a download — and only then the decision.',
+         screen:{for:'Admin', eyebrow:'Terra Agritech · Company constitution', title:'What the issuer sent', box:{h:'Version 1', lines:['constitution_2019.pdf · 18 pages · 5 Aug 2026']}, buttons:[{t:'Accept',solid:1},{t:'Return it'},{t:'Waive with a reason'},{t:'Upload on their behalf'}]}},
+        {who:'admin', say:'Return it: type what is wrong and what you need instead.',
+         note:'Admin writes the reason in their own words, one line per point. The issuer reads exactly those lines under "What we need instead"; nothing is rephrased.',
+         screen:{for:'Admin', eyebrow:'Terra Agritech · Company constitution', title:'Why are you returning it?', box:{h:'What we need instead — the issuer will read this', lines:['Pages 4 to 7 are missing — send the complete copy, front to back.','The signature page is not readable at full size.']}, buttons:[{t:'Return',solid:1},{t:'Cancel'}]},
+         save:[{id:'rr1', f:{decision:'Return', reasons:'Pages 4 to 7 are missing — send the complete copy, front to back. · The signature page is not readable at full size.', by:'Alex Doe', when:'5 Aug 2026 17:40'}}],
+         change:[{id:'c06', f:{status:'Returned'}}]},
+        {who:'issuer', say:'See the reason at the top of the item page — and version 1, still there — then upload a replacement.',
+         screen:{for:'Issuer', eyebrow:'Company', title:'Company constitution', tag:T.ret, help:'The document that sets out how your company is governed: share classes, director powers and how decisions are made.', state:'We need a different copy. The reason is below, and what you sent is kept.', box:{h:'What we need instead', lines:['Pages 4 to 7 are missing — send the complete copy, front to back.','The signature page is not readable at full size.','Alex Doe · 5 Aug 2026']}, buttons:[{t:'Choose a file',solid:1}]},
+         save:[{id:'fv2', f:{file:'constitution_full_2019.pdf', source:'Issuer', sent:'6 Aug 2026 09:20'}}],
+         change:[{id:'c06', f:{status:'With pitchIN'}}]},
+        {who:'admin', say:'Open version 2, accept.',
+         note:'The first review is untouched. Two files and two reviews now sit under this item.',
+         screen:{for:'Admin', eyebrow:'Terra Agritech · Company constitution', title:'What the issuer sent', box:{h:'Versions', lines:['Version 2 · constitution_full_2019.pdf · 6 Aug 2026','Version 1 · constitution_2019.pdf · 5 Aug 2026']}, buttons:[{t:'Accept',solid:1},{t:'Return it'},{t:'Waive with a reason'},{t:'Upload on their behalf'}]},
+         save:[{id:'rr2', f:{decision:'Accept', by:'Alex Doe', when:'6 Aug 2026 11:04'}}],
+         change:[{id:'c06', f:{status:'Accepted'}}]},
+        {who:'issuer', say:'The item now reads as accepted.',
+         screen:{for:'Issuer', eyebrow:'Company', title:'Company constitution', tag:T.ok, help:'The document that sets out how your company is governed: share classes, director powers and how decisions are made.', state:'Accepted. Nothing for you to do.', box:{h:'What you sent', lines:['Version 2 · constitution_full_2019.pdf','Version 1 · constitution_2019.pdf']}}},
+      ]},
+    { ref:'E', title:'Admin waives an item — and later marks it out of date',
+      why:'Sometimes we decide not to ask for something. The issuer just sees it as accepted. The reason admin wrote is for pitchIN only. Waiving is also the only way to undo an acceptance.',
+      steps:[
+        {who:'admin', say:'Waive the shareholder agreement, with a written reason.',
+         note:'A reason is required; the API refuses a waiver without one. It is shown in the admin portal only.',
+         screen:{for:'Admin', eyebrow:'Terra Agritech · Shareholder agreement', title:'Why are you waiving this?', box:{h:'Reason', lines:['Sole shareholder per SSM register; no agreement exists.']}, help:'The issuer will not see this. They see the item as accepted.', buttons:[{t:'Waive it',solid:1},{t:'Cancel'}]},
+         save:[{id:'wv1', f:{reason:'Sole shareholder per SSM register; no agreement exists.', by:'Alex Doe', when:'7 Aug 2026 10:15'}}],
+         change:[{id:'c07', f:{status:'Accepted', waived:'yes'}}]},
+        {who:'issuer', say:'The issuer sees it as accepted, with one different sentence.',
+         screen:{for:'Issuer', eyebrow:'Company', title:'Shareholder agreement', tag:T.ok, help:'The agreement between your current shareholders, including any side letters that change what it says.', state:'Accepted. We did not need this from you.'}},
+        {who:'admin', say:'Weeks later, mark it out of date.',
+         note:'Moving the item off Accepted ends the waiver. The waiver record stays, and a second record says when it ended; nothing is deleted. No file was ever sent, so Accept and Return are not offered — the submitted-payload rule.',
+         screen:{for:'Admin', eyebrow:'Terra Agritech · Shareholder agreement', title:'Shareholder agreement', tag:T.stale, help:'The agreement between your current shareholders, including any side letters that change what it says.', state:'The issuer has not sent this yet. There is nothing to accept or return.', buttons:[{t:'Waive with a reason'},{t:'Upload on their behalf'}]},
+         save:[{id:'ood1', f:{by:'Alex Doe', when:'28 Aug 2026 11:02'}}, {id:'wv2', f:{endedBy:'the item moved off Accepted', when:'28 Aug 2026 11:02'}}],
+         change:[{id:'c07', f:{status:'Out of date', waived:'no'}}]},
+        {who:'issuer', say:'The issuer is asked for it again.',
+         screen:{for:'Issuer', eyebrow:'Company', title:'Shareholder agreement', tag:T.stale, help:'The agreement between your current shareholders, including any side letters that change what it says.', state:'We need a current copy. Send it when you have it.', buttons:[{t:'Upload',solid:1}]}},
+      ]},
+    { ref:'F', title:'A document arrives by email — admin uploads it for the issuer, with a note',
+      why:'Issuers still email things. Admin can put the file on the checklist; the issuer sees that we did, and it still has to be reviewed. Admin also tells this issuer, in their own words, what we need from them about it.',
+      steps:[
+        {who:'admin', say:'The management accounts arrive by email. Upload them on the issuer\'s behalf.',
+         note:'The file version records where it came from. The item is now With pitchIN — not accepted. Admin can fill in a form on their behalf the same way; the form round records that admin filled it.',
+         screen:{for:'Admin', eyebrow:'Terra Agritech · Management accounts', title:'Management accounts to Jun 2026', tag:T.us, box:{h:'What the issuer sent', lines:['Version 1 · Terra-Management-Accounts.xlsx · added by pitchIN from email']}, buttons:[{t:'Accept',solid:1},{t:'Return it'},{t:'Waive with a reason'},{t:'Upload on their behalf'}]},
+         save:[{id:'fv3', f:{file:'Terra-Management-Accounts.xlsx', source:'AdminOnBehalf', by:'Alex Doe'}}],
+         change:[{id:'c11', f:{status:'With pitchIN'}}]},
+        {who:'admin', say:'Write a note from pitchIN for Terra about this item, so they know what we did and what to check.',
+         note:'The note is admin\'s own words for this issuer about this item — not the library help text, which stays generic. Admin can add or change it any time until the item is accepted; saving it writes one logbook line, kind NoteToIssuer.',
+         screen:{for:'Admin', eyebrow:'Terra Agritech · Management accounts', title:'Note to the issuer', box:{h:'Note from pitchIN — shown under the help text', lines:['We filed this from the copy you emailed on 2 Sep. Let us know if the figures have changed since.']}, buttons:[{t:'Save note',solid:1}]},
+         save:[{id:'no1', f:{note:'We filed this from the copy you emailed on 2 Sep. Let us know if the figures have changed since.', by:'Alex Doe', when:'2 Sep 2026 09:40'}}]},
+        {who:'issuer', say:'The issuer sees the file, sees the note from pitchIN under the help text, and can replace the file.',
+         screen:{for:'Issuer', eyebrow:'Financial', title:'Management accounts to Jun 2026', tag:T.us, help:'Your own unaudited accounts since the last audited year end — how the business is trading right now.', box:[{h:'Note from pitchIN', lines:['We filed this from the copy you emailed on 2 Sep. Let us know if the figures have changed since.']}, {h:'What you sent', lines:['Version 1 · Terra-Management-Accounts.xlsx','We added this for you from your email. Replace it if it is not right.']}], state:'Sent. We are reviewing it. Nothing for you to do for now.', buttons:[{t:'Upload a replacement'}]}},
+      ]},
+    { ref:'G', title:'The application is approved — more items appear',
+      why:'The first checklist is short on purpose, so an issuer can apply quickly. When the application is approved, the at-approval template is merged in. Items already accepted stay accepted; nothing is removed.',
+      steps:[
+        {who:'admin', say:'Terra\'s application is approved, on Lane B\'s screen.',
+         note:'Application approval ("we will work with this business") is decided on Lane B\'s screen (P2P-62), not in this portal; this lane only reacts to the application status becoming Approved. It is a separate decision from onboarding sign-off (P2P-73) and from terms approval (P2P-87).',
+         change:[{id:'app', f:{status:'Approved'}}]},
+        {who:'auto', say:'The at-approval template is merged in, matched by library item id. Items Terra already has keep their status, files and template version. New items appear as Not started; an admin-verified item added by the merge starts at With pitchIN.',
+         note:'Nine new items appear; three are shown here. The merge is additive and idempotent. The application now records both template versions.',
+         screen:{for:'Issuer', eyebrow:'Item page · Your application · 2 of 20 done', title:'Debtor ageing listing', tag:T.ns, help:'Who owes your company money and how long it has been outstanding.', state:'Fill this in. You can save and come back to it.', buttons:[{t:'Start',solid:1}]},
+         save:[{id:'c21', f:{copiedFrom:'Debtor ageing listing', type:'Form', templateVersion:'at approval v1', required:'yes', status:'Not started'}}, {id:'c22', f:{copiedFrom:'Pitch deck', type:'File request', templateVersion:'at approval v1', required:'no', status:'Not started'}}, {id:'c23', f:{copiedFrom:'Director credit check', type:'Admin-verified', templateVersion:'at approval v1', required:'yes', status:'With pitchIN'}}],
+         change:[{id:'c06', f:{status:'Accepted (unchanged)', templateVersion:'v1 (unchanged)'}}, {id:'app', f:{atApprovalTemplateVersion:'v1'}}]},
+      ]},
+    { ref:'H', title:'The issuer confirms a statement',
+      why:'An acknowledgement is read and ticked. We keep the exact wording they confirmed, as copied onto their checklist, so it can be shown years later.',
+      steps:[
+        {who:'issuer', say:'Read the risk and consent statement and tick each line.',
+         note:'The Confirm button stays off until every line is ticked. Confirming is a submission: the item goes to With pitchIN for admin to accept.',
+         screen:{for:'Issuer', eyebrow:'Key persons', title:'Consent for background check', tag:T.ns, help:'Your permission for pitchIN to run background and credit checks on the company and its directors.', state:'Read the statement and confirm each line.', box:{h:'Statement (as copied to your checklist)', lines:['☑ I have read the risk and consent statement in full.','☑ I am a director, or authorised to give this on the company\'s behalf.','☑ I agree to pitchIN obtaining credit reports on the company and its directors.']}, buttons:[{t:'Confirm',solid:1}]},
+         save:[{id:'ack1', f:{wording:'kept verbatim, as copied onto the item', linesTicked:'3 of 3', by:'Sam Doe (director)', when:'7 Aug 2026 14:31'}}],
+         change:[{id:'c16', f:{status:'With pitchIN'}}]},
+        {who:'admin', say:'The admin portal shows the statement with each ticked line, who confirmed and when. Accept.',
+         screen:{for:'Admin', eyebrow:'Terra Agritech · Consent for background check', title:'What the issuer sent', box:{h:'Confirmed 7 Aug 2026 by Sam Doe', lines:['☑ I have read the risk and consent statement in full.','☑ I am a director, or authorised to give this on the company\'s behalf.','☑ I agree to pitchIN obtaining credit reports on the company and its directors.']}, buttons:[{t:'Accept',solid:1},{t:'Return it'},{t:'Waive with a reason'}]},
+         save:[{id:'rr3', f:{decision:'Accept', by:'Alex Doe'}}],
+         change:[{id:'c16', f:{status:'Accepted'}}]},
+      ]},
+    { ref:'I', title:'Something pitchIN checks itself',
+      why:'Some items need nothing from the issuer. The item is created at With pitchIN. Admin confirms something offline — here, that the board resolution matches the SSM director register — and attests it. An attestation can be withdrawn.',
+      steps:[
+        {who:'admin', say:'Check the board resolution\'s signatories against the SSM register. Attest.',
+         screen:{for:'Admin', eyebrow:'Terra Agritech · Board resolution', title:'What you are confirming', tag:T.us, box:{h:'Internal note', lines:['Signatories match the current SSM director register; resolution dated within six months.']}, buttons:[{t:'Attest',solid:1},{t:'Withdraw',dis:1}]},
+         save:[{id:'at1', f:{kind:'Attest', by:'Alex Doe', when:'8 Aug 2026 09:40'}}],
+         change:[{id:'c09', f:{status:'Accepted'}}]},
+        {who:'issuer', say:'The issuer only ever sees that pitchIN is handling it. There is no action on their side.',
+         screen:{for:'Issuer', eyebrow:'Company', title:'Board resolution', tag:T.ok, help:'The directors formally resolving to raise on pitchIN. We check it against your SSM filing ourselves.', state:'Checked. Nothing for you to do.'}},
+        {who:'admin', say:'A director resigns. Withdraw the attestation.',
+         note:'The withdrawal is a second record next to the first, not an edit of it. The item goes back to With pitchIN.',
+         screen:{for:'Admin', eyebrow:'Terra Agritech · Board resolution', title:'What you are confirming', tag:T.us, buttons:[{t:'Attest',solid:1},{t:'Withdraw'}]},
+         save:[{id:'at2', f:{kind:'Withdraw', by:'Alex Doe', when:'20 Aug 2026 15:02'}}],
+         change:[{id:'c09', f:{status:'With pitchIN'}}]},
+      ]},
+    { ref:'J', title:'The deal is agreed — proposed, offered, confirmed, approved, then the round is created',
+      why:'The one item both sides work on. The issuer proposes what only they know; admin completes the offer with what only pitchIN decides; the issuer confirms the offer; admin approves. Creating the funding round is a separate action that copies the approved terms once.',
+      steps:[
+        {who:'issuer', say:'Propose: business term financing for working capital, RM 400,000 to 500,000, 36 months, conventional, with a personal guarantee from the directors.',
+         note:'Purpose comes from the fixed list P2P-26 defines (NotePurpose). Financing type comes from P2P-27\'s product config. Amount, tenure and purpose are pre-filled from the application form where the intake captured them.',
+         screen:{for:'Issuer', eyebrow:'Application', title:'Offer terms', tag:T.ns, help:'The financing you are asking for: what kind, how much, for how long. We add the rate and may adjust other terms. Nothing is final until you have confirmed the offer and we have approved it.', state:'Tell us the financing you need.', box:{h:'Propose your terms', lines:['Purpose  Working capital · Shariah type  Conventional','Financing type  Business term · Tenure  36 months','Minimum to raise  RM 400,000 · Maximum  RM 500,000','Security you can offer  Personal guarantee from directors']}, buttons:[{t:'Send proposal',solid:1}]},
+         save:[{id:'ot1', f:{financingType:'Business term', purpose:'Working capital', range:'RM 400,000.00 – RM 500,000.00', tenure:'36 months', repayment:'Monthly instalments (derived)', shariah:'Conventional', security:'Personal guarantee from directors'}}],
+         change:[{id:'c02', f:{status:'With pitchIN'}}]},
+        {who:'admin', say:'Complete the offer: risk grade B1, rate 11.0% within the band, rationale, minimum per investor left at the default. Send it to the issuer.',
+         note:'The issuer always confirms the offer — it carries the rate and the grade they have not seen. Approve stays off until they do. Each field admin saves is its own terms edit record.',
+         screen:{for:'Admin', eyebrow:'Terra Agritech · Offer terms', title:'The offer', box:{h:'Every field, editable', lines:['About the raise  Conventional · Working capital · 400,000 – 500,000 · Minimum per investor  100','Security offered  Personal guarantee from directors — add the guarantee documents as checklist items','About the note  Business term · Monthly instalments (derived) · 36 months','Risk grade  B1 · Risk rationale  typed · Rate  11.0']}, help:'The issuer has not confirmed this offer. Send it to them first.', buttons:[{t:'Approve',solid:1,dis:1},{t:'Send to the issuer to confirm'}]},
+         save:[{id:'ot2a', f:{field:'riskGrade', old:'—', new:'B1', by:'Alex Doe'}}, {id:'ot2b', f:{field:'rate', old:'—', new:'11.0%', by:'Alex Doe'}}, {id:'ot2c', f:{field:'riskRationale', old:'—', new:'typed', by:'Alex Doe'}}],
+         change:[{id:'c02', f:{status:'Returned', offerLocked:'yes, until the issuer confirms'}}]},
+        {who:'issuer', say:'Read the offer — nothing they proposed has changed; the rate and grade are new — and confirm.',
+         note:'Confirm is the only action. If the issuer disagrees, they use Help and admin edits the offer. The Returned sentence is the same whether or not admin changed a proposed field.',
+         screen:{for:'Issuer', eyebrow:'Application', title:'Offer terms', tag:T.ret, help:'The financing you are asking for: what kind, how much, for how long. We add the rate and may adjust other terms. Nothing is final until you have confirmed the offer and we have approved it.', state:'Your offer is ready. Read every term, then confirm it. Use Help if something should change.', box:{h:'Your offer', lines:['Conventional note · Business term · Working capital','RM 400,000.00 – RM 500,000.00 · 36 months · Monthly instalments','Security  Personal guarantee from directors','Rate  11.0% a year · Risk grade  B1 · Minimum per investor  RM 100.00']}, buttons:[{t:'Confirm these terms',solid:1},{t:'Help'}]},
+         save:[{id:'ot3', f:{confirmed:'the offer as sent', by:'Sam Doe (director)', when:'9 Aug 2026 10:02'}}],
+         change:[{id:'c02', f:{status:'With pitchIN', offerLocked:'no'}}]},
+        {who:'admin', say:'Approve.',
+         note:'Approval validates against P2P-27 and records the terms on the item. The headline shows the deal from now on. Nothing is created yet; the item shows as Accepted.',
+         screen:{for:'Admin', eyebrow:'Terra Agritech · Offer terms', title:'Approved terms', box:{h:'Read-only now', lines:['Business term · Conventional · RM 400,000.00 – RM 500,000.00 · 36 months · 11.0% · B1']}, buttons:[{t:'Create funding round from these terms',solid:1}]},
+         save:[{id:'ta1', f:{approvedTerms:'the confirmed offer', by:'Alex Doe', when:'9 Aug 2026 11:30'}}],
+         change:[{id:'c02', f:{status:'Accepted', approved:'yes'}}, {id:'app', f:{headline:'Business term note · RM 400,000.00 – RM 500,000.00 · 36 months'}}]},
+        {who:'admin', say:'Create the funding round from these terms.',
+         note:'A separate, deliberate action. P2P-26\'s note-terms service creates the round from the approved terms, re-validates against P2P-27, stamps the fee and servicing terms and issues the note reference. The item locks while the round exists.',
+         screen:{for:'Admin', eyebrow:'Terra Agritech · Offer terms', title:'Approved terms · N-2026-00042', help:'Funding round created as a draft · N-2026-00042. These terms are locked while it exists.', buttons:[{t:'Reopen the terms'}]},
+         save:[{id:'rc1', f:{noteReference:'N-2026-00042', by:'Alex Doe', when:'9 Aug 2026 11:35'}}, {id:'nt', f:{createdFrom:'the approved terms, copied once', productClass:'Business term', shariah:'Conventional', range:'RM 400,000.00 – RM 500,000.00', tenure:'36 months', rate:'11.0%', riskGrade:'B1', feeTerms:'stamped by P2P-26\'s note service (fee list per P2P-83)', noteReference:'N-2026-00042', roundStatus:'draft'}}],
+         change:[{id:'c02', f:{locked:'yes, while the round exists', noteReference:'N-2026-00042'}}]},
+        {who:'issuer', say:'The offer terms item is read-only with the reference.',
+         note:'The funding round page item — a task on another page, P2P-76 on the P2P-79 type, phase 2 — would open from here once built.',
+         screen:{for:'Issuer', eyebrow:'Your application · Business term note · RM 400,000.00 – RM 500,000.00 · 36 months', title:'Offer terms', tag:T.ok, state:'Approved. These are the terms of your offer.', box:{h:'Your offer · N-2026-00042', lines:['Conventional note · Business term · Working capital','RM 400,000.00 – RM 500,000.00 · 36 months · Monthly instalments','Security  Personal guarantee from directors','Rate  11.0% a year · Risk grade  B1']}}},
+      ]},
+    { ref:'K', title:'Admin improves the library — Terra\'s checklist does not change',
+      why:'The rule that makes everything above safe.',
+      steps:[
+        {who:'admin', say:'Edit "Bank statements, last 6 months" in the library: allow 12 files and reword the help text.',
+         screen:{for:'Admin', eyebrow:'Item library', title:'Bank statements, last 6 months', help:'Editing here changes the next application to be snapshotted. Nothing live moves.', buttons:[{t:'Save changes',solid:1}]},
+         change:[{id:'lib1', f:{maxFiles:'12', help:'Twelve months of bank-issued statements …'}}]},
+        {who:'auto', say:'Terra\'s checklist item still allows 6 files and shows the original help text. The next application snapshotted on this template version copies the new content; no republish is needed, and no live application changes.',
+         screen:{for:'Issuer', eyebrow:'Financial', title:'Bank statements, last 6 months', tag:T.ns, help:'Six months of bank-issued statements from every operating account, used to verify your cash flow.', state:'Send us this document when you have it.', box:{h:'What we need', lines:['PDF · up to 6 files, 20 MB each']}}},
+      ]},
+    { ref:'L', title:'Admin signs off onboarding',
+      why:'Sign-off is onboarding approval: one admin closes the application when every required item is accepted or waived. It is a different decision from application approval (G) and from terms approval (J), and neither of those is a condition of it beyond the offer terms item counting as a required item.',
+      steps:[
+        {who:'admin', say:'Open the queue: every item currently with pitchIN across all applications, oldest first, filterable by status, section and item type. Open Terra and try to sign off while "Debtor ageing listing", a required item, is still Not started.',
+         note:'Sign-off checks required items only — those whose template entry is marked required. An optional item still open does not block it. There is no application-level override: items are cleared one by one, or waived individually with a written reason.',
+         screen:{for:'Admin', eyebrow:'Terra Agritech · Onboarding', title:'Sign off onboarding', box:{h:'Refused', lines:['You cannot sign off yet. Debtor ageing listing is still outstanding.']}, buttons:[{t:'Sign off',solid:1,dis:1}]},
+         change:[{id:'c21', f:{status:'Not started', required:'yes'}}, {id:'c02', f:{status:'Accepted', approved:'yes', noteReference:'N-2026-00042'}}]},
+        {who:'issuer', say:'Fill in the debtor ageing listing and send it for review.',
+         note:'The form is the existing form module. Sending creates a new form round pointing at a new form submission, filled in by the issuer.',
+         screen:{for:'Issuer', eyebrow:'Financial', title:'Debtor ageing listing', tag:T.ip, help:'Who owes your company money and how long it has been outstanding.', state:'You have started this. Finish it and send it for review.', buttons:[{t:'Send for review',solid:1},{t:'Save and close'}]},
+         save:[{id:'fs1', f:{round:'1', filledBy:'Issuer', sent:'12 Sep 2026 09:48'}}],
+         change:[{id:'c21', f:{status:'With pitchIN'}}]},
+        {who:'admin', say:'Accept it, then sign off.',
+         note:'The actor and time are recorded on the application and shown there, and the sign-off is a line in the logbook. Creating the funding round is not a condition of sign-off.',
+         screen:{for:'Admin', eyebrow:'Terra Agritech · Onboarding', title:'Sign off onboarding', tag:{t:'Onboarding complete',cls:'ok'}, help:'Every required item is accepted or waived. Signed off by Alex Doe · 12 Sep 2026 15:20.', buttons:[{t:'Sign off',solid:1}]},
+         save:[{id:'rr4', f:{decision:'Accept', by:'Alex Doe', when:'12 Sep 2026 15:10'}}, {id:'so1', f:{by:'Alex Doe', when:'12 Sep 2026 15:20'}}],
+         change:[{id:'c21', f:{status:'Accepted'}}, {id:'app', f:{onboarding:'Complete', signedOffBy:'Alex Doe', signedOffAt:'12 Sep 2026 15:20'}}]},
+        {who:'issuer', say:'The checklist reads one line, and the submission controls are hidden.',
+         screen:{for:'Issuer', eyebrow:'Your application · Business term note · RM 400,000.00 – RM 500,000.00 · 36 months', title:'Terra Agritech Sdn Bhd', tag:{t:'Onboarding complete',cls:'ok'}, state:'Onboarding complete. We have everything we need.'}},
+        {who:'admin', say:'Open any item. Accept, Return, Waive, Attest, Withdraw, Mark out of date, Upload on their behalf and Fill in on their behalf are no longer offered.',
+         note:'Only Create funding round and reopening the offer terms while the round is a draft remain. Here the round already exists as a draft, so Reopen the terms is the one action offered.',
+         screen:{for:'Admin', eyebrow:'Terra Agritech · Offer terms', title:'Approved terms · N-2026-00042', help:'Onboarding is signed off. Item actions are closed, except creating the funding round and reopening the terms while the round is a draft.', buttons:[{t:'Reopen the terms'}]}},
+      ]},
+    { ref:'M', title:'Admin reopens the terms while the round is a draft',
+      why:'While the funding round is still a draft, admin can reopen the offer terms: the offer unlocks, the confirmation is cleared, and the loop runs again. Once the round has left draft, the item cannot be reopened.',
+      steps:[
+        {who:'issuer', say:'Use Help on the offer terms item: "Can we do 30 months instead of 36?"',
+         note:'Confirm was the issuer\'s only action on the offer; disagreement goes through Help. A help request row is stored first, then a ClickUp task is created in Customer Support › Fundraising Query with the item name. If the ClickUp call fails, the row is kept and the issuer reads "We could not send your message. Try again, or email {support email}."',
+         screen:{for:'Issuer', eyebrow:'Offer terms · Help', title:'What do you need help with?', help:'Tell us what you are stuck on. We will reply by email or phone.', box:{h:'Message sent', lines:['We will reply by email or phone. No need to send it again.']}, buttons:[{t:'Send',solid:1},{t:'Cancel'}]},
+         save:[{id:'hr1', f:{item:'Offer terms', message:'Can we do 30 months instead of 36?', clickUpTask:'created', by:'Sam Doe', when:'14 Sep 2026 10:05'}}],
+         change:[{id:'c02', f:{status:'Accepted', approved:'yes', locked:'yes, while the round exists', noteReference:'N-2026-00042'}}, {id:'nt', f:{tenure:'36 months', roundStatus:'draft'}}]},
+        {who:'admin', say:'The round is still a draft. Reopen the terms.',
+         note:'The item moves to With pitchIN with the offer unlocked and the confirmation cleared. The note reference is kept. Once the round has left draft, this action is not offered.',
+         screen:{for:'Admin', eyebrow:'Terra Agritech · Offer terms', title:'Approved terms · N-2026-00042', help:'The funding round is a draft. Reopening unlocks the offer and clears the issuer\'s confirmation.', buttons:[{t:'Reopen the terms',solid:1},{t:'Cancel'}]},
+         save:[{id:'ro1', f:{by:'Alex Doe', when:'14 Sep 2026 10:40'}}],
+         change:[{id:'c02', f:{status:'With pitchIN', approved:'no', confirmed:'cleared', locked:'no', noteReference:'N-2026-00042 (kept)'}}]},
+        {who:'admin', say:'Change the tenure to 30 months and send the offer to the issuer to confirm.',
+         screen:{for:'Admin', eyebrow:'Terra Agritech · Offer terms', title:'The offer', box:{h:'Every field, editable', lines:['About the note  Business term · Monthly instalments · 30 months (was 36)','Risk grade  B1 · Rate  11.0']}, help:'The issuer has not confirmed this offer. Send it to them first.', buttons:[{t:'Approve',solid:1,dis:1},{t:'Send to the issuer to confirm'}]},
+         save:[{id:'ot4', f:{field:'tenure', old:'36 months', new:'30 months', by:'Alex Doe', when:'14 Sep 2026 11:20'}}],
+         change:[{id:'c02', f:{status:'Returned', locked:'yes, until the issuer confirms'}}]},
+        {who:'issuer', say:'Read the offer — tenure is marked as changed — and confirm.',
+         screen:{for:'Issuer', eyebrow:'Application', title:'Offer terms', tag:T.ret, help:'The financing you are asking for: what kind, how much, for how long. We add the rate and may adjust other terms. Nothing is final until you have confirmed the offer and we have approved it.', state:'Your offer is ready. Read every term, then confirm it. Use Help if something should change.', box:{h:'Your offer', lines:['Conventional note · Business term · Working capital','RM 400,000.00 – RM 500,000.00 · 30 months (you proposed 36) · Monthly instalments','Rate  11.0% a year · Risk grade  B1 · Minimum per investor  RM 100.00']}, buttons:[{t:'Confirm these terms',solid:1},{t:'Help'}]},
+         save:[{id:'ot5', f:{confirmed:'the offer as sent', by:'Sam Doe (director)', when:'14 Sep 2026 14:02'}}],
+         change:[{id:'c02', f:{status:'With pitchIN', confirmed:'yes', locked:'no'}}]},
+        {who:'admin', say:'Approve again.',
+         note:'Approval again requires the issuer\'s confirmation. The headline is rebuilt from the newly approved terms.',
+         screen:{for:'Admin', eyebrow:'Terra Agritech · Offer terms', title:'Approved terms', box:{h:'Read-only now', lines:['Business term · Conventional · RM 400,000.00 – RM 500,000.00 · 30 months · 11.0% · B1']}, buttons:[{t:'Create funding round from these terms',solid:1}]},
+         save:[{id:'ta2', f:{approvedTerms:'the confirmed offer', by:'Alex Doe', when:'14 Sep 2026 15:00'}}],
+         change:[{id:'c02', f:{status:'Accepted', approved:'yes'}}, {id:'app', f:{headline:'Business term note · RM 400,000.00 – RM 500,000.00 · 30 months'}}]},
+        {who:'admin', say:'Create funding round again. It overwrites the draft round\'s terms in place and keeps N-2026-00042.',
+         note:'The round is still the same draft with the same reference; only its terms change. Once it leaves draft, the item can no longer be reopened.',
+         screen:{for:'Admin', eyebrow:'Terra Agritech · Offer terms', title:'Approved terms · N-2026-00042', help:'Draft round N-2026-00042 updated from the approved terms. These terms are locked while it exists.', buttons:[{t:'Reopen the terms'}]},
+         save:[{id:'rc2', f:{noteReference:'N-2026-00042 (kept)', overwrote:'the draft round\'s terms', by:'Alex Doe', when:'14 Sep 2026 15:05'}}],
+         change:[{id:'nt', f:{tenure:'30 months', roundStatus:'draft', noteReference:'N-2026-00042'}}, {id:'c02', f:{locked:'yes, while the round exists'}}]},
+      ]},
+  ];
+
+  const esc = s => String(s).replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+  const WHO = {issuer:'Issuer', admin:'Admin', auto:'Automatic'};
+  const TICKETS = {"A": [["31.1", "P2P-90", "86d4an8nr"]], "B": [["31.2", "P2P-91", "86d4an8q6"]], "C": [["31.3", "P2P-92", "86d4an8t1"], ["124.4", "P2P-128", "14zmk4dk7my"]], "D": [["31.4", "P2P-93", "86d4an8uf"], ["31.9", "P2P-97", "86d4an8zr"], ["31.10", "P2P-99", "86d4an91y"]], "E": [["31.11", "P2P-100", "86d4an93w"]], "F": [["31.11", "P2P-100", "86d4an93w"], ["31.9", "P2P-97", "86d4an8zr"]], "G": [["31.12", "P2P-101", "86d4an954"]], "H": [["31.7", "P2P-96", "86d4an8y7"], ["31.10", "P2P-99", "86d4an91y"]], "I": [["31.8", "P2P-98", "86d4an90b"]], "J": [["87.1", "P2P-104", "86d4an99u"], ["87.2", "P2P-105", "86d4an9ap"], ["87.3", "P2P-106", "86d4an9b9"], ["87.4", "P2P-107", "86d4an9c5"], ["87.5", "P2P-108", "86d4an9d3"]], "K": [["31.3", "P2P-92", "86d4an8t1"], ["31.1", "P2P-90", "86d4an8nr"]], "L": [["73.1", "P2P-111", "86d4an9g2"], ["31.5", "P2P-94", "86d4an8w5"], ["73.3", "P2P-113", "86d4an9hh"]], "M": [["31.13", "P2P-102", "86d4an96a"], ["87.6", "P2P-109", "86d4an9e7"]]};
+  const CORE = ["C", "D", "J", "L"];
+  // Prototype screens for each walkthrough (published Storybook story ids). G has none: the prototype does not simulate the merge.
+  const SB = 'https://pitchplatforms.github.io/prototypes/lane-c-onboarding/?path=/story/prototypes-lane-c-clickable-walkthrough--';
+  const PROTO = {A:[['library','ops-setup-library']], B:[['template builder','ops-setup-template-builder']], C:[['checklist','issuer-checklist']], D:[['return it','ops-review-return-item'],['issuer peek','issuer-peek-document-returned'],['item page','issuer-document-item-page']], E:[['review panel','ops-review-application']], F:[['review panel','ops-review-application']], H:[['issuer peek','issuer-peek-acknowledgement']], I:[['review panel','ops-review-application']], J:[['propose','issuer-offer-terms-item'],['admin offer','ops-review-offer-terms'],['confirm','issuer-offer-to-confirm']], K:[['library','ops-setup-library']], L:[['queue','ops-review-queue'],['sign-off','ops-review-sign-off'],['issuer','issuer-signed-off']], M:[['admin offer','ops-review-offer-terms']]};
+  const CU = 'https://app.clickup.com/t/';
+  const coreRoot = document.getElementById('core-cases'), moreRoot = document.getElementById('more-cases');
+
+  function screenHtml(sc){
+    if (!sc) return '';
+    let h = `<div class="screen" aria-label="What the ${esc(sc.for)} sees">`;
+    h += `<div class="sc-eyebrow">${esc(sc.for)} sees · ${esc(sc.eyebrow || '')}</div>`;
+    h += `<div class="sc-title">${esc(sc.title)}${sc.tag ? ` <span class="tag ${sc.tag.cls}">${esc(sc.tag.t)}</span>` : ''}</div>`;
+    if (sc.help) h += `<div class="sc-line help">${esc(sc.help)}</div>`;
+    if (sc.state) h += `<div class="sc-line state">${esc(sc.state)}</div>`;
+    if (sc.box) (Array.isArray(sc.box) ? sc.box : [sc.box]).forEach(bx => { h += `<div class="sc-box"><b>${esc(bx.h)}</b>${bx.lines.map(l => `<div>${esc(l)}</div>`).join('')}</div>`; });
+    if (sc.buttons) h += `<div class="sc-btns">${sc.buttons.map(b => `<span class="${b.solid ? 'solid' : ''} ${b.dis ? 'dis' : ''}">${esc(b.t)}</span>`).join('')}</div>`;
+    return h + '</div>';
+  }
+
+  CASES.forEach(c => {
+    const el = document.createElement('details');
+    el.className = 'case'; el.id = 'case-' + c.ref; if (CORE.includes(c.ref)) el.open = true;
+    const pro = (PROTO[c.ref] || []).map(([t, id]) => '<a class="pr" href="' + SB + id + '&amp;panel=false" target="_blank" rel="noopener">' + esc(t) + '</a>').join('');
+    const tks = (TICKETS[c.ref] || []).map(([no, ref, id]) => `<a href="${CU}${id}" target="_blank" rel="noopener">${no} · ${ref}</a>`).join('');
+    el.innerHTML = `
+      <summary><div class="case-head"><span class="ref">${c.ref}</span><h3>${esc(c.title)}</h3><p class="why">${esc(c.why)}</p><div class="tks"><span class="lbl">Builds</span>${tks}${pro ? '<span class="lbl" style="margin-left:8px">Prototype</span>' + pro : ''}</div></div></summary>
+      <div class="case-body">
+        <div class="steps" role="list"></div>
+        <div class="ledger"><h4>What has been saved</h4><div class="recs"></div></div>
+      </div>
+      <div class="nav"><button type="button" class="prev">Back</button><button type="button" class="next primary">Next step</button><span class="hint">or click any step — the right-hand side shows what is saved at that point</span><span class="pos"></span></div>`;
+    (CORE.includes(c.ref) ? coreRoot : moreRoot).appendChild(el);
+    const stepsEl = el.querySelector('.steps'), recsEl = el.querySelector('.recs'), pos = el.querySelector('.pos');
+    const prev = el.querySelector('.prev'), next = el.querySelector('.next');
+    let at = 0;
+
+    c.steps.forEach((s, i) => {
+      const d = document.createElement('div');
+      d.className = 'step'; d.setAttribute('role','listitem'); d.tabIndex = 0;
+      d.innerHTML = `<span class="n">${i+1}</span><span><span class="who ${s.who}">${WHO[s.who]}</span>${esc(s.say)}${s.note ? `<span class="note">${esc(s.note)}</span>` : ''}${screenHtml(s.screen)}</span>`;
+      d.addEventListener('click', () => { at = i; render(); });
+      d.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); at = i; render(); } });
+      stepsEl.appendChild(d);
+    });
+
+    function ledgerAt(n){
+      // Replay steps 0..n. A record's flag says what THIS step did to it.
+      const recs = [];
+      const byId = id => recs.find(r => r.id === id);
+      for (let i = 0; i <= n; i++) {
+        const s = c.steps[i], now = i === n;
+        (s.save || []).forEach(w => { const m = REC[w.id]; recs.push({id:w.id, who:m.who, name:m.name, ref:m.ref, f:{...w.f}, flag: now ? 'new' : '', gone:false}); });
+        (s.change || []).forEach(u => {
+          let r = byId(u.id);
+          if (!r) { const m = REC[u.id]; r = {id:u.id, who:m.who, name:m.name, ref:m.ref, f:{}, flag:'', gone:false}; recs.push(r); }
+          Object.assign(r.f, u.f);
+          if (now) r.flag = r.flag === 'new' ? 'new' : 'upd';
+        });
+        (s.drop || []).forEach(id => { const r = byId(id); if (r) { r.gone = true; if (now) r.flag = 'del'; } });
+      }
+      return recs;
+    }
+
+    function render(){
+      [...stepsEl.children].forEach((d, i) => { d.classList.toggle('on', i === at); d.classList.toggle('off', i > at); });
+      const recs = ledgerAt(at);
+      recsEl.innerHTML = recs.length ? recs.map(r => `
+        <div class="rec ${r.who} ${r.flag} ${r.gone ? 'del' : ''}">
+          <div class="t"><span>${esc(r.name)} <small>${esc(r.ref)}</small></span></div>
+          ${Object.entries(r.f).map(([k,v]) => `<div class="f">${esc(k)}: <b>${esc(v)}</b></div>`).join('')}
+        </div>`).join('') : `<p class="empty">Nothing saved yet.</p>`;
+      pos.textContent = `${at+1} / ${c.steps.length}`;
+      prev.disabled = at === 0; next.disabled = at === c.steps.length - 1;
+    }
+    prev.addEventListener('click', () => { if (at > 0) { at--; render(); } });
+    next.addEventListener('click', () => { if (at < c.steps.length - 1) { at++; render(); } });
+    render();
+  });
+
+  // Deep links: guide.html#case-J scrolls to walkthrough J and opens it.
+  function openHash(){
+    const id = decodeURIComponent((location.hash || '').slice(1));
+    if (!id) return;
+    const el = document.getElementById(id);
+    if (!el) return;
+    let p = el;
+    while (p) { if (p.tagName === 'DETAILS') p.open = true; p = p.parentElement; }
+    el.scrollIntoView({block:'start'});
+  }
+  window.addEventListener('hashchange', openHash);
+  openHash();
+})();
+</script>
