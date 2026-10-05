@@ -21207,6 +21207,9 @@ body.ns-panel-expanded .pitchin-icon-up-arrow {
 .tw-grid-cols-\[2fr_5fr_5fr\] {
   grid-template-columns: 2fr 5fr 5fr;
 }
+.tw-grid-cols-\[minmax\(0\,2fr\)_90px_130px_90px_120px_70px\] {
+  grid-template-columns: minmax(0,2fr) 90px 130px 90px 120px 70px;
+}
 .tw-grid-rows-2 {
   grid-template-rows: repeat(2, minmax(0, 1fr));
 }
@@ -26759,6 +26762,9 @@ body.ns-panel-expanded .pitchin-icon-up-arrow {
   .sm\:tw-table {
     display: table;
   }
+  .sm\:tw-grid {
+    display: grid;
+  }
   .sm\:tw-contents {
     display: contents;
   }
@@ -26837,6 +26843,9 @@ body.ns-panel-expanded .pitchin-icon-up-arrow {
   .sm\:tw-max-w-\[260px\] {
     max-width: 260px;
   }
+  .sm\:tw-max-w-\[420px\] {
+    max-width: 420px;
+  }
   .sm\:tw-max-w-\[70\%\] {
     max-width: 70%;
   }
@@ -26872,6 +26881,9 @@ body.ns-panel-expanded .pitchin-icon-up-arrow {
   }
   .sm\:tw-grid-cols-\[auto_1fr\] {
     grid-template-columns: auto 1fr;
+  }
+  .sm\:tw-grid-cols-\[minmax\(0\2c 2fr\)_90px_130px_90px_120px_70px\] {
+    grid-template-columns: minmax(0,2fr) 90px 130px 90px 120px 70px;
   }
   .sm\:tw-flex-row {
     flex-direction: row;
