@@ -183,14 +183,14 @@
   <h2 id="words">Words</h2><h3>Five words this page uses</h3>
   <ul>
     <li><b>Requirement</b> — one thing pitchIN can ask for, defined once in the library (name, optional generic help text, a kind, its settings). A note for <i>one</i> issuer goes on the checklist item, not here (<a href="#lives"><code>RequirementItem</code></a>).</li>
-    <li><b>Template</b> — an ordered list of requirements, published as versions. Each application type (Note, Equity) has two: <b>at-submission</b> (snapshot at submit) and <b>at-approval</b> (merged in on approval). Seeded by name, empty library.</li>
+    <li><b>Template</b> — an ordered list of requirements, published as versions. Each application type (Note, Equity, Token) has an <b>at-submission</b> template (snapshot at submit, carrying the fee) and an <b>at-approval</b> one (merged in when an admin or superadmin presses Start deeper checks and picks it); Undecided has at-submission only. Several per role, one default. Seven seeded by name, empty library. The submitted application form is never in a template: the snapshot always puts it first.</li>
     <li><b>Checklist item</b> — one requirement on one issuer's checklist, copied from the library at snapshot — or, added later (P2P-74), from the library or typed as a one-off, optionally saved there too. Only the at-approval merge or a reason-logged change can alter it after.</li>
     <li><b>Kind</b> — decides what the issuer does and admin sees. Tickets/admin screens call it <i>type</i> (mapping in the <a href="#kinds">kinds table</a>); the issuer sees only the item's own name.</li>
     <li><b>Status</b> — Not started, In progress, With pitchIN, Returned, Accepted, Out of date; the sentence per (kind × status) is a fixed platform string, never admin-written. Grouped by whose turn it is — Yours to do, With pitchIN, Done — never ranked. A seventh, <b>Past due</b>, is reserved and never shown.</li>
   </ul>
   <details class="sect"><summary><h3>Words that are easy to mix up</h3></summary>
   <ul class="plain">
-    <li><b>Four different approvals.</b> <b>Application approval</b> — Lane B (P2P-62) decides whether we work with this business; it triggers the at-approval merge. <b>Terms approval</b> — admin approves the offer terms item (P2P-87). <b>Onboarding approval</b>, also called <b>sign-off</b> — one admin closes the application when every required item is accepted or waived (P2P-73). <b>Accepting</b> one item — every review. None of them makes a funding round visible to investors.</li>
+    <li><b>Four different approvals.</b> <b>Application approval</b> — <b>Start deeper checks</b> (Lane B, P2P-130, on the onboarding tab): we want to go further with this business; admin picks the at-approval template and it merges in. Credit (P2P-32) later decides whether we host the deal. <b>Decline onboarding</b> (P2P-130) closes the application at any point, with a reason the issuer reads. <b>Terms approval</b> — admin approves the offer terms item (P2P-87). <b>Onboarding approval</b>, also called <b>sign-off</b> — one admin closes the application when every required item is accepted or waived (P2P-73). <b>Accepting</b> one item — every review. None of them makes a funding round visible to investors.</li>
     <li><b>Acknowledgement</b> is a kind of item; <b>acknowledged</b> is a kind of record. The item is what the issuer reads and ticks; the record is the row one confirmation writes.</li>
     <li><b>Funding round</b> (what the issuer reads) = <code>Campaign</code> (code) = listing (what investors see). The note is the instrument, created at close (P2P-26).</li>
     <li><b>Return / Returned</b> is the one word for admin needing something different. <b>Attest / Withdraw</b> is the pair for an admin-verified item. <b>Waive</b> records that an item is not needed; it is also the only way to undo an acceptance.</li>
@@ -203,8 +203,8 @@
     <thead><tr><th>Kind <span class="dash">· ticket type</span></th><th>What the issuer does</th><th>How it is built</th></tr></thead>
     <tbody>
       <tr id="kind-file"><td>Document upload <span class="dash">File request</span></td><td>Chooses a file, or taps <b>Take a photo</b> on image-only items.</td><td>Standard file input; formats/count/size enforced from the requirement.</td></tr>
-      <tr id="kind-form"><td>Form <span class="dash">Form</span></td><td>Fills in the existing form module; saves and resumes.</td><td>Requirement only names the form template; fields live in that module.</td></tr>
-      <tr id="kind-fee"><td>Fee payment <span class="dash">Payment</span></td><td>Pays by FPX, or transfers and uploads proof.</td><td>One legacy row; FPX clears itself, proof waits for admin. Cleared is final.</td></tr>
+      <tr id="kind-form"><td>Form <span class="dash">Form</span></td><td>Fills in the existing form module; saves and resumes.</td><td>Requirement only names the form template; fields live in that module. The submitted application form is a form item too: always first, added by the snapshot (P2P-130).</td></tr>
+      <tr id="kind-fee"><td>Fee payment <span class="dash">Payment</span></td><td>Pays by FPX, or transfers and uploads proof.</td><td>One legacy row; FPX clears itself, proof waits for admin. Cleared is final. The application fee is one of these: it sits on every at-submission template, so it is on the checklist from submission.</td></tr>
       <tr id="kind-ack"><td>Acknowledgement <span class="dash">Acknowledgement</span></td><td>Reads a statement and ticks each line.</td><td>Statement copied from the library item; Confirm is a submission, recorded with wording, ticks, who and when.</td></tr>
       <tr id="kind-checked"><td>Checked by pitchIN <span class="dash">Admin-verified</span></td><td>Nothing — we check this ourselves.</td><td>Starts With pitchIN, never Not started; admin attests, can withdraw — each a record.</td></tr>
       <tr id="kind-terms"><td>Offer terms <span class="dash">Offer terms</span></td><td>Proposes the deal, then reads the completed offer and confirms it.</td><td>The one kind admin can edit; sends to confirm, approves, creates the funding round. Never waived. <span class="ph one">P2P-87</span></td></tr>
@@ -240,7 +240,7 @@
   <table>
     <thead><tr><th>Field</th><th>Set by</th><th>Where it lives</th></tr></thead>
     <tbody>
-      <tr><td>Shariah type</td><td>Issuer proposes — Conventional or Islamic (fixed)</td><td><code>Campaign.ShariahType</code></td></tr>
+      <tr><td>Shariah type</td><td>Issuer proposes (pre-filled from the application's Shariah preference) — Conventional or Shariah-compliant (fixed)</td><td><code>Campaign.ShariahType</code></td></tr>
       <tr><td>Funding range <span class="dash">not for invoice/PO financing</span></td><td>Issuer proposes</td><td><code>Campaign.MinimumTargetAmount</code> / <code>MaximumTargetAmount</code></td></tr>
       <tr><td>Minimum per investor</td><td>Admin sets — P2P-27 default RM 100.00</td><td><code>Campaign.MinimumInvestmentAmount</code></td></tr>
     </tbody>
@@ -268,8 +268,8 @@
   <h3>Equity block <span class="ph">P2P-88, to be finalised</span></h3>
   <p>Reshapes today's ECF Offer creation step onto this kind; its fields are undecided — <a href="https://app.clickup.com/t/86d4akv3v" target="_blank" rel="noopener">P2P-88</a>, "[To be finalised]". <b>Until it ships, an equity application has no offer-terms item at all</b> — not disabled, not a placeholder — and keeps today's Offer step outside the portal (P2P-124).</p>
 
-  <h3>Token <span class="ph later">later</span></h3>
-  <p>Token applications don't open this portal — a separate system (IEO), for later. When it comes: same pattern, a <code>CampaignTokenTerm</code> block.</p>
+  <h3>Token <span class="ph later">phase 2</span></h3>
+  <p>Token applications use this portal with no offer-terms item; after sign-off pitchIN agrees the deal off-platform. Token terms are a phase-2 placeholder (<a href="https://app.clickup.com/t/14zmk4dk853" target="_blank" rel="noopener">P2P-136</a>): same pattern, a <code>CampaignTokenTerm</code> block.</p>
 
 
   <h2 id="status">How an item's status moves</h2>
@@ -424,7 +424,7 @@
     <tbody>
       <tr><td>A requirement (library)</td><td><code>RequirementItem</code></td><td>Kind · section · name · help text · file rules · kind settings</td></tr>
       <tr><td>A template</td><td><code>RequirementTemplate</code> + <code>Version</code> + <code>Item</code></td><td>Name, application type, role (at submission / at approval) · versions · ordered items</td></tr>
-      <tr><td>The application</td><td><code>CompanyFundApplication</code> (exists)</td><td>As today, plus asset class (P2P-31), whether it has the portal with when and by whom it was moved (P2P-124), and sign-off (P2P-73)</td></tr>
+      <tr><td>The application</td><td><code>CompanyFundApplication</code> (exists)</td><td>As today, plus asset class (P2P-31; empty = Undecided), share class and Shariah preference (P2P-30), whether it has the portal with when and by whom it was moved (P2P-124), and sign-off (P2P-73)</td></tr>
       <tr><td>A checklist item</td><td><code>ApplicationRequirement</code></td><td>Copied content, kind, status, waived · library/template links empty for a one-off or later item (P2P-74) · offer terms: current + approved offer (P2P-87)</td></tr>
       <tr><td>What happens on it</td><td><code>FileVersion</code> · <code>FormSubmission</code> · <code>RequirementRecord</code></td><td>Files and form rounds, never overwritten, plus the append-only logbook. <a href="data-model.html">What each kind must contain</a></td></tr>
       <tr><td>A form round</td><td><code>FormSubmission</code> → <code>UserDynamicFormSubmission</code></td><td>One child per round, who filled it in</td></tr>
