@@ -1,0 +1,1 @@
+var e=`deck-detour-origin`;function t(t){try{sessionStorage.setItem(e,JSON.stringify(t))}catch{}}function n(){try{let t=sessionStorage.getItem(e);return t?JSON.parse(t):null}catch{return null}}var r=e=>!!e&&e.startsWith(`step-`);export{r as n,t as r,n as t};
