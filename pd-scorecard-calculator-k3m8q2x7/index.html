@@ -1,0 +1,494 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="robots" content="noindex,nofollow">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>PD scorecard: what-if calculator</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..800&display=swap" rel="stylesheet">
+<style>
+:root{
+  --surface:#F3F5F8; --panel:#FFFFFF; --ink:#101828; --muted:#5B6577; --line:#D5DBE5; --track:#E6EAF1;
+  --accent:#1F4FD8; --accent-soft:#E3EAFD; --floor:#AEB8C8;
+  --g-d1:#B42318; --g-c2:#D85A1B; --g-c1:#C98A00; --g-b2:#8A9A12; --g-b1:#3F9434; --g-a2:#1E8E5A; --g-a1:#0F6E5C; --g-x:#7A1C14;
+  box-sizing:border-box; padding-top:env(safe-area-inset-top,0px); padding-bottom:env(safe-area-inset-bottom,0px);
+  color-scheme:light;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --surface:#0F1522; --panel:#171F30; --ink:#E8ECF4; --muted:#9AA6BA; --line:#2A3550; --track:#222C42;
+    --accent:#7DA2FF; --accent-soft:#1D2A4A; --floor:#55617A;
+    --g-d1:#F97066; --g-c2:#FF8A4C; --g-c1:#F5B700; --g-b2:#C2D13A; --g-b1:#6CCB5F; --g-a2:#3CCB8A; --g-a1:#2FB7A0; --g-x:#F04438;
+    color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --surface:#0F1522; --panel:#171F30; --ink:#E8ECF4; --muted:#9AA6BA; --line:#2A3550; --track:#222C42;
+  --accent:#7DA2FF; --accent-soft:#1D2A4A; --floor:#55617A;
+  --g-d1:#F97066; --g-c2:#FF8A4C; --g-c1:#F5B700; --g-b2:#C2D13A; --g-b1:#6CCB5F; --g-a2:#3CCB8A; --g-a1:#2FB7A0; --g-x:#F04438;
+  color-scheme:dark;
+}
+*,*::before,*::after{box-sizing:inherit}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+body{margin:0;background:var(--surface);color:var(--ink);font-family:"Archivo",system-ui,-apple-system,"Segoe UI",Arial,sans-serif;font-size:16px;line-height:1.45;font-variant-numeric:tabular-nums}
+.wrap{max-width:1180px;margin:0 auto;padding:28px 20px 48px}
+header.top{display:flex;flex-wrap:wrap;gap:16px;align-items:flex-end;justify-content:space-between;margin-bottom:20px}
+h1{font-size:clamp(1.5rem,3.2vw,2.1rem);font-weight:700;font-stretch:112%;letter-spacing:-0.01em;margin:0 0 4px;line-height:1.1}
+.sub{color:var(--muted);margin:0;max-width:62ch}
+.preset{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.preset label{color:var(--muted);font-size:.9rem}
+select,input[type=number]{font:inherit;color:var(--ink);background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:8px 10px}
+button{font:inherit;color:var(--ink);background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:8px 14px;cursor:pointer}
+button:hover{border-color:var(--accent)}
+button.primary{background:var(--accent);border-color:var(--accent);color:#fff}
+:root[data-theme="dark"] button.primary{color:#0F1522}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]) button.primary{color:#0F1522}}
+:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
+
+/* result */
+.result{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:22px 22px 18px;margin-bottom:20px}
+.headline{display:flex;flex-wrap:wrap;align-items:baseline;gap:8px 28px}
+.score{font-size:clamp(3.4rem,9vw,5.6rem);font-weight:800;font-stretch:125%;line-height:.95;letter-spacing:-0.02em}
+.grade{font-size:clamp(1.8rem,4.5vw,2.6rem);font-weight:700;font-stretch:112%}
+.facts{display:flex;flex-wrap:wrap;gap:6px 26px;color:var(--muted);font-size:1rem}
+.facts b{color:var(--ink);font-weight:600}
+.ruler{position:relative;margin:26px 0 8px;height:64px}
+.bands{display:flex;height:34px;border-radius:8px;overflow:hidden;border:1px solid var(--line)}
+.band{display:flex;align-items:center;justify-content:center;font-weight:600;font-size:.9rem;color:var(--muted);background:var(--track);border-right:1px solid var(--panel);min-width:0}
+.band:last-child{border-right:0}
+.band.on{color:#fff}
+.ticks{position:relative;height:20px;margin-top:4px;font-size:.78rem;color:var(--muted)}
+.ticks span{position:absolute;transform:translateX(-50%)}
+.marker{position:absolute;top:-8px;height:50px;width:0;border-left:3px solid var(--ink);transition:left .25s ease}
+.marker::after{content:"";position:absolute;left:-8px;top:-7px;border:7px solid transparent;border-top-color:var(--ink);border-bottom:0;width:0;height:0}
+.nextline{color:var(--muted);margin:6px 0 0}
+.nextline b{color:var(--ink);font-weight:600}
+
+/* grid */
+.grid{display:grid;grid-template-columns:minmax(0,5fr) minmax(0,6fr);gap:20px}
+@media (max-width:860px){.grid{grid-template-columns:1fr}}
+.panel{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:20px 22px}
+h2{font-size:1.15rem;font-weight:700;font-stretch:108%;margin:0 0 14px}
+.pillar{border-top:1px solid var(--line);padding:14px 0 6px}
+.pillar:first-of-type{border-top:0;padding-top:0}
+.pillar h3{font-size:.95rem;font-weight:700;margin:0 0 10px;display:flex;justify-content:space-between;gap:12px}
+.pillar h3 span{color:var(--muted);font-weight:500}
+.field{margin:0 0 16px}
+.field .lab{display:flex;justify-content:space-between;gap:12px;align-items:baseline;margin-bottom:6px}
+.field .lab label,.field .lab .name{font-weight:600}
+.band-note{color:var(--muted);font-size:.86rem}
+.band-note b{color:var(--ink)}
+.row{display:flex;gap:12px;align-items:center}
+.row input[type=range]{flex:1;accent-color:var(--accent);min-width:0}
+.row input[type=number]{width:96px}
+.seg{display:flex;flex-wrap:wrap;gap:6px}
+.seg label{position:relative;cursor:pointer}
+.seg input{position:absolute;opacity:0;inset:0;cursor:pointer}
+.seg span{display:block;padding:7px 12px;border:1px solid var(--line);border-radius:999px;font-size:.92rem;background:var(--panel)}
+.seg input:checked+span{background:var(--accent);border-color:var(--accent);color:#fff}
+:root[data-theme="dark"] .seg input:checked+span{color:#0F1522}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]) .seg input:checked+span{color:#0F1522}}
+.seg input:focus-visible+span{outline:3px solid var(--accent);outline-offset:2px}
+.check{display:flex;gap:8px;align-items:center;margin-top:8px;color:var(--muted);font-size:.92rem}
+.check input{accent-color:var(--accent);width:16px;height:16px}
+
+/* contributions */
+.contrib .line{display:grid;grid-template-columns:minmax(120px,1.1fr) minmax(0,2.4fr) auto;gap:12px;align-items:center;margin:0 0 10px}
+.contrib .nm{font-weight:600}
+.contrib .nm small{display:block;color:var(--muted);font-weight:400;font-size:.8rem}
+.bar{position:relative;height:18px;background:var(--track);border-radius:5px;overflow:hidden}
+.bar i{position:absolute;left:0;top:0;bottom:0;background:var(--accent);border-radius:5px;transition:width .25s ease}
+.bar u{position:absolute;left:0;top:0;bottom:0;background:var(--floor);border-radius:5px}
+.pts{white-space:nowrap;text-align:right;min-width:92px}
+.pts b{font-weight:700}
+.pts span{color:var(--muted)}
+.legend{color:var(--muted);font-size:.84rem;margin:2px 0 14px}
+.eq{border-top:1px solid var(--line);margin-top:14px;padding-top:14px;color:var(--muted);font-size:.92rem;overflow-x:auto;white-space:nowrap}
+.eq b{color:var(--ink)}
+details{margin-top:20px}
+details summary{cursor:pointer;font-weight:700;font-stretch:108%;font-size:1.05rem}
+.calc{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:14px;margin-top:14px}
+.calc label{display:block;font-size:.88rem;color:var(--muted);margin-bottom:4px}
+.calc input{width:100%}
+.calcout{display:flex;flex-wrap:wrap;gap:12px 20px;align-items:center;margin-top:14px}
+.calcout b{font-weight:700}
+.custgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:18px 28px;margin-top:16px}
+.custgrid h4{margin:0 0 8px;font-size:.95rem;font-weight:700}
+.custgrid .cr{display:flex;justify-content:space-between;align-items:center;gap:10px;margin:0 0 6px}
+.custgrid .cr label{color:var(--muted);font-size:.9rem}
+.custgrid .cr input{width:76px;padding:5px 8px}
+.custgrid .cr input.chg{border-color:var(--accent);background:var(--accent-soft)}
+.custbar{display:flex;flex-wrap:wrap;gap:12px 18px;align-items:center;margin-top:14px;color:var(--muted);font-size:.9rem}
+.flag{display:inline-block;background:var(--accent-soft);color:var(--accent);border-radius:999px;padding:3px 12px;font-weight:600;font-size:.88rem}
+.cust{margin-top:20px}
+.foot{color:var(--muted);font-size:.84rem;margin-top:22px;max-width:78ch}
+@media (prefers-reduced-motion: reduce){.marker,.bar i{transition:none}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="top">
+    <div>
+      <h1>PD scorecard: what-if calculator</h1>
+      <p class="sub">Change any input and see how the score, grade and each input’s points move.</p>
+    </div>
+    <div class="preset">
+      <label for="preset">Load a tested company</label>
+      <select id="preset"></select>
+      <button id="reset" type="button">Reset</button>
+    </div>
+  </header>
+
+  <section class="result" aria-live="polite">
+    <div class="headline">
+      <div class="score" id="score">–</div>
+      <div class="grade" id="grade">–</div>
+      <div class="facts">
+        <span>PD anchor <b id="pd">–</b></span>
+        <span>Expected loss <b id="el">–</b></span>
+        <span>Exact score <b id="raw">–</b></span>
+        <span class="flag" id="custFlag" hidden>Custom settings in use</span>
+      </div>
+    </div>
+    <div class="ruler">
+      <div class="bands" id="bands"></div>
+      <div class="marker" id="marker"></div>
+      <div class="ticks" id="ticks"></div>
+    </div>
+    <p class="nextline" id="next"></p>
+  </section>
+
+  <div class="grid">
+    <section class="panel" aria-label="Inputs">
+      <h2>Inputs</h2>
+
+      <div class="pillar">
+        <h3>Capacity <span id="pw_cap">45% of the score</span></h3>
+        <div class="field">
+          <div class="lab"><label for="dscrN">DSCR</label><span class="band-note" id="dscrB"></span></div>
+          <div class="row"><input type="range" id="dscrR" min="0" max="3" step="0.01" aria-label="DSCR slider"><input type="number" id="dscrN" step="0.01"></div>
+        </div>
+        <div class="field">
+          <div class="lab"><label for="cvN">Bank-credit CV</label><span class="band-note" id="cvB"></span></div>
+          <div class="row"><input type="range" id="cvR" min="0" max="1" step="0.01" aria-label="Bank-credit CV slider"><input type="number" id="cvN" step="0.01" min="0"></div>
+        </div>
+      </div>
+
+      <div class="pillar">
+        <h3>Character <span id="pw_cha">30%</span></h3>
+        <div class="field">
+          <div class="lab"><span class="name">CCRIS conduct</span><span class="band-note" id="ccB"></span></div>
+          <div class="seg" id="ccSeg" role="radiogroup" aria-label="CCRIS conduct"></div>
+        </div>
+        <div class="field">
+          <div class="lab"><span class="name">Reporting discipline</span><span class="band-note" id="repB"></span></div>
+          <div class="seg" id="repSeg" role="radiogroup" aria-label="Reporting discipline"></div>
+        </div>
+      </div>
+
+      <div class="pillar">
+        <h3>Capital <span id="pw_capi">15%</span></h3>
+        <div class="field">
+          <div class="lab"><label for="deN">Debt to equity</label><span class="band-note" id="deB"></span></div>
+          <div class="row"><input type="range" id="deR" min="0" max="5" step="0.01" aria-label="Debt to equity slider"><input type="number" id="deN" step="0.01" min="0"></div>
+          <label class="check"><input type="checkbox" id="negEq"> Equity is negative</label>
+        </div>
+      </div>
+
+      <div class="pillar">
+        <h3>Conditions <span id="pw_con">10%</span></h3>
+        <div class="field">
+          <div class="lab"><span class="name">Sector cyclicality</span><span class="band-note" id="secB"></span></div>
+          <div class="seg" id="secSeg" role="radiogroup" aria-label="Sector cyclicality"></div>
+        </div>
+        <div class="field">
+          <div class="lab"><span class="name">Use of funds</span><span class="band-note" id="useB"></span></div>
+          <div class="seg" id="useSeg" role="radiogroup" aria-label="Use of funds"></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="panel contrib" aria-label="Points by input">
+      <h2>Points by input</h2>
+      <p class="legend">Blue is what the input earns now. Grey is what it earns even in its worst band. The track is the most it can give.</p>
+      <div id="contrib"></div>
+      <div class="eq" id="eq"></div>
+
+      <details>
+        <summary>Work out DSCR from the numbers</summary>
+        <div class="calc">
+          <div><label for="cEbitda">EBITDA a year (RM)</label><input type="number" id="cEbitda" value="1200000" step="10000"></div>
+          <div><label for="cExist">Existing debt service a year (RM)</label><input type="number" id="cExist" value="700000" step="10000" min="0"></div>
+          <div><label for="cNote">New note amount (RM)</label><input type="number" id="cNote" value="1000000" step="50000" min="0"></div>
+          <div><label for="cRate">Flat rate a year (%)</label><input type="number" id="cRate" value="12.5" step="0.5" min="0"></div>
+          <div><label for="cTen">Tenure (months)</label><input type="number" id="cTen" value="12" step="1" min="1"></div>
+        </div>
+        <div class="calcout">
+          <span>Note service a year <b id="cSvc">–</b></span>
+          <span>DSCR <b id="cDscr">–</b></span>
+          <button class="primary" type="button" id="cUse">Use this DSCR</button>
+        </div>
+      </details>
+    </section>
+  </div>
+
+  <section class="panel cust" aria-label="Customise band points and weights">
+    <details id="custDetails">
+      <summary>Customise band points</summary>
+      <p class="band-note" style="margin:10px 0 0">Each band gives 0 to 100 points before the weights apply. Change any value to test a different scale; the defaults are scorecard v0.</p>
+      <div class="custgrid" id="custBox"></div>
+      <div class="custbar">
+        <button type="button" id="custReset">Restore default band points</button>
+        <span id="custCount"></span>
+      </div>
+    </details>
+    <details id="wtDetails" style="border-top:1px solid var(--line);padding-top:18px">
+      <summary>Customise weights</summary>
+      <p class="band-note" style="margin:10px 0 0">Each input’s multiplier is its pillar weight × its share of the pillar × 10. With the defaults, DSCR is 45% × 70% × 10 = 3.15 points for every band point.</p>
+      <div class="custgrid" id="wtBox"></div>
+      <div class="custbar">
+        <button type="button" id="wtReset">Restore default weights</button>
+        <span id="wtCount"></span>
+      </div>
+    </details>
+  </section>
+
+  <p class="foot">Scorecard v0 by default. Bands, PD anchors and the 60% loss given default are placeholders under test, not pitchIN policy. Scores round to the nearest whole number, with exact halves rounding to the even number, to match the test documents.</p>
+</div>
+
+<script>
+(function(){
+  var PW0={cap:45,cha:30,capi:15,con:10},SH0={dscr:70,cv:30,cc:70,rep:30,de:100,sec:50,use:50};
+  var PILLAR={dscr:'cap',cv:'cap',cc:'cha',rep:'cha',de:'capi',sec:'con',use:'con'};
+  var PNAME={cap:'Capacity',cha:'Character',capi:'Capital',con:'Conditions'};
+  var PORDER=['cap','cha','capi','con'];
+  var PW={},SH={},W={};
+  function calcW(){Object.keys(PILLAR).forEach(function(k){W[k]=PW[PILLAR[k]]*SH[k]/1000;});}
+  function resetW(){PORDER.forEach(function(q){PW[q]=PW0[q];});Object.keys(SH0).forEach(function(k){SH[k]=SH0[k];});calcW();}
+  resetW();
+  // Band definitions: [threshold or key, label, default points]
+  var DEF={
+    dscr:[[1.8,'1.8 or more',100],[1.5,'1.5 to 1.79',85],[1.25,'1.25 to 1.49',70],[1.1,'1.1 to 1.24',55],[1.0,'1.0 to 1.09',35],[null,'below 1.0',10]],
+    cv:[[0.15,'under 0.15',100],[0.25,'0.15 to 0.24',75],[0.40,'0.25 to 0.39',50],[null,'0.40 or more',25]],
+    cc:[['clean','Clean',100],['old30','Old 30-day arrear',80],['rec30','Recent 30-day arrear',60],['d60','60-day arrear',30],['d90','90-day arrear',0]],
+    rep:[['ontime','On time',100],['minor','Minor late',75],['repeat','Repeatedly late',40],['none','Not filed',15]],
+    de:[[0.5,'under 0.5',100],[1,'0.5 to 0.99',75],[2,'1.0 to 1.99',50],[null,'2.0 or more',25],['neg','negative equity',25]],
+    sec:[['low','Low',80],['med','Medium',60],['high','High',35]],
+    use:[['growth','Growth',90],['wc','Working capital',65],['loss','Funding losses',25]]
+  };
+  var NAMES={dscr:'DSCR',cv:'Bank-credit CV',cc:'CCRIS conduct',rep:'Reporting discipline',de:'Debt to equity',sec:'Sector cyclicality',use:'Use of funds'};
+  var KEYS=['dscr','cv','cc','rep','de','sec','use'];
+  var P={};
+  function resetP(){KEYS.forEach(function(k){P[k]=DEF[k].map(function(r){return r[2];});});}
+  resetP();
+  var GRADES=[[850,'A1',0.5,'--g-a1'],[750,'A2',1.5,'--g-a2'],[650,'B1',3.5,'--g-b1'],[550,'B2',6,'--g-b2'],[450,'C1',9,'--g-c1'],[350,'C2',13,'--g-c2'],[250,'D1',18,'--g-d1']];
+  var PRESETS={
+    custom:{name:'Custom'},
+    ascaro:{name:'ASC (795, A2)',dscr:1.84,cv:0.30,cc:'clean',rep:'ontime',de:4.47,neg:false,sec:'med',use:'growth'},
+    ignis:{name:'IEI (738, B1)',dscr:1.76,cv:0.30,cc:'clean',rep:'minor',de:1.98,neg:false,sec:'high',use:'wc'},
+    alva:{name:'AH (700, B1)',dscr:1.46,cv:0.30,cc:'clean',rep:'ontime',de:13.56,neg:false,sec:'med',use:'growth'},
+    ecogen:{name:'ES (599, B2)',dscr:-0.06,cv:0.30,cc:'clean',rep:'ontime',de:0.09,neg:false,sec:'high',use:'wc'},
+    telcov:{name:'TEL (543, C1)',dscr:-80.6,cv:1.43,cc:'clean',rep:'minor',de:0.04,neg:false,sec:'high',use:'wc'},
+    cda:{name:'CDA (536, C1)',dscr:0.27,cv:0.30,cc:'clean',rep:'ontime',de:1.28,neg:false,sec:'med',use:'wc'},
+    scs:{name:'SCS (522, C1)',dscr:-3.01,cv:0.30,cc:'clean',rep:'ontime',de:12.81,neg:false,sec:'low',use:'growth'},
+    gif:{name:'GIF (499, C1)',dscr:0.01,cv:0.30,cc:'clean',rep:'ontime',de:0,neg:true,sec:'med',use:'wc'}
+  };
+  var START='alva';
+  var s={};
+  function $(id){return document.getElementById(id);}
+  // index of the band an input value falls in
+  function idxOf(k){
+    var d=DEF[k],i;
+    if(k==='dscr'){for(i=0;i<d.length;i++){if(d[i][0]===null||s.dscr>=d[i][0])return i;}}
+    if(k==='cv'){for(i=0;i<d.length;i++){if(d[i][0]===null||s.cv<d[i][0])return i;}}
+    if(k==='de'){if(s.neg)return 4;for(i=0;i<4;i++){if(d[i][0]===null||s.de<d[i][0])return i;}}
+    for(i=0;i<d.length;i++){if(d[i][0]===s[k])return i;}
+    return 0;
+  }
+  function roundHalfEven(v){var f=Math.floor(v),d=v-f;if(Math.abs(d-0.5)<1e-9){return f%2===0?f:f+1;}return Math.round(v);}
+  function fmt(n,dp){return n.toLocaleString('en-MY',{minimumFractionDigits:dp,maximumFractionDigits:dp});}
+
+  function buildSeg(id,key){
+    var box=$(id);box.textContent='';
+    DEF[key].forEach(function(o){
+      var l=document.createElement('label'),i=document.createElement('input'),sp=document.createElement('span');
+      i.type='radio';i.name=key;i.value=o[0];sp.textContent=o[1];
+      i.addEventListener('change',function(){s[key]=o[0];edited();});
+      l.appendChild(i);l.appendChild(sp);box.appendChild(l);
+    });
+  }
+  function setSeg(key,val){var els=document.querySelectorAll('input[name="'+key+'"]');for(var i=0;i<els.length;i++){els[i].checked=(els[i].value===val);}}
+
+  function load(key){
+    var p=PRESETS[key];if(!p||key==='custom')return;
+    s={dscr:p.dscr,cv:p.cv,cc:p.cc,rep:p.rep,de:p.de,neg:p.neg,sec:p.sec,use:p.use};
+    syncControls();render();
+  }
+  function syncControls(){
+    $('dscrN').value=s.dscr;$('dscrR').value=Math.max(0,Math.min(3,s.dscr));
+    $('cvN').value=s.cv;$('cvR').value=Math.max(0,Math.min(1,s.cv));
+    $('deN').value=s.de;$('deR').value=Math.max(0,Math.min(5,s.de));
+    $('negEq').checked=!!s.neg;$('deN').disabled=!!s.neg;$('deR').disabled=!!s.neg;
+    setSeg('cc',s.cc);setSeg('rep',s.rep);setSeg('sec',s.sec);setSeg('use',s.use);
+  }
+  function edited(){$('preset').value='custom';render();}
+  function bindNum(numId,rngId,key,lo,hi){
+    $(numId).addEventListener('input',function(){var v=parseFloat(this.value);if(isNaN(v))return;s[key]=v;$(rngId).value=Math.max(lo,Math.min(hi,v));edited();});
+    $(rngId).addEventListener('input',function(){var v=parseFloat(this.value);s[key]=v;$(numId).value=v;edited();});
+  }
+
+  // customise band points
+  var custInputs=[];
+  function buildCust(){
+    var box=$('custBox');box.textContent='';custInputs=[];
+    KEYS.forEach(function(k){
+      var g=document.createElement('div'),h=document.createElement('h4');h.textContent=NAMES[k];g.appendChild(h);
+      DEF[k].forEach(function(r,i){
+        var row=document.createElement('div');row.className='cr';
+        var id='bp_'+k+'_'+i,l=document.createElement('label');l.htmlFor=id;l.textContent=r[1].charAt(0).toUpperCase()+r[1].slice(1);
+        var inp=document.createElement('input');inp.type='number';inp.id=id;inp.min=0;inp.max=100;inp.step=5;inp.value=P[k][i];
+        inp.addEventListener('input',function(){var v=parseFloat(this.value);if(isNaN(v))return;v=Math.max(0,Math.min(100,v));P[k][i]=v;markCust();render();});
+        inp.addEventListener('blur',function(){this.value=P[k][i];});
+        custInputs.push([inp,k,i]);
+        row.appendChild(l);row.appendChild(inp);g.appendChild(row);
+      });
+      box.appendChild(g);
+    });
+    markCust();
+  }
+  function markCust(){
+    var n=0;custInputs.forEach(function(c){var ch=P[c[1]][c[2]]!==DEF[c[1]][c[2]][2];c[0].className=ch?'chg':'';if(ch)n++;});
+    bandChanged=n;showFlag();
+    $('custCount').textContent=n===0?'All band points are at their defaults.':n+(n===1?' band point changed':' band points changed')+' from the default.';
+  }
+  var bandChanged=0,wtChanged=0;
+  function showFlag(){$('custFlag').hidden=(bandChanged===0&&wtChanged===0);}
+
+  // customise weights
+  var wtInputs=[];
+  function buildWts(){
+    var box=$('wtBox');box.textContent='';wtInputs=[];
+    PORDER.forEach(function(q){
+      var g=document.createElement('div'),hh=document.createElement('h4');hh.textContent=PNAME[q];g.appendChild(hh);
+      function addRow(label,get,set,def,kind,key){
+        var row=document.createElement('div');row.className='cr';
+        var id='wt_'+kind+'_'+key,l=document.createElement('label');l.htmlFor=id;l.textContent=label;
+        var inp=document.createElement('input');inp.type='number';inp.id=id;inp.min=0;inp.max=100;inp.step=5;inp.value=get();
+        inp.addEventListener('input',function(){var v=parseFloat(this.value);if(isNaN(v))return;v=Math.max(0,Math.min(100,v));set(v);calcW();markWts();render();});
+        inp.addEventListener('blur',function(){this.value=get();});
+        wtInputs.push([inp,get,def]);
+        row.appendChild(l);row.appendChild(inp);g.appendChild(row);
+      }
+      addRow('Pillar weight, %',function(){return PW[q];},function(v){PW[q]=v;},PW0[q],'p',q);
+      Object.keys(PILLAR).forEach(function(k){if(PILLAR[k]!==q)return;
+        addRow(SHORT[k]+' share, %',function(){return SH[k];},function(v){SH[k]=v;},SH0[k],'s',k);});
+      var m=document.createElement('p');m.className='band-note';m.id='wtm_'+q;m.style.margin='6px 0 0';g.appendChild(m);
+      box.appendChild(g);
+    });
+    markWts();
+  }
+  function markWts(){
+    var n=0;wtInputs.forEach(function(c){var ch=c[1]()!==c[2];c[0].className=ch?'chg':'';if(ch)n++;});
+    wtChanged=n;showFlag();
+    var tot=0,msgs=[];PORDER.forEach(function(q){tot+=PW[q];
+      var st=0,parts=[];Object.keys(PILLAR).forEach(function(k){if(PILLAR[k]===q){st+=SH[k];parts.push(SHORT[k]+' × '+W[k].toFixed(2));}});
+      var e=$('wtm_'+q);if(e){e.textContent='Multiplier: '+parts.join(', ')+(Math.abs(st-100)>1e-9?'. Shares add to '+st+'%, not 100%.':'');}
+      if(Math.abs(st-100)>1e-9)msgs.push(PNAME[q]+' shares add to '+st+'%');});
+    if(Math.abs(tot-100)>1e-9)msgs.unshift('Pillar weights add to '+tot+'%');
+    var top=0;Object.keys(W).forEach(function(k){top+=W[k]*100;});
+    $('wtCount').textContent=(n===0?'All weights are at their defaults.':n+(n===1?' weight changed':' weights changed')+' from the default.')+(msgs.length?' Check: '+msgs.join('; ')+', so the top score is '+fmt(top,0)+' instead of 1,000.':'');
+  }
+  var SHORT={dscr:'DSCR',cv:'Bank-credit CV',cc:'CCRIS conduct',rep:'Reporting',de:'Debt to equity',sec:'Sector',use:'Use of funds'};
+
+  function render(){
+    var b={},lab={};
+    KEYS.forEach(function(k){var i=idxOf(k);b[k]=P[k][i];lab[k]=DEF[k][i][1];});
+    var pts={},raw=0;KEYS.forEach(function(k){pts[k]=W[k]*b[k];raw+=pts[k];});
+    raw=Math.round(raw*100)/100;
+    var score=roundHalfEven(raw);
+    var gr=null;for(var i=0;i<GRADES.length;i++){if(score>=GRADES[i][0]){gr=GRADES[i];break;}}
+    $('score').textContent=score;
+    $('raw').textContent=fmt(raw,2);
+    if(gr){$('grade').textContent=gr[1];$('grade').style.color='var('+gr[3]+')';$('pd').textContent=fmt(gr[2],1)+'%';$('el').textContent=fmt(gr[2]*0.6,2)+'%';}
+    else{$('grade').textContent='Below D1';$('grade').style.color='var(--g-x)';$('pd').textContent='not graded';$('el').textContent='not graded';}
+
+    function note(id,k){var e=$(id);e.textContent='';e.appendChild(document.createTextNode(lab[k]+' → '));var bb=document.createElement('b');bb.textContent=b[k]+' of 100';e.appendChild(bb);}
+    note('dscrB','dscr');note('cvB','cv');note('deB','de');note('ccB','cc');note('repB','rep');note('secB','sec');note('useB','use');
+
+    // ruler
+    var lo=100,hi=1000,segs=[[100,250,'Below D1',null]];
+    for(var j=GRADES.length-1;j>=0;j--){var a=GRADES[j][0],z=j===0?1000:GRADES[j-1][0];segs.push([a,z,GRADES[j][1],GRADES[j][3]]);}
+    var bands=$('bands');bands.textContent='';
+    segs.forEach(function(sg){var e=document.createElement('div');e.className='band';e.style.flex=(sg[1]-sg[0])+' 1 0';e.textContent=sg[2];
+      var on=(score>=sg[0]&&score<sg[1])||(sg[1]===1000&&score>=1000)||(sg[0]===100&&score<100);
+      if(on){e.className='band on';e.style.background='var('+(sg[3]||'--g-x')+')';}
+      bands.appendChild(e);});
+    var ticks=$('ticks');ticks.textContent='';
+    [250,350,450,550,650,750,850].forEach(function(t){var e=document.createElement('span');e.textContent=t;e.style.left=((t-lo)/(hi-lo)*100)+'%';ticks.appendChild(e);});
+    $('marker').style.left=(Math.max(lo,Math.min(hi,score))-lo)/(hi-lo)*100+'%';
+
+    // next grade
+    var nx=$('next');nx.textContent='';
+    function add(t,bold){if(bold){var e=document.createElement('b');e.textContent=t;nx.appendChild(e);}else{nx.appendChild(document.createTextNode(t));}}
+    var idx=gr?GRADES.indexOf(gr):GRADES.length;
+    if(idx>0){var up=GRADES[idx-1];add(String(up[0]-score),true);add(' points to reach '+up[1]);}
+    else{add('Top grade');}
+    if(gr){add(' · ');add(String(score-gr[0]),true);add(' points above the '+gr[1]+' floor');}
+
+    PORDER.forEach(function(q){var e=$('pw_'+q);if(e)e.textContent=PW[q]+'%'+(q==='cap'?' of the score':'');});
+    // contributions
+    var groups=[['Capacity',['dscr','cv']],['Character',['cc','rep']],['Capital',['de']],['Conditions',['sec','use']]];
+    var short=SHORT,maxFull=Math.max.apply(null,KEYS.map(function(x){return W[x];}))*100||1;
+    var box=$('contrib');box.textContent='';
+    groups.forEach(function(gp){
+      var wrap=document.createElement('div');wrap.className='pillar';
+      var sub=0,subMax=0;gp[1].forEach(function(k){sub+=pts[k];subMax+=W[k]*Math.max.apply(null,P[k]);});
+      var h=document.createElement('h3');h.appendChild(document.createTextNode(gp[0]));var sp=document.createElement('span');sp.textContent=fmt(sub,1)+' of '+fmt(subMax,0);h.appendChild(sp);wrap.appendChild(h);
+      gp[1].forEach(function(k){
+        var full=W[k]*100,max=W[k]*Math.max.apply(null,P[k]),fl=W[k]*Math.min.apply(null,P[k]);
+        var ln=document.createElement('div');ln.className='line';
+        var nm=document.createElement('div');nm.className='nm';nm.textContent=short[k];var sm=document.createElement('small');sm.textContent='× '+W[k].toFixed(2)+' per band point';nm.appendChild(sm);
+        var bar=document.createElement('div');bar.className='bar';bar.style.width=(full/maxFull*100)+'%';
+        var fi=document.createElement('i');fi.style.width=(full?pts[k]/full*100:0)+'%';var uu=document.createElement('u');uu.style.width=(full?Math.min(fl,pts[k])/full*100:0)+'%';
+        bar.appendChild(fi);bar.appendChild(uu);
+        var pt=document.createElement('div');pt.className='pts';var pb=document.createElement('b');pb.textContent=fmt(pts[k],1);var ps=document.createElement('span');ps.textContent=' of '+fmt(max,0);pt.appendChild(pb);pt.appendChild(ps);
+        ln.appendChild(nm);ln.appendChild(bar);ln.appendChild(pt);wrap.appendChild(ln);
+      });
+      box.appendChild(wrap);
+    });
+    var eq=$('eq');eq.textContent='';
+    var order=[['dscr','DSCR'],['cc','CCRIS'],['de','Gearing'],['cv','CV'],['rep','Reporting'],['use','Use'],['sec','Sector']];
+    eq.appendChild(document.createTextNode('Score = '));
+    order.forEach(function(o,n){eq.appendChild(document.createTextNode((n?' + ':'')+W[o[0]].toFixed(2)+' × '));var e=document.createElement('b');e.textContent=b[o[0]];eq.appendChild(e);});
+    eq.appendChild(document.createTextNode(' = '));var te=document.createElement('b');te.textContent=fmt(raw,2);eq.appendChild(te);
+  }
+
+  function calc(){
+    var e=parseFloat($('cEbitda').value)||0,x=parseFloat($('cExist').value)||0,n=parseFloat($('cNote').value)||0,r=(parseFloat($('cRate').value)||0)/100,t=Math.max(1,parseFloat($('cTen').value)||12);
+    var svc=n*Math.min(1,12/t)+n*r*Math.min(t,12)/12, tot=x+svc;
+    $('cSvc').textContent='RM'+fmt(svc,0);
+    var d=tot>0?e/tot:null;
+    $('cDscr').textContent=d===null?'no debt service':fmt(d,2);
+    return d;
+  }
+
+  // init
+  var sel=$('preset');
+  Object.keys(PRESETS).forEach(function(k){var o=document.createElement('option');o.value=k;o.textContent=PRESETS[k].name;sel.appendChild(o);});
+  buildSeg('ccSeg','cc');buildSeg('repSeg','rep');buildSeg('secSeg','sec');buildSeg('useSeg','use');
+  bindNum('dscrN','dscrR','dscr',0,3);bindNum('cvN','cvR','cv',0,1);bindNum('deN','deR','de',0,5);
+  $('negEq').addEventListener('change',function(){s.neg=this.checked;$('deN').disabled=s.neg;$('deR').disabled=s.neg;edited();});
+  sel.addEventListener('change',function(){if(this.value!=='custom')load(this.value);});
+  $('reset').addEventListener('click',function(){sel.value=START;load(START);});
+  ['cEbitda','cExist','cNote','cRate','cTen'].forEach(function(id){$(id).addEventListener('input',calc);});
+  $('cUse').addEventListener('click',function(){var d=calc();if(d===null)return;s.dscr=Math.round(d*100)/100;$('dscrN').value=s.dscr;$('dscrR').value=Math.max(0,Math.min(3,s.dscr));edited();});
+  $('custReset').addEventListener('click',function(){resetP();buildCust();render();});
+  $('wtReset').addEventListener('click',function(){resetW();buildWts();render();});
+  buildCust();buildWts();
+  sel.value=START;load(START);calc();
+})();
+</script>
+</body>
+</html>
